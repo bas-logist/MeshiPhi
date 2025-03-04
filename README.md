@@ -11,7 +11,7 @@
 
 
 
-Introducing Meshiφ, a versatile software package designed for comprehensive earth modeling and navigation planning. Meshiφ works by discretizing the Earth's surface into a non-uniform grid, allocating higher resolution in regions of geographic diversity, and conserving lower resolution in more uniform regions. The software also incorporates data-driven vehicle models, with the ability to calculate speed limits and fuel needs for specific vessels within each grid cell. These mesh objects can be output in standard formats, such as GeoJSON and GeoTIFF, enabling data-visualisation via GIS software such as ArcGIS. 
+Introducing Meshiφ, a versatile software package designed for comprehensive earth modeling and navigation planning. Meshiφ works by discretizing the Earth's surface into a non-uniform grid, allocating higher resolution in regions of geographic diversity, and conserving lower resolution in more uniform regions. These mesh objects can be output in standard formats, such as GeoJSON and GeoTIFF, enabling data-visualisation via GIS software such as ArcGIS. The default end products are designed to work with <a href="https://github.com/bas-amop/PolarRoute/">PolarRoute</a>.
 
 ## Installation
 Meshiφ can be installed via pip or by cloning the repository from GitHub.
