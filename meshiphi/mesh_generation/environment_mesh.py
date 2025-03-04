@@ -171,7 +171,7 @@ class EnvironmentMesh:
         cb_width  = agg_cellbox_wp.boundary.get_width()
         cb_height = agg_cellbox_wp.boundary.get_height()
 
-        if (cb_width < min_dcx) or (cb_height < min_dcy):
+        if (cb_width <= min_dcx) or (cb_height <= min_dcy):
             # Continue if cellbox is at max split depth
             return False
         else:
