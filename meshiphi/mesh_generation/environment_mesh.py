@@ -136,6 +136,7 @@ class EnvironmentMesh:
                 cellbox_index (str) - Cellbox index containing the point
         """
         inside_cell = [agg_cell.contains_point(point[0],point[1]) for agg_cell in self.agg_cellboxes]
+
         if any(inside_cell):
             indices = np.where(inside_cell)[0]
             if len(indices) > 1:
