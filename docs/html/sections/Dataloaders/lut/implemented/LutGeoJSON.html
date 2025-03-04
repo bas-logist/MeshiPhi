@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.5.3.3. LUT GeoJSON Dataloader &mdash; meshiphi 2.1.11 documentation</title>
+  <title>7.5.3.3. LUT GeoJSON Dataloader &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -104,19 +102,19 @@
            <div itemprop="articleBody">
              
   <section id="lut-geojson-dataloader">
-<h1><span class="section-number">7.5.3.3. </span>LUT GeoJSON Dataloader<a class="headerlink" href="#lut-geojson-dataloader" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">7.5.3.3. </span>LUT GeoJSON Dataloader<a class="headerlink" href="#lut-geojson-dataloader" title="Link to this heading"></a></h1>
 <p>The scalar CSV dataloader is designed to take any geojson file and cast
 it into a data source for mesh construction. It was primarily used in testing
 for loading dummy data to test performance. When using this dataloader, a value
 should be provided in the mesh config file that specifies the value and data_name
 that the polygons save. The keyword in the config params is ‘value’.</p>
 <p>Name in config: <code class="code docutils literal notranslate"><span class="pre">'lut_geojson'</span></code></p>
-<span class="target" id="module-meshiphi.dataloaders.lut.lut_geojson"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.dataloaders.lut.lut_geojson">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.lut.lut_geojson.</span></span><span class="sig-name descname"><span class="pre">LutGeoJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.lut.lut_geojson.</span></span><span class="sig-name descname"><span class="pre">LutGeoJSON</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON" title="Link to this definition"></a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON.add_default_params">
-<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON.add_default_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON.add_default_params" title="Link to this definition"></a></dt>
 <dd><p>Set default values for LUT dataloader. Only unique addition over
 the regular abstracted add_default_params is the data_name</p>
 <dl class="field-list simple">
@@ -136,7 +134,7 @@ completed with default values if not provided in config.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON.import_data">
-<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON.import_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.lut_geojson.LutGeoJSON.import_data" title="Link to this definition"></a></dt>
 <dd><p>Import a list of GeoJSON files, assign regions a value specified in
 config params, regions outside this are numpy nan values.</p>
 <dl class="field-list simple">

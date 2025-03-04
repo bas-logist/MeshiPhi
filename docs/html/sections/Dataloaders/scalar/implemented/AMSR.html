@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.3.3.1. AMSR Dataloader &mdash; meshiphi 2.1.11 documentation</title>
+  <title>7.3.3.1. AMSR Dataloader &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -118,7 +116,7 @@
            <div itemprop="articleBody">
              
   <section id="amsr-dataloader">
-<h1><span class="section-number">7.3.3.1. </span>AMSR Dataloader<a class="headerlink" href="#amsr-dataloader" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">7.3.3.1. </span>AMSR Dataloader<a class="headerlink" href="#amsr-dataloader" title="Link to this heading"></a></h1>
 <p>The AMSR (Advanced Microwave Scanning Radiometer) dataset is a publicly
 available that provides Sea Ice Concentration scans of the earth’s oceans.
 It is produced by researchers at the University of Bremen.</p>
@@ -129,12 +127,12 @@ data is loaded. This caused issues with the regression tests passing.
 This issue will be rectified soon by updating the regression tests.</p>
 <p>Name in config: <code class="code docutils literal notranslate"><span class="pre">'amsr'</span></code></p>
 <p>Data can be downloaded from <a class="reference external" href="https://seaice.uni-bremen.de/data-archive/">here</a></p>
-<span class="target" id="module-meshiphi.dataloaders.scalar.amsr"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.dataloaders.scalar.amsr">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.amsr.AMSRDataLoader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.scalar.amsr.</span></span><span class="sig-name descname"><span class="pre">AMSRDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.amsr.AMSRDataLoader" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.scalar.amsr.</span></span><span class="sig-name descname"><span class="pre">AMSRDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.amsr.AMSRDataLoader" title="Link to this definition"></a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.amsr.AMSRDataLoader.add_default_params">
-<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.amsr.AMSRDataLoader.add_default_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.amsr.AMSRDataLoader.add_default_params" title="Link to this definition"></a></dt>
 <dd><p>Translates ‘hemisphere’ parameter into values of in_proj and out_proj
 that pyProj can understand. Also defines x_col and y_col for AMSR data
 for reprojection to function</p>
@@ -154,7 +152,7 @@ object attributes</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.amsr.AMSRDataLoader.import_data">
-<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.amsr.AMSRDataLoader.import_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.amsr.AMSRDataLoader.import_data" title="Link to this definition"></a></dt>
 <dd><p>Reads in data from a AMSR NetCDF file, or folder of files.
 Drops unnecessary column ‘polar_stereographic’, and renames variable
 ‘z’ to ‘SIC’</p>

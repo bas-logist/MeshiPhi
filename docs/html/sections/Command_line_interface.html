@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3. Command Line Interface &mdash; meshiphi 2.1.11 documentation</title>
+  <title>3. Command Line Interface &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -89,13 +87,13 @@
            <div itemprop="articleBody">
              
   <section id="command-line-interface">
-<h1><span class="section-number">3. </span>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">3. </span>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
 <p>The MeshiPhi package provides CLI entry points, used to build a digital environment from a heterogeneous collection of
 source data. This digital environment file (mesh) can then be exported to a variety of file formats for use in other
 systems, such as GIS software. The produced mesh file also interfaces directly with <a class="reference external" href="https://github.com/antarctica/PolarRoute">PolarRoute</a>,
 BAS’s route planning software, to provide optimal routes for a vehicle travelling through the mesh.</p>
 <section id="create-mesh">
-<h2><span class="section-number">3.1. </span>create_mesh<a class="headerlink" href="#create-mesh" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">3.1. </span>create_mesh<a class="headerlink" href="#create-mesh" title="Link to this heading"></a></h2>
 <p>The <em>create_mesh</em> entry point builds a digital environment file from a collection of source data, which can then be saved
 to a file for visualisation or use in other software.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">create_mesh</span> <span class="o">&lt;</span><span class="n">config</span><span class="o">.</span><span class="n">json</span><span class="o">&gt;</span>
@@ -115,7 +113,7 @@ There are also example configuration files available in the directory <code clas
 <p>The format of the returned mesh.json file is explain in <a class="reference internal" href="Outputs.html#the-mesh-json-file"><span class="std std-ref">The Mesh.json file</span></a> section of the documentation.</p>
 </section>
 <section id="export-mesh">
-<h2><span class="section-number">3.2. </span>export_mesh<a class="headerlink" href="#export-mesh" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">3.2. </span>export_mesh<a class="headerlink" href="#export-mesh" title="Link to this heading"></a></h2>
 <p>Once a mesh has been built using the <a class="reference internal" href="#create-mesh"><span class="std std-ref">create_mesh</span></a> command, it can be exported other file types for
 use in other systems (such as GIS software) using the the <em>export_mesh</em> command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export_mesh</span> <span class="o">&lt;</span><span class="n">mesh</span><span class="o">.</span><span class="n">json</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">output_location</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">output_format</span><span class="o">&gt;</span>
@@ -175,7 +173,7 @@ corresponding red, green, blue value between 0 and 255.</p>
 which of the data layers you want to export as a single GEOJSON file.</p>
 </section>
 <section id="rebuild-mesh">
-<h2><span class="section-number">3.3. </span>rebuild_mesh<a class="headerlink" href="#rebuild-mesh" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">3.3. </span>rebuild_mesh<a class="headerlink" href="#rebuild-mesh" title="Link to this heading"></a></h2>
 <p>Once a mesh has been built using the <a class="reference internal" href="#create-mesh"><span class="std std-ref">create_mesh</span></a> command the <em>rebuild_mesh</em> command allows a user to rebuild it based on the
 original configs stored within the mesh file. This is primarily useful for debugging or to update old meshes produced with an older version
 of the package.</p>
@@ -189,7 +187,7 @@ of the package.</p>
 </div>
 </section>
 <section id="merge-mesh">
-<h2><span class="section-number">3.4. </span>merge_mesh<a class="headerlink" href="#merge-mesh" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">3.4. </span>merge_mesh<a class="headerlink" href="#merge-mesh" title="Link to this heading"></a></h2>
 <p>When multiple compatible meshes have been created using the <a class="reference internal" href="#create-mesh"><span class="std std-ref">create_mesh</span></a> command, they can be merged together using the <a class="reference internal" href="#merge-mesh"><span class="std std-ref">merge_mesh</span></a> command.
 This will combine the meshes into a single mesh file, replacing cellboxes in mesh1 with cellboxes in mesh2 where they overlap.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">merge_mesh</span> <span class="o">&lt;</span><span class="n">mesh1</span><span class="o">.</span><span class="n">json</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">mesh2</span><span class="o">.</span><span class="n">json</span><span class="o">&gt;</span>
@@ -208,7 +206,7 @@ This will combine the meshes into a single mesh file, replacing cellboxes in mes
 </div>
 </section>
 <section id="plot-mesh-geoplot">
-<h2><span class="section-number">3.5. </span>plot_mesh (GeoPlot)<a class="headerlink" href="#plot-mesh-geoplot" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">3.5. </span>plot_mesh (GeoPlot)<a class="headerlink" href="#plot-mesh-geoplot" title="Link to this heading"></a></h2>
 <p>Meshes produced at any stage in the route planning process can be visualised using the GeoPlot
 library found at the relevant <a class="reference external" href="https://github.com/antarctica/GeoPlot">GitHub page</a>. Meshes and routes can also be
 plotted in other GIS software such as QGIS or ArcGIS by exporting the mesh to a common format such as .geojson or .tif
@@ -223,7 +221,7 @@ using the <a class="reference internal" href="#export-mesh"><span class="std std
 </div>
 </section>
 <section id="meshiphi-test-for-developers">
-<h2><span class="section-number">3.6. </span>meshiphi_test (for developers)<a class="headerlink" href="#meshiphi-test-for-developers" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">3.6. </span>meshiphi_test (for developers)<a class="headerlink" href="#meshiphi-test-for-developers" title="Link to this heading"></a></h2>
 <p>Compares the current working branch of Meshiphi to a different git branch, and runs relevant unit and regression tests
 depending on what files are different between the branches. This command should be run to ensure consistent functionality before
 creating a pull request.</p>

@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.3.3.17. Scalar GRF Dataloader &mdash; meshiphi 2.1.11 documentation</title>
+  <title>7.3.3.17. Scalar GRF Dataloader &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -118,14 +116,14 @@
            <div itemprop="articleBody">
              
   <section id="scalar-grf-dataloader">
-<span id="scalar-grf"></span><h1><span class="section-number">7.3.3.17. </span>Scalar GRF Dataloader<a class="headerlink" href="#scalar-grf-dataloader" title="Permalink to this heading"></a></h1>
+<span id="scalar-grf"></span><h1><span class="section-number">7.3.3.17. </span>Scalar GRF Dataloader<a class="headerlink" href="#scalar-grf-dataloader" title="Link to this heading"></a></h1>
 <p>Produces a gaussian random field of scalar values, useful for producing
 artificial, yet somewhat realistic values for real-world variables.</p>
 <p>Name in config: <code class="code docutils literal notranslate"><span class="pre">'scalar_grf'</span></code></p>
 <p>Can be used to generate <a class="reference internal" href="BinaryGRF.html#binary-grf"><span class="std std-ref">binary masks</span></a>.</p>
 <p>For vector fields, see  the <a class="reference internal" href="../../vector/implemented/VectorGRF.html#vector-grf"><span class="std std-ref">Vector GRF page</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Default parameters for scalar GRF dataloader.</span><a class="headerlink" href="#id1" title="Permalink to this code"></a></div>
+<div class="code-block-caption"><span class="caption-text">Default parameters for scalar GRF dataloader.</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;loader&quot;</span><span class="p">:</span> <span class="s2">&quot;scalar_grf&quot;</span><span class="p">,</span>
     <span class="s2">&quot;params&quot;</span><span class="p">:{</span>
@@ -154,12 +152,12 @@ the min and max are</p>
 <div class="line"><code class="code docutils literal notranslate"><span class="pre">actual_max</span> <span class="pre">=</span> <span class="pre">multiplier</span> <span class="pre">*</span> <span class="pre">max</span> <span class="pre">+</span> <span class="pre">offset</span></code></div>
 </div>
 <p>The dataloader is implemented as follows:</p>
-<span class="target" id="module-meshiphi.dataloaders.scalar.scalar_grf"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.dataloaders.scalar.scalar_grf">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.scalar.scalar_grf.</span></span><span class="sig-name descname"><span class="pre">ScalarGRFDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.scalar.scalar_grf.</span></span><span class="sig-name descname"><span class="pre">ScalarGRFDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader" title="Link to this definition"></a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader.add_default_params">
-<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader.add_default_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader.add_default_params" title="Link to this definition"></a></dt>
 <dd><p>Set default values for abstract GRF dataloaders, starting by
 including defaults for scalar dataloaders.</p>
 <dl class="field-list simple">
@@ -179,7 +177,7 @@ completed with default values if not provided in config.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader.import_data">
-<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader.import_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.scalar_grf.ScalarGRFDataLoader.import_data" title="Link to this definition"></a></dt>
 <dd><p>Creates data in the form of a Gaussian Random Field</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

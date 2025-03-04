@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>9. Mesh Plotting &mdash; meshiphi 2.1.11 documentation</title>
+  <title>9. Mesh Plotting &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -89,22 +87,22 @@
            <div itemprop="articleBody">
              
   <section id="mesh-plotting">
-<h1><span class="section-number">9. </span>Mesh Plotting<a class="headerlink" href="#mesh-plotting" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">9. </span>Mesh Plotting<a class="headerlink" href="#mesh-plotting" title="Link to this heading"></a></h1>
 <p>As well as the interactive plotting functionality provided by <a class="reference external" href="https://github.com/antarctica/GeoPlot">GeoPlot</a>,
 Meshiphi also contains a built-in plotting class <code class="code docutils literal notranslate"><span class="pre">mesh_plotter</span></code> that allows the user to produce static plots of a
 given environmental mesh.</p>
-<span class="target" id="module-meshiphi.mesh_plotting.mesh_plotter"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.mesh_plotting.mesh_plotter">
 <dt class="sig sig-object py" id="meshiphi.mesh_plotting.mesh_plotter.MeshPlotter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_plotting.mesh_plotter.</span></span><span class="sig-name descname"><span class="pre">MeshPlotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_plotting.mesh_plotter.</span></span><span class="sig-name descname"><span class="pre">MeshPlotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter" title="Link to this definition"></a></dt>
 <dd><p>Object for plotting mesh json files using matplotlib and cartopy.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.__init__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.plot_bool">
-<span class="sig-name descname"><span class="pre">plot_bool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.plot_bool" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot_bool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.plot_bool" title="Link to this definition"></a></dt>
 <dd><p>Plots boolean values from the mesh json file.
 :param value_name: The name of the boolean value to plot.
 :type value_name: str
@@ -114,7 +112,7 @@ given environmental mesh.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.plot_cmap">
-<span class="sig-name descname"><span class="pre">plot_cmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colourmap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.plot_cmap" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot_cmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colourmap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.plot_cmap" title="Link to this definition"></a></dt>
 <dd><p>Plots colourmap values from the mesh json file.
 :param value_name: The name of the colourmap value to plot.
 :type value_name: str
@@ -124,7 +122,7 @@ given environmental mesh.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.save" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_plotting.mesh_plotter.MeshPlotter.save" title="Link to this definition"></a></dt>
 <dd><p>Saves the plot to a file.
 :param filename: The name of the file to save the plot to.
 :type filename: str</p>

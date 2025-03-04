@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8.4.1. Mesh Construction - Classes &mdash; meshiphi 2.1.11 documentation</title>
+  <title>8.4.1. Mesh Construction - Classes &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -100,17 +98,17 @@
            <div itemprop="articleBody">
              
   <section id="mesh-construction-classes">
-<h1><span class="section-number">8.4.1. </span>Mesh Construction - Classes<a class="headerlink" href="#mesh-construction-classes" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">8.4.1. </span>Mesh Construction - Classes<a class="headerlink" href="#mesh-construction-classes" title="Link to this heading"></a></h1>
 <p>This section describes the main classes of the Mesh Construction module in detail.
 For an overview of the abstractions behind the Mesh Construction module, see the
 <a class="reference internal" href="Mesh_construction_overview.html#id1"><span class="std std-ref">Mesh Construction - Overview</span></a> section of the documentation.</p>
 <section id="meshbuilder">
-<h2><span class="section-number">8.4.1.1. </span>MeshBuilder<a class="headerlink" href="#meshbuilder" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.4.1.1. </span>MeshBuilder<a class="headerlink" href="#meshbuilder" title="Link to this heading"></a></h2>
 <p>The MeshBuilder object is the main class of the Mesh Construction module. It is used to build the
 EnvironmentalMesh object from a collection geospatial data. Features of the created EnvironmentalMesh
 as be set using a configuration file passed to the MeshBuilder object. For more information on the format
 of the configuration file, see the <a class="reference internal" href="../Configuration/Mesh_construction_config.html#configuration-mesh-construction"><span class="std std-ref">Configuration - Mesh Construction</span></a> section of the documentation.</p>
-<span class="target" id="module-meshiphi.mesh_generation.mesh_builder"></span><p>In this section we will discuss the usage of the MeshBuilder functionality of meshiphi.</p>
+<p id="module-meshiphi.mesh_generation.mesh_builder">In this section we will discuss the usage of the MeshBuilder functionality of meshiphi.</p>
 <p class="rubric">Example</p>
 <p>An example of how to run this code can be executed by running the following in an ipython/Jupyter Notebook:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">meshiphi.mesh_generation.mesh_builder</span> <span class="kn">import</span> <span class="n">MeshBuilder</span>
@@ -125,11 +123,11 @@ of the configuration file, see the <a class="reference internal" href="../Config
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.mesh_builder.MeshBuilder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.mesh_builder.</span></span><span class="sig-name descname"><span class="pre">MeshBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.mesh_builder.</span></span><span class="sig-name descname"><span class="pre">MeshBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder" title="Link to this definition"></a></dt>
 <dd><p>A class resposible for building an environment mesh based on a provided config file.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.mesh_builder.MeshBuilder.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.__init__" title="Link to this definition"></a></dt>
 <dd><p>Constructs a Mesh from a given config file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -176,14 +174,14 @@ of the configuration file, see the <a class="reference internal" href="../Config
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.mesh_builder.MeshBuilder.add_dataloader">
-<span class="sig-name descname"><span class="pre">add_dataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'myDataLoader'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.add_dataloader" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_dataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'myDataLoader'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.add_dataloader" title="Link to this definition"></a></dt>
 <dd><p>Adds a dataloader to a pre-existing mesh by adding to the metadata</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Dataloader</strong> (<a class="reference internal" href="../Dataloaders/scalar/abstractScalar.html#meshiphi.dataloaders.scalar.abstract_scalar.ScalarDataLoader" title="meshiphi.dataloaders.scalar.abstract_scalar.ScalarDataLoader"><em>ScalarDataLoader</em></a><em> or </em><a class="reference internal" href="../Dataloaders/vector/abstractVector.html#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader" title="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader"><em>VectorDataLoader</em></a>) – Dataloader object to add to metadata</p></li>
 <li><p><strong>params</strong> (<em>dict</em>) – Parameters to initialise dataloader with</p></li>
-<li><p><strong>bounds</strong> (<em>Boundary</em>) – </p></li>
+<li><p><strong>bounds</strong> (<em>Boundary</em>)</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Name of the dataloader used in config</p></li>
 </ul>
 </dd>
@@ -199,7 +197,7 @@ new dataloader</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.mesh_builder.MeshBuilder.build_environmental_mesh">
-<span class="sig-name descname"><span class="pre">build_environmental_mesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.build_environmental_mesh" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">build_environmental_mesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.build_environmental_mesh" title="Link to this definition"></a></dt>
 <dd><p>splits the mesh then goes through the mesh cellboxes and builds an evironmental mesh that contains the cellboxes aggregated data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -213,7 +211,7 @@ new dataloader</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.mesh_builder.MeshBuilder.split_and_replace">
-<span class="sig-name descname"><span class="pre">split_and_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.split_and_replace" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">split_and_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.split_and_replace" title="Link to this definition"></a></dt>
 <dd><p>Replaces a cellbox given by parameter ‘cellbox’ in this grid with
 4 smaller cellboxes representing the four corners of the given cellbox.
 A neighbours map is then created for each of the 4 new cellboxes
@@ -228,7 +226,7 @@ and the neighbours map for all surrounding cell boxes is updated.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.mesh_builder.MeshBuilder.split_to_depth">
-<span class="sig-name descname"><span class="pre">split_to_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split_depth</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.split_to_depth" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">split_to_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split_depth</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.mesh_builder.MeshBuilder.split_to_depth" title="Link to this definition"></a></dt>
 <dd><p>splits all cellboxes in this grid until a maximum split depth
 is reached, or all cellboxes are homogeneous.</p>
 <dl class="field-list simple">
@@ -243,17 +241,17 @@ within this Mesh after splitting.</p>
 
 </section>
 <section id="environmentmesh">
-<h2><span class="section-number">8.4.1.2. </span>EnvironmentMesh<a class="headerlink" href="#environmentmesh" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.4.1.2. </span>EnvironmentMesh<a class="headerlink" href="#environmentmesh" title="Link to this heading"></a></h2>
 <p>The EnvironmentMesh object is a collection of geospatial boundaries containing an aggregated representation
 of the data contained within the boundaries (AggregatedCellBox objects). The EnvironmentMesh object is
 created by the MeshBuilder object, though the object is mutable and can be updated after construction.</p>
-<span class="target" id="module-meshiphi.mesh_generation.environment_mesh"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.mesh_generation.environment_mesh">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.environment_mesh.</span></span><span class="sig-name descname"><span class="pre">EnvironmentMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_cellboxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbour_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.environment_mesh.</span></span><span class="sig-name descname"><span class="pre">EnvironmentMesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_cellboxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbour_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh" title="Link to this definition"></a></dt>
 <dd><p>a class that defines the environmental mesh structure and contains each cellbox aggregate information</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.bounds">
-<span class="sig-name descname"><span class="pre">bounds</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.bounds" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">bounds</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.bounds" title="Link to this definition"></a></dt>
 <dd><p>the boundaries of this mesh</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -264,7 +262,7 @@ created by the MeshBuilder object, though the object is mutable and can be updat
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.agg_cellboxes">
-<span class="sig-name descname"><span class="pre">agg_cellboxes</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.agg_cellboxes" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">agg_cellboxes</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.agg_cellboxes" title="Link to this definition"></a></dt>
 <dd><p>a list of aggregated cellboxes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -275,7 +273,7 @@ created by the MeshBuilder object, though the object is mutable and can be updat
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.neighbour_graph">
-<span class="sig-name descname"><span class="pre">neighbour_graph</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.neighbour_graph" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">neighbour_graph</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.neighbour_graph" title="Link to this definition"></a></dt>
 <dd><p>an object contains each cellbox neighbours information</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -286,7 +284,7 @@ created by the MeshBuilder object, though the object is mutable and can be updat
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.config">
-<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.config" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.config" title="Link to this definition"></a></dt>
 <dd><p>conatins the initial config used to build this mesh</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -297,7 +295,7 @@ created by the MeshBuilder object, though the object is mutable and can be updat
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_cellboxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbour_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_cellboxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbour_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.__init__" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -312,7 +310,7 @@ created by the MeshBuilder object, though the object is mutable and can be updat
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.load_from_json">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.load_from_json" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.load_from_json" title="Link to this definition"></a></dt>
 <dd><p>Constructs an Env.Mesh from a given env-mesh json file to be used by other modules (ex.Vessel Performance Modeller).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -385,7 +383,7 @@ created by the MeshBuilder object, though the object is mutable and can be updat
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.merge_mesh">
-<span class="sig-name descname"><span class="pre">merge_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.merge_mesh" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">merge_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.merge_mesh" title="Link to this definition"></a></dt>
 <dd><p>merges the given mesh with this mesh. The given mesh is not modified.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -396,7 +394,7 @@ created by the MeshBuilder object, though the object is mutable and can be updat
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'JSON'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.save" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'JSON'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.save" title="Link to this definition"></a></dt>
 <dd><p>Saves this object to a location in local storage in a specific format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -419,7 +417,7 @@ Supported formats are</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.split_and_replace">
-<span class="sig-name descname"><span class="pre">split_and_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.split_and_replace" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">split_and_replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.split_and_replace" title="Link to this definition"></a></dt>
 <dd><p>splits the cellbox with the given id and replaces it with the new cellboxes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -430,7 +428,7 @@ Supported formats are</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_geojson">
-<span class="sig-name descname"><span class="pre">to_geojson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_geojson" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_geojson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_geojson" title="Link to this definition"></a></dt>
 <dd><p>Returns the cellboxes of this mesh converted to a geoJSON format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -451,7 +449,7 @@ cellboxes are connected together.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_json">
-<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_json" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_json" title="Link to this definition"></a></dt>
 <dd><p>Returns this Mesh converted to a JSON object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -475,7 +473,7 @@ cellboxes are connected together.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_tif">
-<span class="sig-name descname"><span class="pre">to_tif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_tif" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_tif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.to_tif" title="Link to this definition"></a></dt>
 <dd><p>generates a representation of the mesh in geotif image format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -514,7 +512,7 @@ and colour_conf (string) contains the path to color config file, which is a text
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.update_cellbox">
-<span class="sig-name descname"><span class="pre">update_cellbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.update_cellbox" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_cellbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.environment_mesh.EnvironmentMesh.update_cellbox" title="Link to this definition"></a></dt>
 <dd><p>method that adds values to the dict of a cellbox at certain index (to be used by the vessel perf. module to add the perf. metrics to the cellbox)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -530,16 +528,16 @@ and colour_conf (string) contains the path to color config file, which is a text
 
 </section>
 <section id="neighbourgraph">
-<h2><span class="section-number">8.4.1.3. </span>NeighbourGraph<a class="headerlink" href="#neighbourgraph" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.4.1.3. </span>NeighbourGraph<a class="headerlink" href="#neighbourgraph" title="Link to this heading"></a></h2>
 <p>The NeighbourGraph object is used to store the connectivity information between the cells of the EnvironmentMesh.
 The NeighbourGraph object is created by the MeshBuilder object and is encoded into the EnvironmentalMesh.</p>
-<span class="target" id="module-meshiphi.mesh_generation.neighbour_graph"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.mesh_generation.neighbour_graph">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.neighbour_graph.NeighbourGraph">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.neighbour_graph.</span></span><span class="sig-name descname"><span class="pre">NeighbourGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellboxes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.neighbour_graph.</span></span><span class="sig-name descname"><span class="pre">NeighbourGraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellboxes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph" title="Link to this definition"></a></dt>
 <dd><p>A NeighbourGraph is a class that defines the  graphical representation of the adjacency relationship between CellBoxes in the Mesh.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.neighbour_graph">
-<span class="sig-name descname"><span class="pre">neighbour_graph</span></span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.neighbour_graph" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">neighbour_graph</span></span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.neighbour_graph" title="Link to this definition"></a></dt>
 <dd><p>a dictionary that contains cellboxes ids along with their adjacent neighbours in the following form</p>
 <p>{</p>
 <blockquote>
@@ -576,7 +574,7 @@ The NeighbourGraph object is created by the MeshBuilder object and is encoded in
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.get_neighbour_case">
-<span class="sig-name descname"><span class="pre">get_neighbour_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cellbox_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.get_neighbour_case" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_neighbour_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cellbox_b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.get_neighbour_case" title="Link to this definition"></a></dt>
 <dd><p>Given two cellboxes (cellbox_a, cellbox_b) returns a case number
 representing where the two cellboxes are touching.</p>
 <dl class="field-list simple">
@@ -609,13 +607,13 @@ representing where the two cellboxes are touching.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.initialise_neighbour_graph">
-<span class="sig-name descname"><span class="pre">initialise_neighbour_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellboxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.initialise_neighbour_graph" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">initialise_neighbour_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellboxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.initialise_neighbour_graph" title="Link to this definition"></a></dt>
 <dd><p>initialize the neighbour graph</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.update_neighbours">
-<span class="sig-name descname"><span class="pre">update_neighbours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox_indx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_neighbours_indx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cellboxes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.update_neighbours" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_neighbours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cellbox_indx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_neighbours_indx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cellboxes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.neighbour_graph.NeighbourGraph.update_neighbours" title="Link to this definition"></a></dt>
 <dd><p>method that updates the neighbour of a certain cellbox in a specific direction.
 It removes cellbox_indx from the neighbour_map of its neighbours in a specific direction and add new_neighbour_indx</p>
 <dl class="field-list simple">
@@ -634,11 +632,11 @@ It removes cellbox_indx from the neighbour_map of its neighbours in a specific d
 
 </section>
 <section id="cellbox">
-<h2><span class="section-number">8.4.1.4. </span>CellBox<a class="headerlink" href="#cellbox" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.4.1.4. </span>CellBox<a class="headerlink" href="#cellbox" title="Link to this heading"></a></h2>
 <p>The CellBox object is used to store the data contained within a geospatial boundary in the MeshBuilder.
 The CellBox object is created by the MeshBuilder object and transformed into an AggregatedCellBox object
 when the MeshBuilder returns the EnvironmentalMesh object.</p>
-<span class="target" id="module-meshiphi.mesh_generation.cellbox"></span><p>Outlined in this section we will discuss the usage of the CellBox functionality of the meshiphi package.
+<p id="module-meshiphi.mesh_generation.cellbox">Outlined in this section we will discuss the usage of the CellBox functionality of the meshiphi package.
 In this series of class distributions we house our discrete representation of input data. In each CellBox,
 we represent a way of accessing the information governing our numerical world,
 this includes and is not limited to: Ocean Currents, Sea Ice Concentration and Bathymetric depth.</p>
@@ -660,14 +658,14 @@ this includes and is not limited to: Ocean Currents, Sea Ice Concentration and B
 </div></blockquote>
 <dl class="py class">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.cellbox.</span></span><span class="sig-name descname"><span class="pre">CellBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.cellbox.</span></span><span class="sig-name descname"><span class="pre">CellBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox" title="Link to this definition"></a></dt>
 <dd><p>A CellBox represnts a geo-spatial/temporal boundary that enables projecting to information within.
 Information about any given value of a CellBox is calculated from aggregating all data points of within those bounds.
 CellBoxes may  be split into smaller CellBoxes and the data points within distributed  between the newly created
 CellBoxes so as to construct a non-uniform mesh of CellBoxes, such as within a Mesh.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.Bounds">
-<span class="sig-name descname"><span class="pre">Bounds</span></span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.Bounds" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">Bounds</span></span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.Bounds" title="Link to this definition"></a></dt>
 <dd><p>object that contains the latitude and logtitute range and the time range</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -678,7 +676,7 @@ CellBoxes so as to construct a non-uniform mesh of CellBoxes, such as within a M
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.id" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.id" title="Link to this definition"></a></dt>
 <dd><p>the id of the cellbox</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -689,7 +687,7 @@ CellBoxes so as to construct a non-uniform mesh of CellBoxes, such as within a M
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.__init__" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -702,7 +700,7 @@ CellBoxes so as to construct a non-uniform mesh of CellBoxes, such as within a M
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.aggregate">
-<span class="sig-name descname"><span class="pre">aggregate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.aggregate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">aggregate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.aggregate" title="Link to this definition"></a></dt>
 <dd><p>aggregates CellBox data using the associated data_sources’ aggregate type (ex. MEAN, MAX)
 and returns AggregatedCellBox object</p>
 <dl class="field-list simple">
@@ -717,7 +715,7 @@ and returns AggregatedCellBox object</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.set_data_source">
-<span class="sig-name descname"><span class="pre">set_data_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.set_data_source" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_data_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.set_data_source" title="Link to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>a method that sets the data source of the cellbox ( which includes the data loaders,</dt><dd><p>splitting conditions and aggregation type)</p>
 </dd>
@@ -732,14 +730,14 @@ and returns AggregatedCellBox object</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.set_parent">
-<span class="sig-name descname"><span class="pre">set_parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.set_parent" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.set_parent" title="Link to this definition"></a></dt>
 <dd><p>set the parent CellBox, which is the bigger CellBox that conains this CellBox
 :param CellBox: the bigger Cellbox object that got splitted to produce this cellbox</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.should_split">
-<span class="sig-name descname"><span class="pre">should_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.should_split" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">should_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stop_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.should_split" title="Link to this definition"></a></dt>
 <dd><p>determines if a cellbox should be split based on the homogeneity
 condition of each data type contained within. The homogeneity condition
 of values within this cellbox is calculated using the method
@@ -758,8 +756,8 @@ of values within this cellbox is calculated using the method
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stop_index</strong> – the index of the data source at which checking the splitting conditions stops.</p></li>
-<li><p><strong>splitting.</strong> (<em>Implemented like this to perform depth-first</em>) – </p></li>
-<li><p><strong>splitting</strong> (<em>Should be deprecated once we switch to breadth-first</em>) – </p></li>
+<li><p><strong>splitting.</strong> (<em>Implemented like this to perform depth-first</em>)</p></li>
+<li><p><strong>splitting</strong> (<em>Should be deprecated once we switch to breadth-first</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -777,7 +775,7 @@ of values within this cellbox is calculated using the method
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.cellbox.CellBox.split">
-<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.split" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.cellbox.CellBox.split" title="Link to this definition"></a></dt>
 <dd><p>splits the current cellbox into 4 corners, returns as a list of cellbox objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -798,28 +796,28 @@ the cellbox uniformly.</p>
 
 </section>
 <section id="metadata">
-<h2><span class="section-number">8.4.1.5. </span>MetaData<a class="headerlink" href="#metadata" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.4.1.5. </span>MetaData<a class="headerlink" href="#metadata" title="Link to this heading"></a></h2>
 <p>The Metadata object is used to store the metadata associated with a CellBox object within the MeshBuilder. This includes
 associated DataLoaders, the depth of the CellBox within the MeshBuilder, and the parent CellBox of the CellBox among others.</p>
-<span class="target" id="module-meshiphi.mesh_generation.metadata"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.mesh_generation.metadata">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.metadata.Metadata">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.metadata.</span></span><span class="sig-name descname"><span class="pre">Metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitting_conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_fill_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.metadata.</span></span><span class="sig-name descname"><span class="pre">Metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitting_conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_fill_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata" title="Link to this definition"></a></dt>
 <dd><p>A Metadata is a class that defines the datasource for a certain Cellbox and the assocated splitting conditions.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.metadata.Metadata.data_loader">
-<span class="sig-name descname"><span class="pre">data_loader</span></span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.data_loader" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">data_loader</span></span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.data_loader" title="Link to this definition"></a></dt>
 <dd><p>object of the DataLoader class that enable projecting to the cellbox data</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.metadata.Metadata.splitting_conditions">
-<span class="sig-name descname"><span class="pre">splitting_conditions</span></span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.splitting_conditions" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">splitting_conditions</span></span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.splitting_conditions" title="Link to this definition"></a></dt>
 <dd><p>list of conditions that determine how to split the data accessed by data_loader</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.metadata.Metadata.value_fill_type">
-<span class="sig-name descname"><span class="pre">value_fill_type</span></span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.value_fill_type" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">value_fill_type</span></span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.value_fill_type" title="Link to this definition"></a></dt>
 <dd><p>indicates how to fill a CellBox if it has void data
 (ex. use the data in the parent cellbox or assign 0 to the data)</p>
 <dl class="field-list simple">
@@ -831,7 +829,7 @@ associated DataLoaders, the depth of the CellBox within the MeshBuilder, and the
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.metadata.Metadata.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitting_conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_fill_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitting_conditions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_fill_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_subset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.metadata.Metadata.__init__" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -848,12 +846,12 @@ in case it has void data (ex. parent , 0 )</p></li>
 
 </section>
 <section id="aggregatedcellbox">
-<h2><span class="section-number">8.4.1.6. </span>AggregatedCellBox<a class="headerlink" href="#aggregatedcellbox" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.4.1.6. </span>AggregatedCellBox<a class="headerlink" href="#aggregatedcellbox" title="Link to this heading"></a></h2>
 <p>An aggregated representation of the data contained within a geospatial boundary. The AggregatedCellBox object is created
 by the CellBox object when the MeshBuilder returns the EnvironmentalMesh.</p>
-<span class="target" id="module-meshiphi.mesh_generation.aggregated_cellbox"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.mesh_generation.aggregated_cellbox">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.aggregated_cellbox.</span></span><span class="sig-name descname"><span class="pre">AggregatedCellBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.mesh_generation.aggregated_cellbox.</span></span><span class="sig-name descname"><span class="pre">AggregatedCellBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox" title="Link to this definition"></a></dt>
 <dd><p>a class represnts an aggrgated information within a geo-spatial/temporal boundary.</p>
 <p>Attributes:</p>
 <div class="admonition note">
@@ -862,7 +860,7 @@ by the CellBox object when the MeshBuilder returns the EnvironmentalMesh.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.__init__" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -876,7 +874,7 @@ by the CellBox object when the MeshBuilder returns the EnvironmentalMesh.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.contains_point">
-<span class="sig-name descname"><span class="pre">contains_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.contains_point" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">contains_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">long</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.contains_point" title="Link to this definition"></a></dt>
 <dd><p>Returns true if a given lat/long coordinate is contained within this cellbox.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -900,7 +898,7 @@ by the CellBox object when the MeshBuilder returns the EnvironmentalMesh.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.to_json">
-<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.to_json" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.mesh_generation.aggregated_cellbox.AggregatedCellBox.to_json" title="Link to this definition"></a></dt>
 <dd><p>convert cellbox to JSON</p>
 <p>The returned object is of the form -</p>
 <blockquote>

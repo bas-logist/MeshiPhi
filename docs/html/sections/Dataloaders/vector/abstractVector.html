@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.4.1.1. Abstract Vector Dataloader &mdash; meshiphi 2.1.11 documentation</title>
+  <title>7.4.1.1. Abstract Vector Dataloader &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -100,14 +98,14 @@
            <div itemprop="articleBody">
              
   <section id="module-meshiphi.dataloaders.vector.abstract_vector">
-<span id="id1"></span><span id="abstract-vector-dataloader"></span><h1><span class="section-number">7.4.1.1. </span>Abstract Vector Dataloader<a class="headerlink" href="#module-meshiphi.dataloaders.vector.abstract_vector" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><span id="abstract-vector-dataloader"></span><h1><span class="section-number">7.4.1.1. </span>Abstract Vector Dataloader<a class="headerlink" href="#module-meshiphi.dataloaders.vector.abstract_vector" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.vector.abstract_vector.</span></span><span class="sig-name descname"><span class="pre">VectorDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.vector.abstract_vector.</span></span><span class="sig-name descname"><span class="pre">VectorDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader" title="Link to this definition"></a></dt>
 <dd><p>Abstract class for all vector Datasets.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.__init__" title="Link to this definition"></a></dt>
 <dd><p>This is where large-scale operations are performed,
 such as importing data, downsampling, reprojecting, and renaming
 variables</p>
@@ -122,7 +120,7 @@ dataloader</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.self.data">
-<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.self.data" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.self.data" title="Link to this definition"></a></dt>
 <dd><p>Data stored by dataloader to use when called upon by the mesh.
 Must be saved in mercator projection (EPSG:4326), with
 coordinates names ‘lat’, ‘long’, and ‘time’ (if applicable).</p>
@@ -135,7 +133,7 @@ coordinates names ‘lat’, ‘long’, and ‘time’ (if applicable).</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.self.data_name">
-<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">data_name</span></span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.self.data_name" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">data_name</span></span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.self.data_name" title="Link to this definition"></a></dt>
 <dd><p>Name of scalar variable. Must be the column name if self.data
 is pd.DataFrame. Must be variable if self.data is xr.Dataset</p>
 <dl class="field-list simple">
@@ -149,7 +147,7 @@ is pd.DataFrame. Must be variable if self.data is xr.Dataset</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.add_default_params">
-<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.add_default_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.add_default_params" title="Link to this definition"></a></dt>
 <dd><p>Set default values for all scalar dataloaders. This function should be
 overloaded to include any extra params for a specific dataloader</p>
 <dl class="field-list simple">
@@ -169,7 +167,7 @@ completed with default values if not provided in config.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.add_mag_dir">
-<span class="sig-name descname"><span class="pre">add_mag_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.add_mag_dir" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_mag_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.add_mag_dir" title="Link to this definition"></a></dt>
 <dd><p>Adds magnitude and direction variables/columns to data for easier
 retrieval of value</p>
 <dl class="field-list simple">
@@ -195,7 +193,7 @@ values for each.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_curl">
-<span class="sig-name descname"><span class="pre">calc_curl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collapse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MAX'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_curl" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calc_curl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collapse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MAX'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_curl" title="Link to this definition"></a></dt>
 <dd><p>Calculates the curl of vectors in a cellbox</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -222,36 +220,8 @@ pd.DataFrame of curl vector field if collapse=False</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_divergence">
-<span class="sig-name descname"><span class="pre">calc_divergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collapse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MAX'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_divergence" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the divergence of vectors in a cellbox</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bounds</strong> (<em>Boundary</em>) – Cellbox boundary in which all relevant vectors are contained</p></li>
-<li><p><strong>data</strong> (<em>pd.DataFrame</em><em> or </em><em>xr.Dataset</em>) – Dataset with ‘lat’ and ‘long’ columns/dimensions with vectors</p></li>
-<li><p><strong>collapes</strong> (<em>bool</em>) – Flag determining whether to return an aggregated value, or a
-vector field (values for each individual vector).</p></li>
-<li><p><strong>agg_type</strong> (<em>str</em>) – Method of aggregation if collapsing value.
-Accepts ‘MAX’ or ‘MEAN’</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>float value of aggregated div if collapse=True, or
-pd.DataFrame of div vector field if collapse=False</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float or pd.DataFrame</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If agg_type is not ‘MAX’ or ‘MEAN’</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_dmag">
-<span class="sig-name descname"><span class="pre">calc_dmag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collapse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MEAN'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_dmag" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calc_dmag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collapse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MEAN'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_dmag" title="Link to this definition"></a></dt>
 <dd><p>Calculates the dmag of vectors in a cellbox.
 dmag is defined as being the difference in magnitudes between
 each vector and the average vector within the bounds.</p>
@@ -281,28 +251,8 @@ pd.DataFrame of dmag vector field if collapse=False</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_reynolds_number">
-<span class="sig-name descname"><span class="pre">calc_reynolds_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calc_reynolds_number" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates an approximate Reynolds number from the mean vector velocity
-and cellbox size.</p>
-<p>CURRENTLY ASSUMES DENSITY AND VISCOSITY OF SEAWATER AT 4°C!
-WILL NEED MINOR REWORKING TO INCLUDE DIFFERENT FLUIDS</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>bounds</strong> (<em>Boundary</em>) – Cellbox boundary to calculate characteristic length from</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Reynolds number of cellbox</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calculate_coverage">
-<span class="sig-name descname"><span class="pre">calculate_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calculate_coverage" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">calculate_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.calculate_coverage" title="Link to this definition"></a></dt>
 <dd><p>Calculates percentage of boundary covered by dataset</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -324,7 +274,7 @@ Defaults to objects internal dataset.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.downsample">
-<span class="sig-name descname"><span class="pre">downsample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.downsample" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">downsample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.downsample" title="Link to this definition"></a></dt>
 <dd><p>Downsamples imported data to be more easily manipulated. Data size
 should be reduced by a factor of m*n, where (m,n) are the
 downsample_factors defined in the params.
@@ -345,7 +295,7 @@ same method used for homogeneity condition.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_data_col_name">
-<span class="sig-name descname"><span class="pre">get_data_col_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_data_col_name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_data_col_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_data_col_name" title="Link to this definition"></a></dt>
 <dd><p>Retrieve name of data column (for pd.DataFrame), or variable
 (for xr.Dataset). Used for when data_name not defined in params.
 Variable names are appended and comma seperated</p>
@@ -361,7 +311,7 @@ Variable names are appended and comma seperated</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_data_col_name_list">
-<span class="sig-name descname"><span class="pre">get_data_col_name_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_data_col_name_list" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_data_col_name_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_data_col_name_list" title="Link to this definition"></a></dt>
 <dd><p>Retrieve names of data columns (for pd.DataFrame), or variable
 (for xr.Dataset). Used for when data_name not defined in params.</p>
 <dl class="field-list simple">
@@ -376,7 +326,7 @@ Variable names are appended and comma seperated</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_hom_condition">
-<span class="sig-name descname"><span class="pre">get_hom_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitting_conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MEAN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_hom_condition" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_hom_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitting_conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MEAN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_hom_condition" title="Link to this definition"></a></dt>
 <dd><p>Retrieves homogeneity condition of data within boundary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -408,7 +358,7 @@ data points</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_value">
-<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_value" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.get_value" title="Link to this definition"></a></dt>
 <dd><p>Retrieve aggregated value from within bounds</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -436,7 +386,7 @@ Aggregated value within bounds following aggregation_type</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.import_data">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.import_data" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.import_data" title="Link to this definition"></a></dt>
 <dd><p>User defined method for importing data from files, or even generating
 data from scratch</p>
 <dl class="field-list simple">
@@ -465,7 +415,7 @@ data from scratch</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.reproject">
-<span class="sig-name descname"><span class="pre">reproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'long'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.reproject" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_proj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'long'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.reproject" title="Link to this definition"></a></dt>
 <dd><p>Reprojects data using pyProj.Transformer
 self.data can be pd.DataFrame or xr.Dataset</p>
 <dl class="field-list simple">
@@ -494,7 +444,7 @@ replacing ‘x_col’ and ‘y_col’</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.set_data_col_name">
-<span class="sig-name descname"><span class="pre">set_data_col_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.set_data_col_name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_data_col_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.set_data_col_name" title="Link to this definition"></a></dt>
 <dd><p>Sets name of data column/data variables from a comma-seperated string</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -512,7 +462,7 @@ of the form {old_name (str): new_name (str)}</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.set_data_col_name_list">
-<span class="sig-name descname"><span class="pre">set_data_col_name_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.set_data_col_name_list" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_data_col_name_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.set_data_col_name_list" title="Link to this definition"></a></dt>
 <dd><p>Sets name of data column/data variables from a list of strings.
 Also updates self.data_name_list with new names from list</p>
 <dl class="field-list simple">
@@ -530,7 +480,7 @@ Also updates self.data_name_list with new names from list</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.trim_datapoints">
-<span class="sig-name descname"><span class="pre">trim_datapoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.trim_datapoints" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">trim_datapoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.vector.abstract_vector.VectorDataLoader.trim_datapoints" title="Link to this definition"></a></dt>
 <dd><p>Trims datapoints from self.data within boundary defined by ‘bounds’.
 self.data can be pd.DataFrame or xr.Dataset</p>
 <dl class="field-list simple">

@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.5.3.5. Thickness Dataloader &mdash; meshiphi 2.1.11 documentation</title>
+  <title>7.5.3.5. Thickness Dataloader &mdash; meshiphi 2.1.15 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=07076ffb"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -104,28 +102,28 @@
            <div itemprop="articleBody">
              
   <section id="thickness-dataloader">
-<h1><span class="section-number">7.5.3.5. </span>Thickness Dataloader<a class="headerlink" href="#thickness-dataloader" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">7.5.3.5. </span>Thickness Dataloader<a class="headerlink" href="#thickness-dataloader" title="Link to this heading"></a></h1>
 <p>Thickness values were taken from the paper ‘Thickness distribution of Antarctic sea ice’
 (Worby, A.P. et al.).</p>
 <p>Name in config: <code class="code docutils literal notranslate"><span class="pre">'thickness'</span></code></p>
 <p>Data is generated using the values from this paper, and so no
 data file is available for download.</p>
-<span class="target" id="module-meshiphi.dataloaders.lut.thickness"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.dataloaders.lut.thickness">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.thickness.ThicknessDataLoader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.lut.thickness.</span></span><span class="sig-name descname"><span class="pre">ThicknessDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.lut.thickness.</span></span><span class="sig-name descname"><span class="pre">ThicknessDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader" title="Link to this definition"></a></dt>
 <dd><dl class="py class">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{1:</span> <span class="pre">'su',</span> <span class="pre">2:</span> <span class="pre">'su',</span> <span class="pre">3:</span> <span class="pre">'au',</span> <span class="pre">4:</span> <span class="pre">'au',</span> <span class="pre">5:</span> <span class="pre">'au',</span> <span class="pre">6:</span> <span class="pre">'wi',</span> <span class="pre">7:</span> <span class="pre">'wi',</span> <span class="pre">8:</span> <span class="pre">'wi',</span> <span class="pre">9:</span> <span class="pre">'sp',</span> <span class="pre">10:</span> <span class="pre">'sp',</span> <span class="pre">11:</span> <span class="pre">'sp',</span> <span class="pre">12:</span> <span class="pre">'su'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{1:</span> <span class="pre">'su',</span> <span class="pre">2:</span> <span class="pre">'su',</span> <span class="pre">3:</span> <span class="pre">'au',</span> <span class="pre">4:</span> <span class="pre">'au',</span> <span class="pre">5:</span> <span class="pre">'au',</span> <span class="pre">6:</span> <span class="pre">'wi',</span> <span class="pre">7:</span> <span class="pre">'wi',</span> <span class="pre">8:</span> <span class="pre">'wi',</span> <span class="pre">9:</span> <span class="pre">'sp',</span> <span class="pre">10:</span> <span class="pre">'sp',</span> <span class="pre">11:</span> <span class="pre">'sp',</span> <span class="pre">12:</span> <span class="pre">'su'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region" title="Link to this definition"></a></dt>
 <dd><p>Data storage object with region boundary as polygon, seasonal
 sea ice densities, and a dict mapping from integer month to season</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{1:</span> <span class="pre">'su',</span> <span class="pre">2:</span> <span class="pre">'su',</span> <span class="pre">3:</span> <span class="pre">'au',</span> <span class="pre">4:</span> <span class="pre">'au',</span> <span class="pre">5:</span> <span class="pre">'au',</span> <span class="pre">6:</span> <span class="pre">'wi',</span> <span class="pre">7:</span> <span class="pre">'wi',</span> <span class="pre">8:</span> <span class="pre">'wi',</span> <span class="pre">9:</span> <span class="pre">'sp',</span> <span class="pre">10:</span> <span class="pre">'sp',</span> <span class="pre">11:</span> <span class="pre">'sp',</span> <span class="pre">12:</span> <span class="pre">'su'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region.__init__" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{1:</span> <span class="pre">'su',</span> <span class="pre">2:</span> <span class="pre">'su',</span> <span class="pre">3:</span> <span class="pre">'au',</span> <span class="pre">4:</span> <span class="pre">'au',</span> <span class="pre">5:</span> <span class="pre">'au',</span> <span class="pre">6:</span> <span class="pre">'wi',</span> <span class="pre">7:</span> <span class="pre">'wi',</span> <span class="pre">8:</span> <span class="pre">'wi',</span> <span class="pre">9:</span> <span class="pre">'sp',</span> <span class="pre">10:</span> <span class="pre">'sp',</span> <span class="pre">11:</span> <span class="pre">'sp',</span> <span class="pre">12:</span> <span class="pre">'su'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region.__init__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region.get_value">
-<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region.get_value" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.Region.get_value" title="Link to this definition"></a></dt>
 <dd><p>Returns the sea ice density for a given month, taking into account
 seasons per hemisphere</p>
 <dl class="field-list simple">
@@ -145,7 +143,7 @@ seasons per hemisphere</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.import_data">
-<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.import_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.thickness.ThicknessDataLoader.import_data" title="Link to this definition"></a></dt>
 <dd><p>Creates a simulated dataset of sea ice thickness based on
 scientific literature.</p>
 <dl class="field-list simple">
