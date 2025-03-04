@@ -19,7 +19,7 @@ from PyPI:
 from Github:
 ::
 
-    git clone https://github.com/antarctica/MeshiPhi.git
+    git clone https://github.com/bas-amop/MeshiPhi.git
     cd MeshiPhi
     pip install .
 

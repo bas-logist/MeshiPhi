@@ -1,6 +1,6 @@
 # Examples
 This directory contains example configs that can be used with MeshiPhi. Please make sure you have MeshiPhi properly installed before attempting to run these examples. 
-You will also need GeoPlot installed to run the `plot_mesh` command, however it is not necessary if all you need is the ability to generate meshes. See `https://github.com/antarctica/geoplot` for more instructions.
+You will also need GeoPlot installed to run the `plot_mesh` command, however it is not necessary if all you need is the ability to generate meshes. See `https://github.com/bas-amop/geoplot` for more instructions.
 
 To run PolarRoute, choose one config out of each directory and execute this command in a terminal:
 

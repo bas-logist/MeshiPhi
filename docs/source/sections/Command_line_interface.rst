@@ -183,7 +183,7 @@ creating a pull request.
 
 Requires git to be installed, and for Meshiphi to be installed with pip in developer mode from a local git repo. 
 
-:file:`git clone git@github.com:antarctica/MeshiPhi.git /path/to/meshiphi` downloads Meshiphi into :file:`/path/to/meshiphi`
+:file:`git clone git@github.com:bas-amop/MeshiPhi.git /path/to/meshiphi` downloads Meshiphi into :file:`/path/to/meshiphi`
 
 :file:`pip install -e /path/to/meshiphi` installs the local copy of Meshiphi in developer mode.
 
