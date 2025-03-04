@@ -36,7 +36,7 @@ a json object and saved to a file.
     
     mesh = cg.to_json()
 
-The **Mesh** object can be visualised using the `GeoPlot <https://github.com/antarctica/GeoPlot>`_ package, also developed
+The **Mesh** object can be visualised using the `GeoPlot <https://github.com/bas-amop/GeoPlot>`_ package, also developed
 by BAS. This package is not included in the distribution of MeshiPhi, but can be installed using the following command:
 
 :: 

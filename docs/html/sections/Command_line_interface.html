@@ -90,7 +90,7 @@
 <h1><span class="section-number">3. </span>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h1>
 <p>The MeshiPhi package provides CLI entry points, used to build a digital environment from a heterogeneous collection of
 source data. This digital environment file (mesh) can then be exported to a variety of file formats for use in other
-systems, such as GIS software. The produced mesh file also interfaces directly with <a class="reference external" href="https://github.com/antarctica/PolarRoute">PolarRoute</a>,
+systems, such as GIS software. The produced mesh file also interfaces directly with <a class="reference external" href="https://github.com/bas-amop/PolarRoute">PolarRoute</a>,
 BAS’s route planning software, to provide optimal routes for a vehicle travelling through the mesh.</p>
 <section id="create-mesh">
 <h2><span class="section-number">3.1. </span>create_mesh<a class="headerlink" href="#create-mesh" title="Link to this heading"></a></h2>
@@ -208,7 +208,7 @@ This will combine the meshes into a single mesh file, replacing cellboxes in mes
 <section id="plot-mesh-geoplot">
 <h2><span class="section-number">3.5. </span>plot_mesh (GeoPlot)<a class="headerlink" href="#plot-mesh-geoplot" title="Link to this heading"></a></h2>
 <p>Meshes produced at any stage in the route planning process can be visualised using the GeoPlot
-library found at the relevant <a class="reference external" href="https://github.com/antarctica/GeoPlot">GitHub page</a>. Meshes and routes can also be
+library found at the relevant <a class="reference external" href="https://github.com/bas-amop/GeoPlot">GitHub page</a>. Meshes and routes can also be
 plotted in other GIS software such as QGIS or ArcGIS by exporting the mesh to a common format such as .geojson or .tif
 using the <a class="reference internal" href="#export-mesh"><span class="std std-ref">export_mesh</span></a> command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plot_mesh</span> <span class="o">&lt;</span><span class="n">mesh</span><span class="o">.</span><span class="n">json</span><span class="o">&gt;</span>
