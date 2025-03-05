@@ -1,1 +1,0 @@
-waypoints_columns = ['Name','Lat','Long','Source','Destination']
