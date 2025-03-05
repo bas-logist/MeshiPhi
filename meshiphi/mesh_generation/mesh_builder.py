@@ -33,6 +33,7 @@ from meshiphi.dataloaders.factory import DataLoaderFactory
 from meshiphi.config_validation.config_validator import validate_mesh_config
 
 from meshiphi.utils import longitude_distance, longitude_domain
+from meshiphi import __version__ as meshiphi_version
 
 
 class MeshBuilder:
@@ -81,6 +82,8 @@ class MeshBuilder:
         logging.info("Initialising Mesh Builder")
         validate_mesh_config(config)
         self.config = config
+        self.config['meshiphi_version'] = meshiphi_version
+        
         bounds = Boundary.from_json(config)
 
         # Configs may contain reference to system time for start_time and end_time
@@ -88,6 +91,7 @@ class MeshBuilder:
         # updates config start_time/ end_time once system time has been parsed.
         self.config['region']['start_time'] = bounds.get_time_min()
         self.config['region']['end_time'] = bounds.get_time_max()
+
 
         
         cell_width = config['region']['cell_width']
