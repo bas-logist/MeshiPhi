@@ -61,6 +61,11 @@ class AMSRHourlyDataLoader(ScalarDataLoader):
         data = xr.concat(data_array,'time')
 
         data = data.rename({'z': 'SIC'})
+
+        # Rename columns to standard format
+        data = data.rename({'lon':'long'})
+        # Trim to initial datapoints
+        data = self.trim_datapoints(bounds, data=data)
         
         # Limit self.files to only those actually used
         self.files = relevant_files

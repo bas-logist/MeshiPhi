@@ -16,6 +16,7 @@ from meshiphi.dataloaders.scalar.era5_wind_mag import ERA5WindMagDataLoader
 from meshiphi.dataloaders.scalar.era5_wind_dir import ERA5WindDirDataLoader
 from meshiphi.dataloaders.scalar.visual_iced import VisualIcedDataLoader
 from meshiphi.dataloaders.scalar.ecmwf_sig_wave_height import ECMWFSigWaveHeightDataLoader
+from meshiphi.dataloaders.scalar.amsr_hourly import AMSRHourlyDataLoader
 
 from meshiphi.dataloaders.vector.baltic_current import BalticCurrentDataLoader
 from meshiphi.dataloaders.vector.era5_wind import ERA5WindDataLoader
@@ -84,6 +85,7 @@ class DataLoaderFactory:
             'scalar_grf':   (ScalarGRFDataLoader, ['binary']),
             'binary_grf':   (ScalarGRFDataLoader, ['binary']),
             'amsr':         (AMSRDataLoader, ['files', 'hemisphere']),
+            'amsr_hourly':  (AMSRHourlyDataLoader, ['files']),
             'bsose_sic':    (BSOSESeaIceDataLoader, ['files']),
             'bsose_depth':  (BSOSEDepthDataLoader, ['files']),
             'baltic_sic':   (BalticSeaIceDataLoader, ['files']),
