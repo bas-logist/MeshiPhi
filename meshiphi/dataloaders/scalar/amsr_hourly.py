@@ -26,9 +26,9 @@ class AMSRHourlyDataLoader(ScalarDataLoader):
             '''
             date = filename.split('-')[-2]
             hour = filename.split('-')[-1].split('_')[-1].split('.')[0]
-            hour = hour[1:]
+            hour = int(hour[1:])
 
-            date_str = f'{date[:4]}-{date[4:6]}-{date[6:]}T{hour}'
+            date_str = f'{date[:4]}-{date[4:6]}-{date[6:]}T{hour:02d}'
             return date_str
         
         def retrieve_data(filename, date):
@@ -43,13 +43,16 @@ class AMSRHourlyDataLoader(ScalarDataLoader):
         data_array = []
         relevant_files = []
         # For each file found from config
+        logging.info(self.files)
         for file in self.files:
+            logging.info(file)
             # If date within boundary
             date = retrieve_date(file)
+            logging.info(date)
             # If file data from within time boundary, append to list
             # Doing now to avoid ingesting too much data initially
             if datetime.strptime(bounds.get_time_min(), '%Y-%m-%d') <= \
-                datetime.strptime(date, '%Y-%m-%dT%-H') <= \
+                datetime.strptime(date, '%Y-%m-%dT%H') <= \
                 datetime.strptime(bounds.get_time_max(), '%Y-%m-%d'):
                 data_array.append(retrieve_data(file, date))
                 relevant_files += [file]
