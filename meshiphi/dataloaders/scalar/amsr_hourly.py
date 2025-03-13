@@ -37,7 +37,8 @@ class AMSRHourlyDataLoader(ScalarDataLoader):
             '''
             data = xr.open_dataset(filename)
             # Add date to data
-            data = data.assign_coords(time=date)
+            # data = data.assign_coords(time=date)
+            data = data.assign_coords(time=datetime.strptime(date, '%Y-%m-%dT%H'))
             return data
 
         data_array = []
@@ -61,7 +62,7 @@ class AMSRHourlyDataLoader(ScalarDataLoader):
             logging.error('\tNo files found for date range '+\
                          f'[ {bounds.get_time_min()} : {bounds.get_time_max()} ]')
             raise FileNotFoundError('No AMSR files found within specified time range!')
-        data = xr.concat(data_array,'time')
+        data = xr.concat(data_array,'time').sortby('time')
 
         data = data.rename({'z': 'SIC'})
 
