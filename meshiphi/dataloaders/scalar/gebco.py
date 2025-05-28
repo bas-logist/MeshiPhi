@@ -22,6 +22,10 @@ class GEBCODataLoader(ScalarDataLoader):
         else:                       data = xr.open_mfdataset(self.files)
         # Rename columns to standard format
         data = data.rename({'lon':'long'})
+
+        # Only use the elevation column
+        data = data["elevation"].to_dataset()
+
         # Trim to initial datapoints
         data = self.trim_datapoints(bounds, data=data)
         
