@@ -1,4 +1,4 @@
-__version__ = "2.1.15"
+__version__ = "2.1.16"
 __description__ = "MeshiPhi: Earth's digital twin mapped on a non-uniform mesh"
 __license__ = "MIT"
 __author__ = "Autonomous Marine Operations Planning (AMOP) Team, AI Lab, British Antarctic Survey"
