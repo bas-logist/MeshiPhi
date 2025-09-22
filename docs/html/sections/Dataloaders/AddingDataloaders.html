@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.6. Adding New Dataloaders &mdash; meshiphi 2.1.11 documentation</title>
+  <title>7.6. Adding New Dataloaders &mdash; meshiphi 2.2.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -95,9 +93,9 @@
            <div itemprop="articleBody">
              
   <section id="adding-new-dataloaders">
-<span id="adding-dataloaders"></span><h1><span class="section-number">7.6. </span>Adding New Dataloaders<a class="headerlink" href="#adding-new-dataloaders" title="Permalink to this heading"></a></h1>
+<span id="adding-dataloaders"></span><h1><span class="section-number">7.6. </span>Adding New Dataloaders<a class="headerlink" href="#adding-new-dataloaders" title="Link to this heading"></a></h1>
 <section id="adding-to-the-repository">
-<h2><span class="section-number">7.6.1. </span>Adding to the repository<a class="headerlink" href="#adding-to-the-repository" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">7.6.1. </span>Adding to the repository<a class="headerlink" href="#adding-to-the-repository" title="Link to this heading"></a></h2>
 <p>Each dataloader is to be implemented as a separate object for the environmental mesh to interface with.
 The general workflow for creating a new dataloader is as follows:</p>
 <ol class="arabic simple">
@@ -111,7 +109,7 @@ to create the dataloader object from within <code class="code docutils literal n
 <code class="code docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__=='__main__':</span></code> ) and test its functionality before deploying it.</p>
 </section>
 <section id="adding-within-ipython-notebooks">
-<h2><span class="section-number">7.6.2. </span>Adding within iPython Notebooks<a class="headerlink" href="#adding-within-ipython-notebooks" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">7.6.2. </span>Adding within iPython Notebooks<a class="headerlink" href="#adding-within-ipython-notebooks" title="Link to this heading"></a></h2>
 <p>If you do not wish to modify the repo to add a dataloader, you may add one into the mesh by calling the
 <code class="code docutils literal notranslate"><span class="pre">add_dataloader()</span></code> method of <a class="reference internal" href="../Mesh_Construction/Mesh_construction_classes.html#meshbuilder"><span class="std std-ref">MeshBuilder</span></a>.</p>
 <p>An example of how to do this is detailed below. Assuming you’re working out of a Jupyter notebook, the

@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Examples &mdash; meshiphi 2.1.11 documentation</title>
+  <title>2. Examples &mdash; meshiphi 2.2.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -84,12 +82,12 @@
            <div itemprop="articleBody">
              
   <section id="examples">
-<h1><span class="section-number">2. </span>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">2. </span>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
 <p>Digital environment files (meshes) can be created using the MeshiPhi package, either through the
 command line interface (CLI) or through the python terminal. This section will provide examples of how to create a digital
 environment file using Python.</p>
 <section id="creating-the-digital-environment">
-<h2><span class="section-number">2.1. </span>Creating the Digital Environment.<a class="headerlink" href="#creating-the-digital-environment" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">2.1. </span>Creating the Digital Environment.<a class="headerlink" href="#creating-the-digital-environment" title="Link to this heading"></a></h2>
 <p>A configuration file is needed to initialise the <strong>Mesh</strong> object which forms the digital environment. This
 configuration file is of the same format used in the <a class="reference internal" href="Command_line_interface.html#create-mesh"><span class="std std-ref">create_mesh</span></a> CLI entry-point, and may either be loaded from a
 <em>json</em> file or constructed within a python interpreter.</p>
@@ -111,7 +109,7 @@ a json object and saved to a file.</p>
 <span class="n">mesh</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The <strong>Mesh</strong> object can be visualised using the <a class="reference external" href="https://github.com/antarctica/GeoPlot">GeoPlot</a> package, also developed
+<p>The <strong>Mesh</strong> object can be visualised using the <a class="reference external" href="https://github.com/bas-amop/GeoPlot">GeoPlot</a> package, also developed
 by BAS. This package is not included in the distribution of MeshiPhi, but can be installed using the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">bas_geoplot</span>
 </pre></div>
@@ -134,9 +132,10 @@ any python interpreter:</p>
 </div>
 <p>The prior should produce a plot which shows the digital environment, including sea ice concentration, elevation, currents and wind.</p>
 <figure class="align-center" id="id1">
-<span id="splitting-figure"></span><a class="reference internal image-reference" href="../_images/grf_example_mesh.png"><img alt="../_images/grf_example_mesh.png" src="../_images/grf_example_mesh.png" style="width: 700px;" /></a>
+<span id="splitting-figure"></span><a class="reference internal image-reference" href="../_images/grf_example_mesh.png"><img alt="../_images/grf_example_mesh.png" src="../_images/grf_example_mesh.png" style="width: 700px;" />
+</a>
 <figcaption>
-<p><span class="caption-text"><em>Plot showing the expected output of running bas_geoplot on the GRF example mesh provided</em></span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+<p><span class="caption-text"><em>Plot showing the expected output of running bas_geoplot on the GRF example mesh provided</em></span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </section>

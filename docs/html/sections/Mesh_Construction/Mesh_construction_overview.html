@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Methods - Mesh Construction &mdash; meshiphi 2.1.11 documentation</title>
+  <title>8. Methods - Mesh Construction &mdash; meshiphi 2.2.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -91,47 +89,51 @@
            <div itemprop="articleBody">
              
   <section id="methods-mesh-construction">
-<span id="mesh-construction-overview"></span><h1><span class="section-number">8. </span>Methods - Mesh Construction<a class="headerlink" href="#methods-mesh-construction" title="Permalink to this heading"></a></h1>
+<span id="mesh-construction-overview"></span><h1><span class="section-number">8. </span>Methods - Mesh Construction<a class="headerlink" href="#methods-mesh-construction" title="Link to this heading"></a></h1>
 <p>Throughout this section we will outline an overview of the Environment Mesh Construction
 module, describe the main classes that composes the module and illustrate a use case for
 the Discrete Meshing of the environment.</p>
 <section id="id1">
-<h2><span class="section-number">8.1. </span>Mesh Construction - Overview<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.1. </span>Mesh Construction - Overview<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <p>A general overview of the method can be seen below:</p>
 <figure class="align-center" id="id2">
-<a class="reference internal image-reference" href="../../_images/FlowDiagram_MeshGraph.png"><img alt="../../_images/FlowDiagram_MeshGraph.png" src="../../_images/FlowDiagram_MeshGraph.png" style="width: 700px;" /></a>
+<a class="reference internal image-reference" href="../../_images/FlowDiagram_MeshGraph.png"><img alt="../../_images/FlowDiagram_MeshGraph.png" src="../../_images/FlowDiagram_MeshGraph.png" style="width: 700px;" />
+</a>
 <figcaption>
-<p><span class="caption-text">Overview figure of the Discrete Meshing from the multi-data input.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+<p><span class="caption-text">Overview figure of the Discrete Meshing from the multi-data input.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 </section>
 <section id="mesh-construction-design">
-<h2><span class="section-number">8.2. </span>Mesh Construction Design<a class="headerlink" href="#mesh-construction-design" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.2. </span>Mesh Construction Design<a class="headerlink" href="#mesh-construction-design" title="Link to this heading"></a></h2>
 <p>The below UML diagram describes how the Environment Mesh Construction module is designed.
 It depicts the classes of the module and how they interact with each other.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="../../_images/mesh-construct-UML.drawio.png"><img alt="../../_images/mesh-construct-UML.drawio.png" src="../../_images/mesh-construct-UML.drawio.png" style="width: 1000px;" /></a>
+<a class="reference internal image-reference" href="../../_images/mesh-construct-UML.drawio.png"><img alt="../../_images/mesh-construct-UML.drawio.png" src="../../_images/mesh-construct-UML.drawio.png" style="width: 1000px;" />
+</a>
 </figure>
 </section>
 <section id="mesh-construction-use-case">
-<h2><span class="section-number">8.3. </span>Mesh Construction Use case<a class="headerlink" href="#mesh-construction-use-case" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.3. </span>Mesh Construction Use case<a class="headerlink" href="#mesh-construction-use-case" title="Link to this heading"></a></h2>
 <p>This sequence diagram illustrates a use case for the Discrete Meshing of the environment,
 where the module’s client starts by initializing the MeshBuilder with a certain mesh
 configuration (see Input-Configuration section for more details about the configuration format)
 then calls build_environment_mesh method.</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="../../_images/mesh-build-sequence-diagram.drawio.png"><img alt="../../_images/mesh-build-sequence-diagram.drawio.png" src="../../_images/mesh-build-sequence-diagram.drawio.png" style="width: 1000px;" /></a>
+<a class="reference internal image-reference" href="../../_images/mesh-build-sequence-diagram.drawio.png"><img alt="../../_images/mesh-build-sequence-diagram.drawio.png" src="../../_images/mesh-build-sequence-diagram.drawio.png" style="width: 1000px;" />
+</a>
 </figure>
 <p>The following diagram depicts the sequence of events that take place inside build_environment_mesh
 method into details</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="../../_images/build-env-mesh.drawio.png"><img alt="../../_images/build-env-mesh.drawio.png" src="../../_images/build-env-mesh.drawio.png" style="width: 1000px;" /></a>
+<a class="reference internal image-reference" href="../../_images/build-env-mesh.drawio.png"><img alt="../../_images/build-env-mesh.drawio.png" src="../../_images/build-env-mesh.drawio.png" style="width: 1000px;" />
+</a>
 </figure>
 <p>For a more in-depth explanation of the mesh construction methods, please refer to the <a class="reference internal" href="Mesh_construction_classes.html#mesh-construction-classes"><span class="std std-ref">Mesh Construction - Classes</span></a>
 section.</p>
 </section>
 <section id="mesh-construction-additional">
-<h2><span class="section-number">8.4. </span>Mesh Construction - Additional<a class="headerlink" href="#mesh-construction-additional" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">8.4. </span>Mesh Construction - Additional<a class="headerlink" href="#mesh-construction-additional" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Mesh_construction_classes.html">8.4.1. Mesh Construction - Classes</a></li>

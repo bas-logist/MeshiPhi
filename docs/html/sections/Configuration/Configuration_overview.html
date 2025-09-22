@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5. Configuration Overview &mdash; meshiphi 2.1.11 documentation</title>
+  <title>5. Configuration Overview &mdash; meshiphi 2.2.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -54,9 +52,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#config-validation">5.2. Config Validation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#meshiphi.config_validation.config_validator.flexi_json_input"><code class="docutils literal notranslate"><span class="pre">flexi_json_input()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#meshiphi.config_validation.config_validator.validate_mesh_config"><code class="docutils literal notranslate"><span class="pre">validate_mesh_config()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#meshiphi.config_validation.config_validator.validate_route_config"><code class="docutils literal notranslate"><span class="pre">validate_route_config()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#meshiphi.config_validation.config_validator.validate_vessel_config"><code class="docutils literal notranslate"><span class="pre">validate_vessel_config()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#meshiphi.config_validation.config_validator.validate_waypoints"><code class="docutils literal notranslate"><span class="pre">validate_waypoints()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -92,7 +87,7 @@
            <div itemprop="articleBody">
              
   <section id="configuration-overview">
-<h1><span class="section-number">5. </span>Configuration Overview<a class="headerlink" href="#configuration-overview" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">5. </span>Configuration Overview<a class="headerlink" href="#configuration-overview" title="Link to this heading"></a></h1>
 <p>In this section we outline the standard structure for the configuration file used as the starting point for generating
 an environmental mesh using the MeshiPhi software package. These configuration files are written in JSON, can be passed
 to MeshiPhi as command-line arguments or through a Python interpreter.</p>
@@ -105,13 +100,13 @@ the <a class="reference internal" href="Mesh_construction_config.html#configurat
 </ul>
 </div>
 <section id="config-validation">
-<h2><span class="section-number">5.2. </span>Config Validation<a class="headerlink" href="#config-validation" title="Permalink to this heading"></a></h2>
+<h2><span class="section-number">5.2. </span>Config Validation<a class="headerlink" href="#config-validation" title="Link to this heading"></a></h2>
 <p>The configs supplied by the user are validated using a template JSON Schema. This schema checks that the correct
 keywords and datatypes are provided in the config JSON file. They also perform rudimentary checks on the values within
 the config to ensure that they make sense (e.g. start_time is before end_time).</p>
-<span class="target" id="module-meshiphi.config_validation.config_validator"></span><dl class="py function">
+<dl class="py function" id="module-meshiphi.config_validation.config_validator">
 <dt class="sig sig-object py" id="meshiphi.config_validation.config_validator.flexi_json_input">
-<span class="sig-prename descclassname"><span class="pre">meshiphi.config_validation.config_validator.</span></span><span class="sig-name descname"><span class="pre">flexi_json_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.config_validation.config_validator.flexi_json_input" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">meshiphi.config_validation.config_validator.</span></span><span class="sig-name descname"><span class="pre">flexi_json_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.config_validation.config_validator.flexi_json_input" title="Link to this definition"></a></dt>
 <dd><p>Allows flexible inputs. If a string is parsed, then assume it’s a file path
 and read in as a json. If a dict is parsed, then assume it’s already a
 valid loaded json, and return it as is</p>
@@ -133,7 +128,7 @@ valid loaded json, and return it as is</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="meshiphi.config_validation.config_validator.validate_mesh_config">
-<span class="sig-prename descclassname"><span class="pre">meshiphi.config_validation.config_validator.</span></span><span class="sig-name descname"><span class="pre">validate_mesh_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.config_validation.config_validator.validate_mesh_config" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">meshiphi.config_validation.config_validator.</span></span><span class="sig-name descname"><span class="pre">validate_mesh_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.config_validation.config_validator.validate_mesh_config" title="Link to this definition"></a></dt>
 <dd><p>Validates a mesh config</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -146,64 +141,6 @@ If type ‘dict’, assumes it’s already read in from a json file</p>
 <li><p><strong>TypeError</strong> – Incorrect config parsed in. Must be ‘str’ or ‘dict’</p></li>
 <li><p><strong>FileNotFoundError</strong> – Could not read in file if ‘str’ parsed</p></li>
 <li><p><strong>ValidationError</strong> – Malformed mesh config</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="meshiphi.config_validation.config_validator.validate_route_config">
-<span class="sig-prename descclassname"><span class="pre">meshiphi.config_validation.config_validator.</span></span><span class="sig-name descname"><span class="pre">validate_route_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.config_validation.config_validator.validate_route_config" title="Permalink to this definition"></a></dt>
-<dd><p>Validates a route config</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>config</strong> (<em>str</em><em> or </em><em>dict</em>) – route config to be validated.
-If type ‘str’, tries to read in as a filename and open file as json
-If type ‘dict’, assumes it’s already read in from a json file</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – Incorrect config parsed in. Must be ‘str’ or ‘dict’</p></li>
-<li><p><strong>FileNotFoundError</strong> – Could not read in file if ‘str’ parsed</p></li>
-<li><p><strong>ValidationError</strong> – Malformed route config</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="meshiphi.config_validation.config_validator.validate_vessel_config">
-<span class="sig-prename descclassname"><span class="pre">meshiphi.config_validation.config_validator.</span></span><span class="sig-name descname"><span class="pre">validate_vessel_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.config_validation.config_validator.validate_vessel_config" title="Permalink to this definition"></a></dt>
-<dd><p>Validates a vessel config</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>config</strong> (<em>str</em><em> or </em><em>dict</em>) – Vessel config to be validated.
-If type ‘str’, tries to read in as a filename and open file as json
-If type ‘dict’, assumes it’s already read in from a json file</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – Incorrect config parsed in. Must be ‘str’ or ‘dict’</p></li>
-<li><p><strong>FileNotFoundError</strong> – Could not read in file if ‘str’ parsed</p></li>
-<li><p><strong>ValidationError</strong> – Malformed vessel config</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="meshiphi.config_validation.config_validator.validate_waypoints">
-<span class="sig-prename descclassname"><span class="pre">meshiphi.config_validation.config_validator.</span></span><span class="sig-name descname"><span class="pre">validate_waypoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waypoints</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.config_validation.config_validator.validate_waypoints" title="Permalink to this definition"></a></dt>
-<dd><p>_summary_</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>waypoints</strong> (<em>str</em><em> or </em><em>pd.DataFrame</em>) – _description_</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – Incorrect config parsed in. Must be ‘str’ or ‘pd.DataFrame’</p></li>
-<li><p><strong>FileNotFoundError</strong> – Could not read in file if ‘str’ parsed</p></li>
-<li><p><strong>AssertionError</strong> – Malformed waypoints config</p></li>
 </ul>
 </dd>
 </dl>

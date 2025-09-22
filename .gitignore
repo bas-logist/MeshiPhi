@@ -31,3 +31,4 @@ dev_venv/*
 splitting_experiments/*
 GRF_Plots/*
 tests/regression_tests/.outputs/*
+docs/doctrees

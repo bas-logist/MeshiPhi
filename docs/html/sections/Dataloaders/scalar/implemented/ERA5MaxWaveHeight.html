@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7.3.3.7. ERA5 Maximum Wave Height Dataloader &mdash; meshiphi 2.1.11 documentation</title>
+  <title>7.3.3.7. ERA5 Maximum Wave Height Dataloader &mdash; meshiphi 2.2.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=8353c628"></script>
-        <script src="../../../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -118,7 +116,7 @@
            <div itemprop="articleBody">
              
   <section id="era5-maximum-wave-height-dataloader">
-<h1><span class="section-number">7.3.3.7. </span>ERA5 Maximum Wave Height Dataloader<a class="headerlink" href="#era5-maximum-wave-height-dataloader" title="Permalink to this heading"></a></h1>
+<h1><span class="section-number">7.3.3.7. </span>ERA5 Maximum Wave Height Dataloader<a class="headerlink" href="#era5-maximum-wave-height-dataloader" title="Link to this heading"></a></h1>
 <p>ERA5 is a family of data products produced by the European Centre for Medium-Range Weather Forecasts (ECMWF).
 It is the fifth generation ECMWF atmospheric reanalysis of the global climate covering the period from January 1950 to present.</p>
 <p>From their website:</p>
@@ -132,12 +130,12 @@ uncertainties for all variables at reduced spatial and temporal resolutions.</p>
 <p>Name in config: <code class="code docutils literal notranslate"><span class="pre">'era5_max_wave_height'</span></code></p>
 <p>Instructions for how to download their data products are
 available <a class="reference external" href="https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5">here</a></p>
-<span class="target" id="module-meshiphi.dataloaders.scalar.era5_max_wave_height"></span><dl class="py class">
+<dl class="py class" id="module-meshiphi.dataloaders.scalar.era5_max_wave_height">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.era5_max_wave_height.ERA5MaxWaveHeightDataLoader">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.scalar.era5_max_wave_height.</span></span><span class="sig-name descname"><span class="pre">ERA5MaxWaveHeightDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.era5_max_wave_height.ERA5MaxWaveHeightDataLoader" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.scalar.era5_max_wave_height.</span></span><span class="sig-name descname"><span class="pre">ERA5MaxWaveHeightDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.era5_max_wave_height.ERA5MaxWaveHeightDataLoader" title="Link to this definition"></a></dt>
 <dd><dl class="py method">
 <dt class="sig sig-object py" id="meshiphi.dataloaders.scalar.era5_max_wave_height.ERA5MaxWaveHeightDataLoader.import_data">
-<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.era5_max_wave_height.ERA5MaxWaveHeightDataLoader.import_data" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.scalar.era5_max_wave_height.ERA5MaxWaveHeightDataLoader.import_data" title="Link to this definition"></a></dt>
 <dd><p>Reads in data from an ERA5 NetCDF file.
 Renames coordinates to ‘lat’ and ‘long’</p>
 <dl class="field-list simple">
