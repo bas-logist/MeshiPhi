@@ -32,3 +32,5 @@ splitting_experiments/*
 GRF_Plots/*
 tests/regression_tests/.outputs/*
 docs/doctrees
+docs/html/*
+docs/index.html
