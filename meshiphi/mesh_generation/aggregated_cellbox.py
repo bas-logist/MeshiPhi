@@ -167,7 +167,13 @@ class AggregatedCellBox:
         """
         shapely_boundary = self.boundary.to_polygon()
         point = Point(long, lat)
-        return shapely_boundary.contains(point)
+        point_within_bounds = shapely_boundary.contains(point)
+        point_on_bounds     = shapely_boundary.boundary.contains(point)
+        point_on_north_edge = shapely_boundary.bounds[2] == point.x
+        point_on_east_edge  = shapely_boundary.bounds[3] == point.y
+        
+        return (point_within_bounds or \
+                (point_on_bounds and (point_on_north_edge or point_on_east_edge)))
     
     def __eq__(self, other):
 

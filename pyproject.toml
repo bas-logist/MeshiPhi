@@ -41,9 +41,9 @@ optional-dependencies.test = { file = ["tests/requirements.txt"] }
 
 [project.urls]
 Homepage = "https://www.bas.ac.uk/project/autonomous-marine-operations-planning"
-Documentation = "https://antarctica.github.io/MeshiPhi"
-Repository = "https://github.com/antarctica/MeshiPhi"
-Issues = "https://github.com/antarctica/MeshiPhi/issues"
+Documentation = "https://bas-amop.github.io/MeshiPhi"
+Repository = "https://github.com/bas-amop/MeshiPhi"
+Issues = "https://github.com/bas-amop/MeshiPhi/issues"
 
 [project.scripts]
 create_mesh = "meshiphi.cli:create_mesh_cli"

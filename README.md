@@ -3,15 +3,15 @@
 ![](logo.jpg)
 
 <!-- <a href="https://colab.research.google.com/drive/12D-CN10X7xAcXn_df0zNLHtdiiXxZVkz?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" alt="Colab"> -->
-<a href="https://antarctica.github.io/MeshiPhi/"><img src="https://img.shields.io/badge/Manual%20-github.io%2FMeshiPhi%2F-red" alt="Manual Page"></a>
+<a href="https://bas-amop.github.io/MeshiPhi/"><img src="https://img.shields.io/badge/Manual%20-github.io%2FMeshiPhi%2F-red" alt="Manual Page"></a>
 <a href="https://pypi.org/project/meshiphi/"><img src="https://img.shields.io/pypi/v/meshiphi" alt="PyPi"></a>
-<a href="https://github.com/antarctica/meshiphi/tags"><img src="https://img.shields.io/github/v/tag/antarctica/MeshiPhi" alt="Release Tag"></a>
-<a href="https://github.com/antarctica/MeshiPhi/issues"><img src="https://img.shields.io/github/issues/antarctica/MeshiPhi" alt="Issues"></a>
-<a href="https://github.com/antarctica/MeshiPhi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/antarctica/MeshiPhi" alt="License"></a> 
+<a href="https://github.com/bas-amop/meshiphi/tags"><img src="https://img.shields.io/github/v/tag/bas-amop/MeshiPhi" alt="Release Tag"></a>
+<a href="https://github.com/bas-amop/MeshiPhi/issues"><img src="https://img.shields.io/github/issues/bas-amop/MeshiPhi" alt="Issues"></a>
+<a href="https://github.com/bas-amop/MeshiPhi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/bas-amop/MeshiPhi" alt="License"></a> 
 
 
 
-Introducing Meshiφ, a versatile software package designed for comprehensive earth modeling and navigation planning. Meshiφ works by discretizing the Earth's surface into a non-uniform grid, allocating higher resolution in regions of geographic diversity, and conserving lower resolution in more uniform regions. The software also incorporates data-driven vehicle models, with the ability to calculate speed limits and fuel needs for specific vessels within each grid cell. These mesh objects can be output in standard formats, such as GeoJSON and GeoTIFF, enabling data-visualisation via GIS software such as ArcGIS. 
+Introducing Meshiφ, a versatile software package designed for comprehensive earth modeling and navigation planning. Meshiφ works by discretizing the Earth's surface into a non-uniform grid, allocating higher resolution in regions of geographic diversity, and conserving lower resolution in more uniform regions. These mesh objects can be output in standard formats, such as GeoJSON and GeoTIFF, enabling data-visualisation via GIS software such as ArcGIS. The default end products are designed to work with <a href="https://github.com/bas-amop/PolarRoute/">PolarRoute</a>.
 
 ## Installation
 Meshiφ can be installed via pip or by cloning the repository from GitHub.
@@ -23,7 +23,7 @@ pip install meshiphi
 
 Github: (for local development)
 ```
-git clone https://github.com/Antarctica/MeshiPhi
+git clone https://github.com/bas-amop/MeshiPhi
 cd MeshiPhi
 pip install -e .
 ```
