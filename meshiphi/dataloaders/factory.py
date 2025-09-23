@@ -4,6 +4,7 @@ from meshiphi.dataloaders.scalar.bsose_sea_ice import BSOSESeaIceDataLoader
 from meshiphi.dataloaders.scalar.baltic_sea_ice import BalticSeaIceDataLoader
 from meshiphi.dataloaders.scalar.gebco import GEBCODataLoader
 from meshiphi.dataloaders.scalar.icenet import IceNetDataLoader
+from meshiphi.dataloaders.scalar.icenet_diffusion import IceNetDiffusionDataLoader
 from meshiphi.dataloaders.scalar.modis import MODISDataLoader
 from meshiphi.dataloaders.scalar.scalar_csv import ScalarCSVDataLoader
 from meshiphi.dataloaders.scalar.scalar_grf import ScalarGRFDataLoader
@@ -89,6 +90,7 @@ class DataLoaderFactory:
             'baltic_sic':   (BalticSeaIceDataLoader, ['files']),
             'gebco':        (GEBCODataLoader, ['files']),
             'icenet':       (IceNetDataLoader, ['files']),
+            'icenet_diffusion': (IceNetDiffusionDataLoader, ['files','leadtime']),
             'modis':        (MODISDataLoader, ['files']),
             'visual_iced': (VisualIcedDataLoader, ['files']),
             'era5_sig_wave_height': (ERA5SigWaveHeightDataLoader, ['files']),
