@@ -262,22 +262,18 @@ class ScalarDataLoader(DataLoaderInterface):
                     exclusive of spatial lower bound. Inclusive of both
                     upper and lower time bounds
             '''
-            # Use optimized vectorized operations to avoid slow boolean masking
-            # Note: Can't use pandas.query() with numexpr because time column
-            # may contain string dates which numexpr doesn't support
-            
             # Convert bounds to numpy arrays for faster comparison
             lat_min = bounds.get_lat_min()
             lat_max = bounds.get_lat_max()
             long_min = bounds.get_long_min()
             long_max = bounds.get_long_max()
             
-            # Use .values to get numpy arrays (faster than pandas Series comparisons)
+            # Use .values to get numpy arrays
             try:
                 lat_vals = data['lat'].values
                 long_vals = data['long'].values
                 
-                # Build spatial mask using numpy (much faster than pandas boolean ops)
+                # Build spatial mask using numpy
                 if long_min < long_max:
                     spatial_mask = (lat_vals > lat_min) & (lat_vals <= lat_max) & \
                                   (long_vals > long_min) & (long_vals <= long_max)
@@ -285,7 +281,7 @@ class ScalarDataLoader(DataLoaderInterface):
                     spatial_mask = (lat_vals > lat_min) & (lat_vals <= lat_max) & \
                                   ((long_vals <= long_min) | (long_vals > long_max))
                 
-                # Filter using numpy mask first (fast)
+                # Filter using numpy mask first
                 if 'time' in data.columns:
                     # For time, convert to datetime if needed and use vectorized comparison
                     spatially_filtered = data.iloc[spatial_mask]
@@ -314,7 +310,6 @@ class ScalarDataLoader(DataLoaderInterface):
                 
             except Exception as e:
                 # Fallback to original boolean masking if query fails
-                # (e.g., if numexpr not available or data types incompatible)
                 logging.debug(f"\tDataFrame query optimization failed ({type(e).__name__}), using fallback")
                 if bounds.get_long_min() < bounds.get_long_max():
                     mask = (data['lat']  > bounds.get_lat_min())  & \
