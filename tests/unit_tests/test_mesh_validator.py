@@ -1,5 +1,6 @@
 
 import unittest
+from pathlib import Path
 
 
 from meshiphi.mesh_validation.sampler import Sampler
@@ -9,7 +10,10 @@ class TestMeshValidator(unittest.TestCase):
    
 
    def setUp(self):
-     self.mesh_validator = MeshValidator("../regression_tests/example_meshes/abstract_env_meshes/hgrad.json")
+     # Use Path to construct absolute path from repository root
+     test_dir = Path(__file__).parent.parent
+     mesh_file = test_dir / "regression_tests/example_meshes/abstract_env_meshes/hgrad.json"
+     self.mesh_validator = MeshValidator(str(mesh_file))
      
 
 

@@ -1,6 +1,7 @@
 
 import unittest
 import json
+from pathlib import Path
 from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
 from meshiphi.mesh_generation.mesh_builder import MeshBuilder
 from meshiphi.mesh_generation.direction import Direction
@@ -10,7 +11,9 @@ class TestMeshBuilder(unittest.TestCase):
    def setUp(self):
       self.config = None
       self.env_mesh = None
-      self.json_file = "../unit_tests/resources/global_grf_normal.json"
+      # Use Path to construct absolute path from repository root
+      test_dir = Path(__file__).parent
+      self.json_file = test_dir / "resources/global_grf_normal.json"
       with open (self.json_file , "r") as config_file:
           self.json_file = json.load(config_file)
           self.config = self.json_file ['config']['mesh_info']
