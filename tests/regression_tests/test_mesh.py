@@ -7,6 +7,7 @@ import json
 import pytest
 import time
 import os
+from pathlib import Path
 
 import meshiphi
 
@@ -25,24 +26,26 @@ import logging
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
+# Use Path to construct absolute paths from repository root
+TEST_DIR = Path(__file__).parent
 
 #File locations of all environmental meshes to be recalculated for regression testing.
 TEST_ENV_MESHES = [
-    './example_meshes/env_meshes/grf_normal.json',
-    './example_meshes/env_meshes/grf_downsample.json',
-    './example_meshes/env_meshes/grf_reprojection.json',
-    './example_meshes/env_meshes/grf_sparse.json'
+    str(TEST_DIR / 'example_meshes/env_meshes/grf_normal.json'),
+    str(TEST_DIR / 'example_meshes/env_meshes/grf_downsample.json'),
+    str(TEST_DIR / 'example_meshes/env_meshes/grf_reprojection.json'),
+    str(TEST_DIR / 'example_meshes/env_meshes/grf_sparse.json')
 ]
 
 TEST_ABSTRACT_MESHES = [
-    './example_meshes/abstract_env_meshes/vgrad.json',
-    './example_meshes/abstract_env_meshes/hgrad.json',
-    './example_meshes/abstract_env_meshes/checkerboard_1.json',
-    './example_meshes/abstract_env_meshes/checkerboard_2.json',
-    './example_meshes/abstract_env_meshes/checkerboard_3.json',
-    './example_meshes/abstract_env_meshes/circle.json',
-    './example_meshes/abstract_env_meshes/circle_quadrant_split.json',
-    './example_meshes/abstract_env_meshes/circle_quadrant_nosplit.json'
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/vgrad.json'),
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/hgrad.json'),
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/checkerboard_1.json'),
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/checkerboard_2.json'),
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/checkerboard_3.json'),
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/circle.json'),
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/circle_quadrant_split.json'),
+    str(TEST_DIR / 'example_meshes/abstract_env_meshes/circle_quadrant_nosplit.json')
 ]
 
 def setup_module():
