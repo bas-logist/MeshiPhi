@@ -262,25 +262,77 @@ class ScalarDataLoader(DataLoaderInterface):
                     exclusive of spatial lower bound. Inclusive of both
                     upper and lower time bounds
             '''
-            # Mask off any positions not within spatial bounds
-            # If not going through antimeridian
-            if bounds.get_long_min() < bounds.get_long_max():
-                mask = (data['lat']  > bounds.get_lat_min())  & \
-                    (data['lat']  <= bounds.get_lat_max())  & \
-                    (data['long'] > bounds.get_long_min()) & \
-                    (data['long'] <= bounds.get_long_max())
-            else:
-                mask = (data['lat']  > bounds.get_lat_min())  & \
-                    (data['lat']  <= bounds.get_lat_max())  & \
-                    (data['long'] <= bounds.get_long_min()) & \
-                    (data['long'] > bounds.get_long_max())
-            # Mask with time if time column exists
-            if 'time' in data.columns:
-                mask &= (data['time'] >= bounds.get_time_min()) & \
-                        (data['time'] <= bounds.get_time_max())
-                        
-            # Return column of data from within bounds
-            return data.loc[mask]
+            # Use optimized vectorized operations to avoid slow boolean masking
+            # Note: Can't use pandas.query() with numexpr because time column
+            # may contain string dates which numexpr doesn't support
+            
+            # Convert bounds to numpy arrays for faster comparison
+            lat_min = bounds.get_lat_min()
+            lat_max = bounds.get_lat_max()
+            long_min = bounds.get_long_min()
+            long_max = bounds.get_long_max()
+            
+            # Use .values to get numpy arrays (faster than pandas Series comparisons)
+            try:
+                lat_vals = data['lat'].values
+                long_vals = data['long'].values
+                
+                # Build spatial mask using numpy (much faster than pandas boolean ops)
+                if long_min < long_max:
+                    spatial_mask = (lat_vals > lat_min) & (lat_vals <= lat_max) & \
+                                  (long_vals > long_min) & (long_vals <= long_max)
+                else:
+                    spatial_mask = (lat_vals > lat_min) & (lat_vals <= lat_max) & \
+                                  ((long_vals <= long_min) | (long_vals > long_max))
+                
+                # Filter using numpy mask first (fast)
+                if 'time' in data.columns:
+                    # For time, convert to datetime if needed and use vectorized comparison
+                    spatially_filtered = data.iloc[spatial_mask]
+                    
+                    # Check if time column is already datetime, if not convert
+                    if spatially_filtered['time'].dtype == 'object':
+                        # Avoid slow object array comparisons by converting to datetime
+                        try:
+                            time_series = pd.to_datetime(spatially_filtered['time'], errors='coerce')
+                            time_min = pd.to_datetime(bounds.get_time_min())
+                            time_max = pd.to_datetime(bounds.get_time_max())
+                            time_mask = (time_series >= time_min) & (time_series <= time_max)
+                            return spatially_filtered.iloc[time_mask.values]
+                        except:
+                            # If conversion fails, fall back to original comparison
+                            time_mask = (spatially_filtered['time'] >= bounds.get_time_min()) & \
+                                       (spatially_filtered['time'] <= bounds.get_time_max())
+                            return spatially_filtered.loc[time_mask]
+                    else:
+                        # Already datetime, use direct comparison
+                        time_mask = (spatially_filtered['time'] >= bounds.get_time_min()) & \
+                                   (spatially_filtered['time'] <= bounds.get_time_max())
+                        return spatially_filtered.loc[time_mask]
+                else:
+                    return data.iloc[spatial_mask]
+                
+            except Exception as e:
+                # Fallback to original boolean masking if query fails
+                # (e.g., if numexpr not available or data types incompatible)
+                logging.debug(f"\tDataFrame query optimization failed ({type(e).__name__}), using fallback")
+                if bounds.get_long_min() < bounds.get_long_max():
+                    mask = (data['lat']  > bounds.get_lat_min())  & \
+                        (data['lat']  <= bounds.get_lat_max())  & \
+                        (data['long'] > bounds.get_long_min()) & \
+                        (data['long'] <= bounds.get_long_max())
+                else:
+                    mask = (data['lat']  > bounds.get_lat_min())  & \
+                        (data['lat']  <= bounds.get_lat_max())  & \
+                        (data['long'] <= bounds.get_long_min()) & \
+                        (data['long'] > bounds.get_long_max())
+                # Mask with time if time column exists
+                if 'time' in data.columns:
+                    mask &= (data['time'] >= bounds.get_time_min()) & \
+                            (data['time'] <= bounds.get_time_max())
+                            
+                # Return column of data from within bounds
+                return data.loc[mask]
 
         def trim_datapoints_from_xr(data, bounds):
             '''
@@ -299,24 +351,47 @@ class ScalarDataLoader(DataLoaderInterface):
                     exclusive of spatial lower bound. Inclusive of both
                     upper and lower time bounds
             '''
-            # Select data region within spatial bounds
-            # NOTE slice in xarray is inclusive of bounds
-            data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
-            # If not going over antimeridian
-            if bounds.get_long_min() < bounds.get_long_max():
-                data = data.sel(long=slice(bounds.get_long_min(), bounds.get_long_max()))
-            else:
-                data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
-                data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
-                data = xr.concat([data_lhs, data_rhs], 'long')
+            # Optimized integer-based indexing
+            try:
+                # Get coordinate values as numpy arrays
+                lat_vals = data.lat.values
+                long_vals = data.long.values
+                
+                lat_min_idx = np.searchsorted(lat_vals, bounds.get_lat_min(), side='right')
+                lat_max_idx = np.searchsorted(lat_vals, bounds.get_lat_max(), side='right')
+                
+                if bounds.get_long_min() < bounds.get_long_max():
+                    long_min_idx = np.searchsorted(long_vals, bounds.get_long_min(), side='right')
+                    long_max_idx = np.searchsorted(long_vals, bounds.get_long_max(), side='right')
+                    
+                    # Use integer-based indexing
+                    data = data.isel(lat=slice(lat_min_idx, lat_max_idx),
+                                    long=slice(long_min_idx, long_max_idx))
+                else:
+                    # Fallback to coordinate-based selection
+                    data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
+                    data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
+                    data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
+                    data = xr.concat([data_lhs, data_rhs], 'long')
+                    
+            except (ValueError, KeyError, AttributeError):
+                # Fallback to standard coordinate-based selection if optimisation fails
+                data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
+                if bounds.get_long_min() < bounds.get_long_max():
+                    data = data.sel(long=slice(bounds.get_long_min(), bounds.get_long_max()))
+                else:
+                    data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
+                    data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
+                    data = xr.concat([data_lhs, data_rhs], 'long')
+            
             # Select data region within temporal bounds if time exists as a coordinate
             if 'time' in data.coords.keys():
                 data = data.sel(time=slice(bounds.get_time_min(),  bounds.get_time_max()))
 
             # Trim off any data on the min boundary to be consistent with df
-            if bounds.get_lat_min() in data.lat:
+            if len(data.lat) > 0 and bounds.get_lat_min() in data.lat.values:
                 data = data.where(data.lat  != bounds.get_lat_min(), drop=True)
-            if bounds.get_long_min() in data.long:
+            if len(data.long) > 0 and bounds.get_long_min() in data.long.values:
                 data = data.where(data.long != bounds.get_long_min(), drop=True)
             
             # Return column of data from within bounds
