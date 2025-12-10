@@ -1379,7 +1379,10 @@ class EnvironmentMesh:
                      os.remove(file_path)
 
         # Only import if we need GDAL, to avoid having it as a requirement
-        from osgeo import gdal, ogr, osr
+        try:
+            from osgeo import gdal, ogr, osr
+        except ImportError:
+            raise ImportError("GDAL is required for tif export. Install with: conda install -c conda-forge gdal")
         
         params = {}
         params = load_params(params_file)
