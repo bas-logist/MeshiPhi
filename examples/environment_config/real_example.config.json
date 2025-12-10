@@ -39,6 +39,7 @@
                 "hemisphere": "south",
                 "value_fill_types": "parent",
                 "data_name": "SIC",
+                "fast_reprojection": true,
                 "splitting_conditions": [
                     {
                         "SIC": {

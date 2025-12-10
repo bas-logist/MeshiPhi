@@ -339,27 +339,49 @@ class VectorDataLoader(DataLoaderInterface):
 
         def trim_datapoints_from_xr(data, bounds):
             '''
-            Extracts data from a xr.Dataset
+            Extracts data from a xr.Dataset using optimized spatial indexing
             '''
-
-            # Select data region within spatial bounds
-            # NOTE slice in xarray is inclusive of bounds
-            data = data.sel(lat=slice(bounds.get_lat_min(),  bounds.get_lat_max() ))
-            # If not going over antimeridian
-            if bounds.get_long_min() < bounds.get_long_max():
-                data = data.sel(long=slice(bounds.get_long_min(), bounds.get_long_max()))
-            else:
-                data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
-                data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
-                data = xr.concat([data_lhs, data_rhs], 'long')
+            # Integer-based indexing
+            try:
+                # Get coordinate values as numpy arrays
+                lat_vals = data.lat.values
+                long_vals = data.long.values
+                
+                lat_min_idx = np.searchsorted(lat_vals, bounds.get_lat_min(), side='right')
+                lat_max_idx = np.searchsorted(lat_vals, bounds.get_lat_max(), side='right')
+                
+                if bounds.get_long_min() < bounds.get_long_max():
+                    long_min_idx = np.searchsorted(long_vals, bounds.get_long_min(), side='right')
+                    long_max_idx = np.searchsorted(long_vals, bounds.get_long_max(), side='right')
+                    
+                    # Use integer-based indexing (faster than coordinate-based)
+                    data = data.isel(lat=slice(lat_min_idx, lat_max_idx),
+                                    long=slice(long_min_idx, long_max_idx))
+                else:
+                    # Fallback to coordinate-based selection
+                    data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
+                    data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
+                    data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
+                    data = xr.concat([data_lhs, data_rhs], 'long')
+                    
+            except (ValueError, KeyError, AttributeError):
+                # Fallback to standard coordinate-based selection if optimisation fails
+                data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
+                if bounds.get_long_min() < bounds.get_long_max():
+                    data = data.sel(long=slice(bounds.get_long_min(), bounds.get_long_max()))
+                else:
+                    data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
+                    data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
+                    data = xr.concat([data_lhs, data_rhs], 'long')
+            
             # Select data region within temporal bounds if time exists as a coordinate
             if 'time' in data.coords.keys():
                 data = data.sel(time=slice(bounds.get_time_min(),  bounds.get_time_max()))
 
             # Trim off any data on the min boundary to be consistent with df
-            if bounds.get_lat_min() in data.lat:
+            if len(data.lat) > 0 and bounds.get_lat_min() in data.lat.values:
                 data = data.where(data.lat  != bounds.get_lat_min(), drop=True)
-            if bounds.get_long_min() in data.long:
+            if len(data.long) > 0 and bounds.get_long_min() in data.long.values:
                 data = data.where(data.long != bounds.get_long_min(), drop=True)
             
             # Return column of data from within bounds
