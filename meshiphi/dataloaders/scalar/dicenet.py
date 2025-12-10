@@ -20,7 +20,7 @@ class DIceNetDataLoader(ScalarDataLoader):
             
         Returns:
             pd.DataFrame: 
-                DiceNet dataset within limits of bounds. 
+                dIceNet dataset within limits of bounds. 
                 Dataset has coordinates 'lat', 'long', and variable 'SIC'
         '''
         # Convert temporal boundary to datetime objects for comparison
