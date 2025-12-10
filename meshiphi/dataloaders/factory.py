@@ -4,6 +4,7 @@ from meshiphi.dataloaders.scalar.bsose_sea_ice import BSOSESeaIceDataLoader
 from meshiphi.dataloaders.scalar.baltic_sea_ice import BalticSeaIceDataLoader
 from meshiphi.dataloaders.scalar.gebco import GEBCODataLoader
 from meshiphi.dataloaders.scalar.icenet import IceNetDataLoader
+from meshiphi.dataloaders.scalar.dicenet import DIceNetDataLoader
 from meshiphi.dataloaders.scalar.modis import MODISDataLoader
 from meshiphi.dataloaders.scalar.scalar_csv import ScalarCSVDataLoader
 from meshiphi.dataloaders.scalar.scalar_grf import ScalarGRFDataLoader
@@ -53,7 +54,7 @@ class DataLoaderFactory:
             name (str):
                 Name of data source/type. Must be one of following -
                 'scalar_csv', 'scalar_grf', 'binary_grf', 'amsr', 'bsose_sic',
-                'bsose_depth', 'baltic_sic', 'gebco', 'icenet', 'modis',
+                'bsose_depth', 'baltic_sic', 'gebco', 'icenet', 'dicenet', 'modis',
                 'thickness', 'density', 'circle', 'square', 'gradient',
                 'checkerboard', 'vector_csv', 'vector_grf', 'baltic_currents',
                 'era5_wind', 'northsea_currents', 'oras5_currents', 'sose',
@@ -89,6 +90,7 @@ class DataLoaderFactory:
             'baltic_sic':   (BalticSeaIceDataLoader, ['files']),
             'gebco':        (GEBCODataLoader, ['files']),
             'icenet':       (IceNetDataLoader, ['files']),
+            'dicenet':      (DIceNetDataLoader, ['files']),
             'modis':        (MODISDataLoader, ['files']),
             'visual_iced': (VisualIcedDataLoader, ['files']),
             'era5_sig_wave_height': (ERA5SigWaveHeightDataLoader, ['files']),
