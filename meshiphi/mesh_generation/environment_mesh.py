@@ -10,6 +10,7 @@ import os
 import tempfile
 from shapely import wkt
 
+from meshiphi import __version__ as meshiphi_version
 from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
@@ -1099,13 +1100,15 @@ class EnvironmentMesh:
                     {\n
                         "config": the config used to initialize the Mesh,\n
                         "cellboxes": a list of CellBoxes contained within the Mesh,\n
-                        "neighbour_graph": a graph representing the adjacency of CellBoxes within the Mesh.\n
+                        "neighbour_graph": a graph representing the adjacency of CellBoxes within the Mesh,\n
+                        "meshiphi_version": the version of MeshiPhi.\n
                     }\n
         """
         output = dict()
         output['config'] = {'mesh_info': self.config}
         output["cellboxes"] = self.cellboxes_to_json()
         output['neighbour_graph'] = self.neighbour_graph.get_graph()
+        output['meshiphi_version'] = meshiphi_version
 
 
         return json.loads(json.dumps(output, indent=4))
@@ -1193,6 +1196,9 @@ class EnvironmentMesh:
         mesh_gdf = gpd.GeoDataFrame(
             mesh_df, crs="EPSG:4326", geometry="geometry")
         geojson = json.loads(mesh_gdf.to_json())
+        
+        # Add MeshiPhi version to the GeoJSON properties
+        geojson['meshiphi_version'] = meshiphi_version
 
         return geojson
 
