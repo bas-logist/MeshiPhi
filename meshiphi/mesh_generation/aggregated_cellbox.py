@@ -1,6 +1,7 @@
 from shapely.geometry import Polygon, Point
 from meshiphi.mesh_generation.boundary import Boundary
 import shapely.wkt
+import numpy as np
 
 
 class AggregatedCellBox:
@@ -146,7 +147,21 @@ class AggregatedCellBox:
            
         }
 
-        cell_json.update(self.get_agg_data())
+        # Clean agg_data by converting np.nan to None for valid JSON
+        agg_data = self.get_agg_data()
+        clean_agg_data = {}
+        for key, value in agg_data.items():
+            if isinstance(value, (list, tuple)):
+                # Handle lists/arrays that might contain NaN values
+                clean_value = [None if (isinstance(v, float) and np.isnan(v)) else v for v in value]
+            elif isinstance(value, float) and np.isnan(value):
+                # Convert single NaN values to None
+                clean_value = None
+            else:
+                clean_value = value
+            clean_agg_data[key] = clean_value
+        
+        cell_json.update(clean_agg_data)
         cell_json['id'] = self.get_id()
         
         return cell_json
