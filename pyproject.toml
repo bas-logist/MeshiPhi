@@ -32,7 +32,7 @@ keywords= ["Polar Science",
 dynamic = ["version", "dependencies", "optional-dependencies"]
 
 [tool.setuptools]
-packages = ["meshiphi"]
+packages = {find = {where = ["."], include = ["meshiphi*"]}}
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}

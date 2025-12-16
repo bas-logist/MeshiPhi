@@ -53,7 +53,7 @@ A list of supported data sources and their associated data-loaders is given in t
 
 
 ## Developers
-Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, Jonathan Smith, Maria Fox, and James Byrne 
+Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, David Wyld, Thomas Zwagerman, Jonathan Smith, Maria Fox, and James Byrne 
 
 ## Collaboration
 We are currently assessing the best practice for collaboration on the codebase, until then please contact [polarroute@bas.ac.uk](polarroute@bas.ac.uk) for further info.

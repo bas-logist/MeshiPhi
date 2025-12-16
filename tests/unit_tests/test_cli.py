@@ -4,6 +4,7 @@ from meshiphi.cli import create_mesh_cli
 from meshiphi.cli import export_mesh_cli
 from meshiphi.cli import merge_mesh_cli
 from meshiphi.cli import meshiphi_test_cli
+from meshiphi import __version__ as MESHIPHI_VERSION
 
 
 import tempfile
@@ -18,12 +19,21 @@ from unittest.mock import patch
 # Config to create BASIC_OUTPUT
 BASIC_CONFIG = {"region":{"lat_min":-10,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}
 # Mesh to rebuild to create BASIC_OUTPUT
-BASIC_MESH   = {"config":{"mesh_info":{"region":{"lat_min":-10,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}},"cellboxes":[{"geometry":"POLYGON ((-10 -10, -10 0, 0 0, 0 -10, -10 -10))","cx":-5,"cy":-5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 -10, 0 0, 10 0, 10 -10, 0 -10))","cx":5,"cy":-5,"dcx":5,"dcy":5,"id":"1"},{"geometry":"POLYGON ((-10 0, -10 10, 0 10, 0 0, -10 0))","cx":-5,"cy":5,"dcx":5,"dcy":5,"id":"2"},{"geometry":"POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))","cx":5,"cy":5,"dcx":5,"dcy":5,"id":"3"}],"neighbour_graph":{"0":{"1":[3],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[2]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[2],"-4":[3]},"2":{"1":[],"2":[3],"3":[1],"4":[0],"-1":[],"-2":[],"-3":[],"-4":[]},"3":{"1":[],"2":[],"3":[],"4":[1],"-1":[0],"-2":[2],"-3":[],"-4":[]}}}
-BASIC_OUTPUT = {"config":{"mesh_info":{"region":{"lat_min":-10,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}},"cellboxes":[{"geometry":"POLYGON ((-10 -10, -10 0, 0 0, 0 -10, -10 -10))","cx":-5,"cy":-5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 -10, 0 0, 10 0, 10 -10, 0 -10))","cx":5,"cy":-5,"dcx":5,"dcy":5,"id":"1"},{"geometry":"POLYGON ((-10 0, -10 10, 0 10, 0 0, -10 0))","cx":-5,"cy":5,"dcx":5,"dcy":5,"id":"2"},{"geometry":"POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))","cx":5,"cy":5,"dcx":5,"dcy":5,"id":"3"}],"neighbour_graph":{"0":{"1":[3],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[2]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[2],"-4":[3]},"2":{"1":[],"2":[3],"3":[1],"4":[0],"-1":[],"-2":[],"-3":[],"-4":[]},"3":{"1":[],"2":[],"3":[],"4":[1],"-1":[0],"-2":[2],"-3":[],"-4":[]}}}
+def get_basic_mesh():
+    return {"config":{"mesh_info":{"region":{"lat_min":-10,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}},"cellboxes":[{"geometry":"POLYGON ((-10 -10, -10 0, 0 0, 0 -10, -10 -10))","cx":-5,"cy":-5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 -10, 0 0, 10 0, 10 -10, 0 -10))","cx":5,"cy":-5,"dcx":5,"dcy":5,"id":"1"},{"geometry":"POLYGON ((-10 0, -10 10, 0 10, 0 0, -10 0))","cx":-5,"cy":5,"dcx":5,"dcy":5,"id":"2"},{"geometry":"POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))","cx":5,"cy":5,"dcx":5,"dcy":5,"id":"3"}],"neighbour_graph":{"0":{"1":[3],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[2]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[2],"-4":[3]},"2":{"1":[],"2":[3],"3":[1],"4":[0],"-1":[],"-2":[],"-3":[],"-4":[]},"3":{"1":[],"2":[],"3":[],"4":[1],"-1":[0],"-2":[2],"-3":[],"-4":[]}},"meshiphi_version":MESHIPHI_VERSION}
+
+BASIC_MESH = get_basic_mesh()
+def get_basic_output():
+    return {"config":{"mesh_info":{"region":{"lat_min":-10,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}},"cellboxes":[{"geometry":"POLYGON ((-10 -10, -10 0, 0 0, 0 -10, -10 -10))","cx":-5,"cy":-5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 -10, 0 0, 10 0, 10 -10, 0 -10))","cx":5,"cy":-5,"dcx":5,"dcy":5,"id":"1"},{"geometry":"POLYGON ((-10 0, -10 10, 0 10, 0 0, -10 0))","cx":-5,"cy":5,"dcx":5,"dcy":5,"id":"2"},{"geometry":"POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))","cx":5,"cy":5,"dcx":5,"dcy":5,"id":"3"}],"neighbour_graph":{"0":{"1":[3],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[2]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[2],"-4":[3]},"2":{"1":[],"2":[3],"3":[1],"4":[0],"-1":[],"-2":[],"-3":[],"-4":[]},"3":{"1":[],"2":[],"3":[],"4":[1],"-1":[0],"-2":[2],"-3":[],"-4":[]}},"meshiphi_version":MESHIPHI_VERSION}
+
+BASIC_OUTPUT = get_basic_output()
 # Meshes to merge to produce BASIC_MERGED_MESH
 BASIC_HALF_MESH_1 = {"config":{"mesh_info":{"region":{"lat_min":-10,"lat_max":0,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}},"cellboxes":[{"geometry":"POLYGON ((-10 -10, -10 0, 0 0, 0 -10, -10 -10))","cx":-5,"cy":-5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 -10, 0 0, 10 0, 10 -10, 0 -10))","cx":5,"cy":-5,"dcx":5,"dcy":5,"id":"1"}],"neighbour_graph":{"0":{"1":[],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[],"-4":[]}}}
 BASIC_HALF_MESH_2 = {"config":{"mesh_info":{"region":{"lat_min":0,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}},"cellboxes":[{"geometry":"POLYGON ((-10 0, -10 10, 0 10, 0 0, -10 0))","cx":-5,"cy":5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))","cx":5,"cy":5,"dcx":5,"dcy":5,"id":"1"}],"neighbour_graph":{"0":{"1":[],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[],"-4":[]}}}
-BASIC_MERGED_MESH = {"config":{"mesh_info":{"region":{"lat_min":-10,"lat_max":0,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5},"merged":[{"region":{"lat_min":0,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}]}},"cellboxes":[{"geometry":"POLYGON ((-10 -10, -10 0, 0 0, 0 -10, -10 -10))","cx":-5,"cy":-5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 -10, 0 0, 10 0, 10 -10, 0 -10))","cx":5,"cy":-5,"dcx":5,"dcy":5,"id":"1"},{"geometry":"POLYGON ((-10 0, -10 10, 0 10, 0 0, -10 0))","cx":-5,"cy":5,"dcx":5,"dcy":5,"id":"2"},{"geometry":"POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))","cx":5,"cy":5,"dcx":5,"dcy":5,"id":"3"}],"neighbour_graph":{"0":{"1":[3],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[2]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[2],"-4":[3]},"2":{"1":[],"2":[3],"3":[1],"4":[0],"-1":[],"-2":[],"-3":[],"-4":[]},"3":{"1":[],"2":[],"3":[],"4":[1],"-1":[0],"-2":[2],"-3":[],"-4":[]}}}
+def get_basic_merged_mesh():
+    return {"config":{"mesh_info":{"region":{"lat_min":-10,"lat_max":0,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5},"merged":[{"region":{"lat_min":0,"lat_max":10,"long_min":-10,"long_max":10,"start_time":"2000-01-01","end_time":"2000-12-31","cell_width":10,"cell_height":10},"data_sources":[],"splitting":{"split_depth":1,"minimum_datapoints":5}}]}},"cellboxes":[{"geometry":"POLYGON ((-10 -10, -10 0, 0 0, 0 -10, -10 -10))","cx":-5,"cy":-5,"dcx":5,"dcy":5,"id":"0"},{"geometry":"POLYGON ((0 -10, 0 0, 10 0, 10 -10, 0 -10))","cx":5,"cy":-5,"dcx":5,"dcy":5,"id":"1"},{"geometry":"POLYGON ((-10 0, -10 10, 0 10, 0 0, -10 0))","cx":-5,"cy":5,"dcx":5,"dcy":5,"id":"2"},{"geometry":"POLYGON ((0 0, 0 10, 10 10, 10 0, 0 0))","cx":5,"cy":5,"dcx":5,"dcy":5,"id":"3"}],"neighbour_graph":{"0":{"1":[3],"2":[1],"3":[],"4":[],"-1":[],"-2":[],"-3":[],"-4":[2]},"1":{"1":[],"2":[],"3":[],"4":[],"-1":[],"-2":[0],"-3":[2],"-4":[3]},"2":{"1":[],"2":[3],"3":[1],"4":[0],"-1":[],"-2":[],"-3":[],"-4":[]},"3":{"1":[],"2":[],"3":[],"4":[1],"-1":[0],"-2":[2],"-3":[],"-4":[]}},"meshiphi_version":MESHIPHI_VERSION}
+
+BASIC_MERGED_MESH = get_basic_merged_mesh()
 
 
 def json_dict_to_file(json_dict, filename):
@@ -87,7 +97,7 @@ class TestCLI (unittest.TestCase):
                      '-o', self.tmp_output_file.name]
         
         # Create files with relevant data for test
-        json_dict_to_file(BASIC_MESH, self.tmp_mesh_file.name)
+        json_dict_to_file(get_basic_mesh(), self.tmp_mesh_file.name)
 
         # Patch sys.argv with command line entry defined above
         with patch.object(sys, 'argv', test_args):
@@ -110,7 +120,7 @@ class TestCLI (unittest.TestCase):
         
         # Create files with relevant data for test
         json_dict_to_file(BASIC_CONFIG, self.tmp_config_file.name)
-        json_dict_to_file(BASIC_MESH, self.tmp_mesh_file.name)
+        json_dict_to_file(get_basic_mesh(), self.tmp_mesh_file.name)
 
         # Patch sys.argv with command line entry defined above
         with patch.object(sys, 'argv', test_args):
@@ -144,7 +154,7 @@ class TestCLI (unittest.TestCase):
         # Create files with relevant data for test
         json_dict_to_file(BASIC_HALF_MESH_1, self.tmp_mesh_file_1.name)
         json_dict_to_file(BASIC_HALF_MESH_2, self.tmp_mesh_file_2.name)
-        json_dict_to_file(BASIC_MERGED_MESH, self.tmp_mesh_file.name)
+        json_dict_to_file(get_basic_merged_mesh(), self.tmp_mesh_file.name)
         
         # Patch sys.argv with command line entry defined above
         with patch.object(sys, 'argv', test_args):
