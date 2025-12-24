@@ -8,6 +8,8 @@ import tracemalloc
 import numpy as np
 
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
 from functools import wraps
 from calendar import monthrange
 from scipy.fftpack import fftshift
@@ -245,9 +247,9 @@ def memory_trace(func):
         top_stats = snapshot.statistics('traceback')
 
         stat = top_stats[0]
-        logging.info("{} memory blocks: {.1f} KiB".
+        logger.info("{} memory blocks: {.1f} KiB".
                      format(stat.count, stat.size / 1024))
-        logging.info("\n".join(stat.traceback.format()))
+        logger.info("\n".join(stat.traceback.format()))
         return res
     return wrapper
 
@@ -258,8 +260,8 @@ def timed_call(func):
         start = time.perf_counter()
         res = func(*args, **kwargs)
         end = time.perf_counter()
-        logging.info("Timed call to {} took {:02f} seconds".
-                     format(func.__name__, end - start))
+        logger.info("Timed call to {} took {:02f} seconds".
+                    format(func.__name__, end - start))
         return res
     return wrapper
 

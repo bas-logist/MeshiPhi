@@ -40,7 +40,7 @@ class VectorDataLoader(DataLoaderInterface):
         '''
         # Translates parameters from config input to desired inputs
         params = self.add_default_params(params)
-        logging.info(f"Initialising {params['dataloader_name']} dataloader")
+        logger.info(f"Initialising {params['dataloader_name']} dataloader")
         # Creates a class attribute for all keys in params
         for key, val in params.items():
             setattr(self, key, val)
@@ -48,9 +48,9 @@ class VectorDataLoader(DataLoaderInterface):
         self.data = self.import_data(bounds)
         # Read in and manipulate data to standard form
         if 'files' in params:
-            logging.info('\tFiles read:')
+            logger.info('\tFiles read:')
             for file in self.files:
-                logging.info(f'\t\t{file}')
+                logger.info(f'\t\t{file}')
         # If need to downsample data
         self.data = self.downsample()
         # If need to reproject data
@@ -64,11 +64,11 @@ class VectorDataLoader(DataLoaderInterface):
 
         # Get data name from column name if not set in params
         if self.data_name is None:
-            logging.debug('\tSetting self.data_name from column name')
+            logger.debug('\tSetting self.data_name from column name')
             self.data_name = self.get_data_col_name()
         # or if set in params, set col name to data name
         else:
-            logging.debug(f'\tSetting data column name to {self.data_name}')
+            logger.debug(f'\tSetting data column name to {self.data_name}')
             self.data = self.set_data_col_name(self.data_name.split(','))
         # Store data names in a list for easier access in future
         self.data_name_list = self.data_name.split(',')
@@ -78,17 +78,17 @@ class VectorDataLoader(DataLoaderInterface):
         
         # Calculate fraction of boundary that data covers
         data_coverage = self.calculate_coverage(bounds)
-        logging.info("\tMercator data range (roughly) covers "+\
+        logger.info("\tMercator data range (roughly) covers "+\
                     f"{np.round(data_coverage*100,0).astype(int)}% "+\
                      "of initial boundary")
         # If there's 0 datapoints in the initial boundary, raise ValueError
         if data_coverage == 0:
-            logging.warning('\tDataloader has no data in initial region!')
+            logger.warning('\tDataloader has no data in initial region!')
             # raise ValueError(f"Dataloader {params['dataloader_name']}"+\
                             #   " contains no data within initial region!")
         else:
             # Cut dataset down to initial boundary
-            logging.info(
+            logger.info(
                 "\tTrimming data to initial boundary: {min} to {max}".format(
                     min=(bounds.get_lat_min(), bounds.get_long_min()),
                     max=(bounds.get_lat_max(), bounds.get_long_max())
@@ -424,7 +424,7 @@ class VectorDataLoader(DataLoaderInterface):
                 dps (pd.Series): Datapoints within boundary
                 bounds (Boundary): 
                     Boundary dps was trimmed to. Not used for any calculations,
-                    just the logging.debug message.
+                    just the logger.debug message.
                 agg_type (str):
                     Method of aggregation for the value, 
                     e.g. agg_type = 'MIN' => min(dps) returned 
@@ -435,7 +435,7 @@ class VectorDataLoader(DataLoaderInterface):
                 np.float64: Aggregated value
             '''
             data_count = len(dps)
-            logging.debug(f"\t{data_count} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
+            logger.debug(f"\t{data_count} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
             # If no data
             if data_count == 0:
                 values = [np.nan, np.nan]
@@ -474,7 +474,7 @@ class VectorDataLoader(DataLoaderInterface):
                 dps (xr.DataArray): Datapoints within boundary
                 bounds (Boundary): 
                     Boundary dps was trimmed to. Not used for any calculations,
-                    just the logging.debug message.
+                    just the logger.debug message.
                 agg_type (str):
                     Method of aggregation for the value, 
                     e.g. agg_type = 'MIN' => min(dps) returned 
@@ -487,7 +487,7 @@ class VectorDataLoader(DataLoaderInterface):
             '''
             # Info on size of array
             data_count = dps._magnitude.size 
-            logging.debug(f"\t{data_count} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
+            logger.debug(f"\t{data_count} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
             # If no data, return np.nan for each variable
             if data_count == 0:
                 values = [np.nan for _ in variable_names]
@@ -580,7 +580,7 @@ class VectorDataLoader(DataLoaderInterface):
 
         # Check to see if it's above the minimum threshold
         if num_dp < self.min_dp:
-            logging.debug(f"\t{num_dp} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
+            logger.debug(f"\t{num_dp} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
             hom_type = 'CLR'
         else:
             # To allow multiple modes of splitting, chuck them in the splitting conditions
@@ -617,7 +617,7 @@ class VectorDataLoader(DataLoaderInterface):
             else: hom_type = "HET"
                 
 
-        logging.debug(f"\thom_condition for attribute: '{self.data_name}' in bounds:'{bounds}' returned '{hom_type}'")
+        logger.debug(f"\thom_condition for attribute: '{self.data_name}' in bounds:'{bounds}' returned '{hom_type}'")
         
         return hom_type
 
@@ -731,10 +731,10 @@ class VectorDataLoader(DataLoaderInterface):
 
         # If no reprojection to do
         if in_proj == out_proj:
-            logging.debug("\tself.reproject() called but don't need to")
+            logger.debug("\tself.reproject() called but don't need to")
             return self.data
         else:
-            logging.info(f"\tReprojecting data from {in_proj} to {out_proj}")
+            logger.info(f"\tReprojecting data from {in_proj} to {out_proj}")
         # Choose appropriate method of reprojection based on data type
         if type(self.data) == pd.core.frame.DataFrame:
             return reproject_df(self.data, in_proj, out_proj, x_col, y_col)
@@ -810,7 +810,7 @@ class VectorDataLoader(DataLoaderInterface):
             Not implemented as it just adds to processing time, 
             defeating the purpose
             '''
-            logging.warning(
+            logger.warning(
                 '\tDownsampling called on pd.DataFrame! Downsampling a df' \
                 'too computationally expensive, returning original df'
                 )
@@ -823,10 +823,10 @@ class VectorDataLoader(DataLoaderInterface):
         # If no downsampling
         if self.downsample_factors == (1,1) or \
            self.downsample_factors == [1,1]:
-            logging.debug("\tself.downsample() called but don't have to")
+            logger.debug("\tself.downsample() called but don't have to")
             return self.data
         else:
-            logging.info(f"\tDownsampling data by {self.downsample_factors}")
+            logger.info(f"\tDownsampling data by {self.downsample_factors}")
         # Otherwise, downsample appropriately
         if type(self.data) == pd.core.frame.DataFrame:
             return downsample_df(self.data, self.downsample_factors, agg_type)
@@ -865,7 +865,7 @@ class VectorDataLoader(DataLoaderInterface):
             # Turn into comma seperated string and return
             return ','.join(data_names)
         
-        logging.debug(f"\tRetrieving data name from {type(self.data)}")
+        logger.debug(f"\tRetrieving data name from {type(self.data)}")
         # Choose method of extraction based on data type
         if type(self.data) == pd.core.frame.DataFrame:
             return get_data_names_from_df(self.data)
@@ -943,7 +943,7 @@ class VectorDataLoader(DataLoaderInterface):
         new_data_name = ','.join(new_names)
         
         # Set names
-        logging.info(f'\tSetting data names to {new_names}')
+        logger.info(f'\tSetting data names to {new_names}')
         self.data_name_list = new_names
         return self.set_data_col_name(new_data_name)
 
@@ -979,7 +979,7 @@ class VectorDataLoader(DataLoaderInterface):
         fx, fy = vector_field[:, :, 0], vector_field[:, :, 1]
         # If not enough datapoints to compute gradient
         if 1 in fx.shape or 1 in fy.shape:
-            logging.debug('\tUnable to compute gradient across cell for curl calculation')
+            logger.debug('\tUnable to compute gradient across cell for curl calculation')
             curl = np.nan
         else:
             # Compute partial derivatives
@@ -990,7 +990,7 @@ class VectorDataLoader(DataLoaderInterface):
 
         # If curl is nan
         if np.isnan(curl).all():
-            logging.debug('\tAll NaN cellbox encountered')
+            logger.debug('\tAll NaN cellbox encountered')
             return np.nan
         # If want to collapse to max mag value, return scalar
         elif collapse:
@@ -1040,11 +1040,11 @@ class VectorDataLoader(DataLoaderInterface):
         
         d_mag = np.linalg.norm(delta_vector, axis=1)
         if len(d_mag) == 0:
-            logging.debug('\tEmpty cellbox encountered')
+            logger.debug('\tEmpty cellbox encountered')
             return np.nan
         # If d_mag is nan
         elif np.isnan(d_mag).all():
-            logging.debug('\tAll NaN cellbox encountered')
+            logger.debug('\tAll NaN cellbox encountered')
             return np.nan
         # If want to collapse to max mag value, return scalar
         elif collapse:

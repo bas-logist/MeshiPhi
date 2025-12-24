@@ -12,6 +12,8 @@ import logging
 from meshiphi.mesh_generation.boundary import Boundary
 from sklearn.metrics import mean_squared_error
 import xarray as xr
+
+logger = logging.getLogger(__name__)
 class MeshValidator:
 
     """
@@ -90,7 +92,7 @@ class MeshValidator:
             data_name = data_loader.get_data_col_name()
             dp = data_loader.trim_datapoints( Boundary (lat_range , long_range , time_range))
             values = np.append (values , dp[data_name])
-        logging.info("values from data are: {}".format(' '.join(map(str, values))))
+        logger.info("values from data are: {}".format(' '.join(map(str, values))))
         return values
 
     def get_range_end(self, sample):
@@ -142,7 +144,7 @@ class MeshValidator:
                         if agg_cellbox.contains_point(lat , long):
                             values = np.append ( values , agg_cellbox.agg_data [data_loader.data_name] )#get the agg_value 
                             break  # break to make sure we avoid getting multiple values (for lat and long on bounds of multiple cellboxes)
-            logging.info("values from mesh are: {}".format(' '.join(map(str, values))))
+            logger.info("values from mesh are: {}".format(' '.join(map(str, values))))
          
             return values
     

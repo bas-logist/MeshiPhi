@@ -4,6 +4,8 @@ import inspect
 import logging
 
 from meshiphi import __version__ as version
+
+logger = logging.getLogger(__name__)
 from meshiphi.utils import setup_logging, timed_call
 from meshiphi.mesh_generation.mesh_builder import MeshBuilder
 from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
@@ -80,7 +82,7 @@ def rebuild_mesh_cli():
 
     default_output = "rebuild_mesh.output.json"
     args = get_args(default_output, mesh_arg=True, config_arg=False)
-    logging.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
 
     mesh_json = json.load(args.mesh)
     config = mesh_json['config']['mesh_info']
@@ -89,7 +91,7 @@ def rebuild_mesh_cli():
     rebuilt_mesh = MeshBuilder(config).build_environmental_mesh()
     rebuilt_mesh_json = rebuilt_mesh.to_json()
 
-    logging.info("Saving mesh to {}".format(args.output))
+    logger.info("Saving mesh to {}".format(args.output))
     
     json.dump(rebuilt_mesh_json, open(args.output, "w"), indent=4)
 
@@ -103,14 +105,14 @@ def create_mesh_cli():
     
     default_output = "create_mesh.output.json"
     args = get_args(default_output)
-    logging.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
 
     config = json.load(args.config)
 
     # Discrete Meshing
     cg = MeshBuilder(config).build_environmental_mesh()
 
-    logging.info("Saving mesh to {}".format(args.output))
+    logger.info("Saving mesh to {}".format(args.output))
     info = cg.to_json()
     json.dump(info, open(args.output, "w"), indent=4)
     
@@ -145,12 +147,12 @@ def export_mesh_cli():
                     mesh_arg = True, 
                     format_arg = True)
     
-    logging.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
 
     mesh = json.load(args.mesh)
     env_mesh = EnvironmentMesh.load_from_json(mesh)
 
-    logging.info(f"exporting mesh to {args.output} in format {args.format}")
+    logger.info(f"exporting mesh to {args.output} in format {args.format}")
 
     env_mesh.save(args.output, args.format , args.format_conf)
 
@@ -165,14 +167,14 @@ def merge_mesh_cli():
 
     default_output = "merged_mesh.output.json"
     args = get_args(default_output, config_arg = False, mesh_arg=True, merge_arg=True)
-    logging.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
 
     with open(args.mesh.name, "r") as f:
         mesh1 = json.load(args.mesh)
     env_mesh1 = EnvironmentMesh.load_from_json(mesh1)
     
     if args.directory:
-        logging.debug("Merging multiple meshes from directory {} with input mesh".format(args.merge))
+        logger.debug("Merging multiple meshes from directory {} with input mesh".format(args.merge))
 
         merge_dir = args.merge
         merge_meshes = [f for f in listdir(merge_dir) if isfile(join(merge_dir, f))]
@@ -194,7 +196,7 @@ def merge_mesh_cli():
        
     merged_mesh_json = env_mesh1.to_json()
 
-    logging.info("Saving merged mesh to {}".format(args.output))
+    logger.info("Saving merged mesh to {}".format(args.output))
     json.dump(merged_mesh_json, open(args.output, "w"), indent=4)
 
 

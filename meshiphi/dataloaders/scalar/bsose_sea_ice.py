@@ -40,7 +40,7 @@ class BSOSESeaIceDataLoader(ScalarDataLoader):
         data = self.trim_datapoints(bounds, data=data)
 
         if hasattr(self, 'units'):
-            logging.info(f'- Changing units of data to {self.units}')
+            logger.info(f'- Changing units of data to {self.units}')
             # Convert to percentage form if requested in params
             if self.units == 'percentage':
                 data = data.assign(SIC= data['SIC'] * 100)

@@ -85,7 +85,7 @@ class AMSRDataLoader(ScalarDataLoader):
                 relevant_files += [file]
         # Concat all valid files
         if len(data_array) == 0:
-            logging.error('\tNo files found for date range '+\
+            logger.error('\tNo files found for date range '+\
                          f'[ {bounds.get_time_min()} : {bounds.get_time_max()} ]')
             raise FileNotFoundError('No AMSR files found within specified time range!')
         data = xr.concat(data_array,'time')

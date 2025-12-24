@@ -59,7 +59,7 @@ class IceNetDataLoader(ScalarDataLoader):
         assert closest_date + timedelta(days=max_leadtime) > max_time,\
             'Time boundary runs beyond max forecast date!'
         
-        logging.info(f"- Searching for closest date prior to {bounds.get_time_min()}")
+        logger.info(f"- Searching for closest date prior to {bounds.get_time_min()}")
         # For the days in forecast range of IceNet dataset
         for days_ago in range(1, max_leadtime+1):
             # Set the date from which the forecast is taken
@@ -70,7 +70,7 @@ class IceNetDataLoader(ScalarDataLoader):
                 break
             except:
                 # Error thrown, date not in dataset. Try previous day
-                logging.debug(f'\tUnable to select start day of {start_time} for IceNet, trying previous day')
+                logger.debug(f'\tUnable to select start day of {start_time} for IceNet, trying previous day')
                 continue
         else:
             # If ran through entire dataset with no valid dates
@@ -83,7 +83,7 @@ class IceNetDataLoader(ScalarDataLoader):
             '''
         
         # TODO fix logging bug.
-        #logging.info(f"- Found date {datetime.strftime('%Y-%m-%d')}")
+        #logger.info(f"- Found date {datetime.strftime('%Y-%m-%d')}")
 
         # Choose predictions from earliest date before start_date
         ds = ds.sel(leadtime=range(days_ago, time_range.days + days_ago))

@@ -9,6 +9,8 @@ import xarray as xr
 import pandas as pd
 from rasterio.enums import Resampling
 
+logger = logging.getLogger(__name__)
+
 from meshiphi.mesh_generation.boundary import Boundary
 
 
@@ -44,7 +46,7 @@ class ScalarDataLoader(DataLoaderInterface):
         '''
         # Translates parameters from config input to desired inputs
         params = self.add_default_params(params)
-        logging.info(f"Initialising {params['dataloader_name']} dataloader")
+        logger.info(f"Initialising {params['dataloader_name']} dataloader")
         # Creates a class attribute for all keys in params
         for key, val in params.items():
             setattr(self, key, val)
@@ -52,9 +54,9 @@ class ScalarDataLoader(DataLoaderInterface):
         # Read in and manipulate data to standard form
         self.data = self.import_data(bounds)
         if 'files' in params:
-            logging.info('\tFiles read:')
+            logger.info('\tFiles read:')
             for file in self.files:
-                logging.info(f'\t\t{file}')
+                logger.info(f'\t\t{file}')
         # If need to downsample data
         self.data = self.downsample()
         # If need to reproject data
@@ -67,26 +69,26 @@ class ScalarDataLoader(DataLoaderInterface):
                                 )
         # Get data name from column name if not set in params
         if self.data_name is None:
-            logging.debug('\tSetting self.data_name from column name')
+            logger.debug('\tSetting self.data_name from column name')
             self.data_name = self.get_data_col_name()
         # or if set in params, set col name to data name
         else:
-            logging.debug(f'\tSetting data column name to {self.data_name}')
+            logger.debug(f'\tSetting data column name to {self.data_name}')
             self.data = self.set_data_col_name(self.data_name)
 
         # Calculate fraction of boundary that data covers
         data_coverage = self.calculate_coverage(bounds)
-        logging.info("\tMercator data range (roughly) covers "+\
+        logger.info("\tMercator data range (roughly) covers "+\
                     f"{np.round(data_coverage*100,0).astype(int)}% "+\
                      "of initial boundary")
         # If there's 0 datapoints in the initial boundary, raise ValueError
         if data_coverage == 0:
-            logging.warning('\tDataloader has no data in initial region!')
+            logger.warning('\tDataloader has no data in initial region!')
             #raise ValueError(f"Dataloader {params['dataloader_name']}"+\
             #                  " contains no data within initial region!")
         else:
             # Cut dataset down to initial boundary
-            logging.info(
+            logger.info(
                 "\tTrimming data to initial boundary: {min} to {max}".format(
                     min=(bounds.get_lat_min(), bounds.get_long_min()),
                     max=(bounds.get_lat_max(), bounds.get_long_max())
@@ -310,7 +312,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 
             except Exception as e:
                 # Fallback to original boolean masking if query fails
-                logging.debug(f"\tDataFrame query optimization failed ({type(e).__name__}), using fallback")
+                logger.debug(f"\tDataFrame query optimization failed ({type(e).__name__}), using fallback")
                 if bounds.get_long_min() < bounds.get_long_max():
                     mask = (data['lat']  > bounds.get_lat_min())  & \
                         (data['lat']  <= bounds.get_lat_max())  & \
@@ -429,7 +431,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 dps (pd.Series): Datapoints within boundary
                 bounds (Boundary): 
                     Boundary dps was trimmed to. Not used for any calculations,
-                    just the logging.debug message.
+                    just the logger.debug message.
                 agg_type (str):
                     Method of aggregation for the value, 
                     e.g. agg_type = 'MIN' => min(dps) returned 
@@ -442,7 +444,7 @@ class ScalarDataLoader(DataLoaderInterface):
             # Skip NaN's if desired
             if skipna:  dps = dps.dropna()
 
-            logging.debug(f"\t{len(dps)} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
+            logger.debug(f"\t{len(dps)} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
             # If want the number of datapoints
             if agg_type =='COUNT':
                 return len(dps)
@@ -475,7 +477,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 dps (xr.DataArray): Datapoints within boundary
                 bounds (Boundary): 
                     Boundary dps was trimmed to. Not used for any calculations,
-                    just the logging.debug message.
+                    just the logger.debug message.
                 agg_type (str):
                     Method of aggregation for the value, 
                     e.g. agg_type = 'MIN' => min(dps) returned 
@@ -487,7 +489,7 @@ class ScalarDataLoader(DataLoaderInterface):
             '''
             # Extract values to be worked on by numpy functions
             dps = dps.values
-            logging.debug(f"\t{len(dps)} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
+            logger.debug(f"\t{len(dps)} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
             # If want the number of datapoints
             if agg_type =='COUNT':
                 return dps.size
@@ -609,7 +611,7 @@ class ScalarDataLoader(DataLoaderInterface):
                         hom_type = "CLR"
                 else: hom_type = "HET"
 
-            logging.debug(f"\thom_condition for attribute: '{self.data_name}' in bounds:'{bounds}' returned '{hom_type}'")
+            logger.debug(f"\thom_condition for attribute: '{self.data_name}' in bounds:'{bounds}' returned '{hom_type}'")
             return hom_type
         
         def get_hom_condition_from_xr(dps, splitting_conds):
@@ -630,7 +632,7 @@ class ScalarDataLoader(DataLoaderInterface):
             '''
             if dps.size < self.min_dp: 
                 hom_type = "CLR"
-                logging.debug(f"\t{dps.size} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
+                logger.debug(f"\t{dps.size} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'")
             else:
                 # Determine fraction of datapoints over threshold value
                 num_over_threshold = np.count_nonzero(dps > splitting_conds['threshold'])
@@ -644,11 +646,11 @@ class ScalarDataLoader(DataLoaderInterface):
                 elif frac_over_threshold >= splitting_conds['upper_bound']: 
                     if splitting_conds['split_lock'] == True:
                         hom_type = "HOM"
-                        logging.debug(f"\tSplitting locked by attribute: '{self.data_name}' in bounds:'{bounds}'")
+                        logger.debug(f"\tSplitting locked by attribute: '{self.data_name}' in bounds:'{bounds}'")
                     else: hom_type = "CLR"
                 else: hom_type = "HET"
                 
-            logging.debug(f"\thom_condition for attribute: '{self.data_name}' in bounds:'{bounds}' returned '{hom_type}'")
+            logger.debug(f"\thom_condition for attribute: '{self.data_name}' in bounds:'{bounds}' returned '{hom_type}'")
             
             return hom_type
         
@@ -779,10 +781,10 @@ class ScalarDataLoader(DataLoaderInterface):
 
         # If no reprojection to do
         if in_proj == out_proj:
-            logging.debug("\tself.reproject() called but don't need to")
+            logger.debug("\tself.reproject() called but don't need to")
             return self.data
         else:
-            logging.info(f"\tReprojecting data from {in_proj} to {out_proj}")
+            logger.info(f"\tReprojecting data from {in_proj} to {out_proj}")
         # Choose appropriate method of reprojection based on data type
         if type(self.data) == pd.core.frame.DataFrame:
             return reproject_df(self.data, in_proj, out_proj, x_col, y_col)
@@ -858,7 +860,7 @@ class ScalarDataLoader(DataLoaderInterface):
             Not implemented as it just adds to processing time, 
             defeating the purpose
             '''
-            logging.warning(
+            logger.warning(
                 '\tDownsampling called on pd.DataFrame! Downsampling a df' \
                 'too computationally expensive, returning original df'
                 )
@@ -871,10 +873,10 @@ class ScalarDataLoader(DataLoaderInterface):
         # If no downsampling
         if self.downsample_factors == (1,1) or \
            self.downsample_factors == [1,1]:
-            logging.debug("\tself.downsample() called but don't have to")
+            logger.debug("\tself.downsample() called but don't have to")
             return self.data
         else:
-            logging.info(f"\tDownsampling data by {self.downsample_factors}")
+            logger.info(f"\tDownsampling data by {self.downsample_factors}")
         # Otherwise, downsample appropriately
         if type(self.data) == pd.core.frame.DataFrame:
             return downsample_df(self.data, self.downsample_factors, agg_type)
@@ -941,7 +943,7 @@ class ScalarDataLoader(DataLoaderInterface):
                                  )
             return name[0]
         
-        logging.debug(f"\tRetrieving data name from {type(self.data)}")
+        logger.debug(f"\tRetrieving data name from {type(self.data)}")
         # Choose method of extraction based on data type
         if type(self.data) == pd.core.frame.DataFrame:
             return get_data_name_from_df(self.data)
@@ -998,7 +1000,7 @@ class ScalarDataLoader(DataLoaderInterface):
         
         old_name = self.get_data_col_name()
         if old_name != new_name:
-            logging.info(f"\tChanging data name from {old_name} to {new_name}")
+            logger.info(f"\tChanging data name from {old_name} to {new_name}")
         # Change data name depending on data type
         if type(self.data) == pd.core.frame.DataFrame:
             return set_name_df(self.data, old_name, new_name)
