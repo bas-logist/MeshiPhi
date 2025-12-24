@@ -12,16 +12,8 @@ import logging
 
 import meshiphi
 
-# Import test functions
-from .mesh_test_functions import (
-    test_mesh_cellbox_attributes,
-    test_mesh_cellbox_count,
-    test_mesh_cellbox_ids,
-    test_mesh_cellbox_values,
-    test_mesh_neighbour_graph_count,
-    test_mesh_neighbour_graph_ids,
-    test_mesh_neighbour_graph_values
-)
+# Import test functions - pytest will auto-discover them from test_comparisons.py
+from . import test_comparisons  # noqa: F401
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)

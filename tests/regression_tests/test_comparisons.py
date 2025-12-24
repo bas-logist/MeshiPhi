@@ -6,30 +6,31 @@ consistency between old and new mesh versions.
 """
 
 import pandas as pd
-from meshiphi.utils import round_to_sigfig
 
-from .regression_test_utils import (
+from .utils import (
     extract_neighbour_graph,
     extract_cellboxes,
-    extract_common_boundaries
+    extract_common_boundaries,
+    round_dataframe_values,
+    extract_common_boundaries_for_comparison
 )
 
-SIG_FIG_TOLERANCE = 4
 
+# Cellbox comparison test functions
 
-# Cellbox comparison functions
-
-def compare_cellbox_count(mesh_a, mesh_b):
+def test_mesh_cellbox_count(mesh_pair):
     """
-    Test if two meshes contain the same number of cellboxes.
+    Test that cellbox count is preserved between mesh versions.
 
     Args:
-        mesh_a (dict): First mesh JSON
-        mesh_b (dict): Second mesh JSON
+        mesh_pair (dict): Fixture containing old_mesh and new_mesh
 
     Raises:
         AssertionError: If cellbox counts differ
     """
+    mesh_a = mesh_pair["old_mesh"]
+    mesh_b = mesh_pair["new_mesh"]
+    
     regression_mesh = extract_cellboxes(mesh_a)
     new_mesh = extract_cellboxes(mesh_b)
 
@@ -40,17 +41,19 @@ def compare_cellbox_count(mesh_a, mesh_b):
         f"Incorrect number of cellboxes in new mesh. Expected: {cellbox_count_a}, got: {cellbox_count_b}"
 
 
-def compare_cellbox_ids(mesh_a, mesh_b):
+def test_mesh_cellbox_ids(mesh_pair):
     """
-    Test if two meshes contain cellboxes with the same IDs.
+    Test that cellbox IDs are preserved between mesh versions.
 
     Args:
-        mesh_a (dict): First mesh JSON
-        mesh_b (dict): Second mesh JSON
+        mesh_pair (dict): Fixture containing old_mesh and new_mesh
 
     Raises:
         AssertionError: If any cellbox IDs differ
     """
+    mesh_a = mesh_pair["old_mesh"]
+    mesh_b = mesh_pair["new_mesh"]
+    
     regression_mesh = extract_cellboxes(mesh_a)
     new_mesh = extract_cellboxes(mesh_b)
 
@@ -68,77 +71,31 @@ def compare_cellbox_ids(mesh_a, mesh_b):
         f"ID's {missing_b_ids} are missing from the new mesh"
 
 
-def _round_dataframe_values(df):
+def test_mesh_cellbox_values(mesh_pair):
     """
-    Helper function to round float and list-of-float values in a dataframe.
+    Test that cellbox values are preserved between mesh versions.
 
     Args:
-        df (DataFrame): Pandas dataframe to round values in
-
-    Returns:
-        DataFrame: Modified dataframe with rounded values
-    """
-    # Round float columns to sig figs
-    float_cols = df.select_dtypes(include=float).columns
-    for col in float_cols:
-        df[col] = round_to_sigfig(df[col].to_numpy(), sigfig=SIG_FIG_TOLERANCE)
-    
-    # Round list columns that contain floats
-    list_cols = df.select_dtypes(include=list).columns
-    for col in list_cols:
-        round_col = []
-        for val in df[col]:
-            if isinstance(val, list) and all(isinstance(x, float) for x in val):
-                round_col.append(round_to_sigfig(val, sigfig=SIG_FIG_TOLERANCE))
-            else:
-                round_col.append(val)
-        df[col] = round_col
-    
-    return df
-
-
-def _extract_common_boundaries_for_comparison(mesh_a, mesh_b):
-    """
-    Creates a list of common geometry boundaries between two mesh JSONs.
-
-    Args:
-        mesh_a (dict): First mesh JSON to extract boundaries from
-        mesh_b (dict): Second mesh JSON to extract boundaries from
-
-    Returns:
-        list: List of common cellbox geometries (as strings)
-    """
-    bounds_a = [cb['geometry'] for cb in extract_cellboxes(mesh_a)]
-    bounds_b = [cb['geometry'] for cb in extract_cellboxes(mesh_b)]
-
-    common_bounds = [geom for geom in bounds_a if geom in bounds_b]
-
-    return common_bounds
-
-
-def compare_cellbox_values(mesh_a, mesh_b):
-    """
-    Test if values of all attributes in each cellbox are the same in both meshes.
-
-    Args:
-        mesh_a (dict): First mesh JSON
-        mesh_b (dict): Second mesh JSON
+        mesh_pair (dict): Fixture containing old_mesh and new_mesh
 
     Raises:
         AssertionError: If any values of any attributes differ
     """
+    mesh_a = mesh_pair["old_mesh"]
+    mesh_b = mesh_pair["new_mesh"]
+    
     # Retrieve cellboxes from meshes as dataframes
     df_a = pd.DataFrame(extract_cellboxes(mesh_a)).set_index('geometry')
     df_b = pd.DataFrame(extract_cellboxes(mesh_b)).set_index('geometry')
     
     # Extract only cellboxes with same boundaries, drop ID as it may differ
-    common_bounds = _extract_common_boundaries_for_comparison(mesh_a, mesh_b)
+    common_bounds = extract_common_boundaries_for_comparison(mesh_a, mesh_b)
     df_a = df_a.loc[common_bounds].drop(columns=['id'])
     df_b = df_b.loc[common_bounds].drop(columns=['id'])
 
     # Round values to significant figures for comparison
-    df_a = _round_dataframe_values(df_a)
-    df_b = _round_dataframe_values(df_b)
+    df_a = round_dataframe_values(df_a)
+    df_b = round_dataframe_values(df_b)
 
     # Find differences
     diff = df_a.compare(df_b).rename({'self': 'old', 'other': 'new'})
@@ -147,21 +104,23 @@ def compare_cellbox_values(mesh_a, mesh_b):
         f'Mismatch between values in common cellboxes:\n{diff.to_string(max_colwidth=10)}'
 
 
-def compare_cellbox_attributes(mesh_a, mesh_b):
+def test_mesh_cellbox_attributes(mesh_pair):
     """
-    Test if attributes of cellboxes are the same in both meshes.
+    Test that cellbox attributes are preserved between mesh versions.
 
     Note:
         Assumes all cellboxes in a mesh have the same attributes,
         so only compares the first cellbox from each mesh.
 
     Args:
-        mesh_a (dict): First mesh JSON
-        mesh_b (dict): Second mesh JSON
+        mesh_pair (dict): Fixture containing old_mesh and new_mesh
 
     Raises:
         AssertionError: If cellbox attributes differ
     """
+    mesh_a = mesh_pair["old_mesh"]
+    mesh_b = mesh_pair["new_mesh"]
+    
     regression_mesh = extract_cellboxes(mesh_a)
     new_mesh = extract_cellboxes(mesh_b)
 
@@ -176,19 +135,21 @@ def compare_cellbox_attributes(mesh_a, mesh_b):
         f"Attributes {missing_b_attributes} are missing in the new mesh"
 
 
-# Neighbour graph comparison functions
+# Neighbour graph comparison test functions
 
-def compare_neighbour_graph_count(mesh_a, mesh_b):
+def test_mesh_neighbour_graph_count(mesh_pair):
     """
-    Test that neighbour graphs have the same number of nodes.
+    Test that neighbour graph node count is preserved between mesh versions.
 
     Args:
-        mesh_a (dict): First mesh JSON
-        mesh_b (dict): Second mesh JSON
+        mesh_pair (dict): Fixture containing old_mesh and new_mesh
 
     Raises:
         AssertionError: If node counts differ
     """
+    mesh_a = mesh_pair["old_mesh"]
+    mesh_b = mesh_pair["new_mesh"]
+    
     regression_graph = extract_neighbour_graph(mesh_a)
     new_graph = extract_neighbour_graph(mesh_b)
 
@@ -200,17 +161,19 @@ def compare_neighbour_graph_count(mesh_a, mesh_b):
         f"got: {new_graph_count} nodes."
 
 
-def compare_neighbour_graph_ids(mesh_a, mesh_b):
+def test_mesh_neighbour_graph_ids(mesh_pair):
     """
-    Test that neighbour graphs contain all the same node IDs.
+    Test that neighbour graph node IDs are preserved between mesh versions.
 
     Args:
-        mesh_a (dict): First mesh JSON
-        mesh_b (dict): Second mesh JSON
+        mesh_pair (dict): Fixture containing old_mesh and new_mesh
 
     Raises:
         AssertionError: If node IDs differ
     """
+    mesh_a = mesh_pair["old_mesh"]
+    mesh_b = mesh_pair["new_mesh"]
+    
     regression_graph = extract_neighbour_graph(mesh_a)
     new_graph = extract_neighbour_graph(mesh_b)
 
@@ -225,17 +188,19 @@ def compare_neighbour_graph_ids(mesh_a, mesh_b):
         f"{len(missing_b_keys)} nodes are missing from the new graph."
 
 
-def compare_neighbour_graph_values(mesh_a, mesh_b):
+def test_mesh_neighbour_graph_values(mesh_pair):
     """
-    Test that each node in the neighbour graphs has the same neighbours.
+    Test that neighbour graph edge values are preserved between mesh versions.
 
     Args:
-        mesh_a (dict): First mesh JSON
-        mesh_b (dict): Second mesh JSON
+        mesh_pair (dict): Fixture containing old_mesh and new_mesh
 
     Raises:
         AssertionError: If neighbour sets differ for any node
     """
+    mesh_a = mesh_pair["old_mesh"]
+    mesh_b = mesh_pair["new_mesh"]
+    
     regression_graph = extract_neighbour_graph(mesh_a)
     new_graph = extract_neighbour_graph(mesh_b)
 
@@ -257,40 +222,3 @@ def compare_neighbour_graph_values(mesh_a, mesh_b):
     assert len(mismatch_neighbours) == 0, \
         f"Mismatch in neighbour graph neighbours. {len(mismatch_neighbours.keys())} nodes " \
         f"have changed in the new mesh."
-
-
-# Test wrapper functions
-
-def test_mesh_cellbox_count(mesh_pair):
-    """Test that cellbox count is preserved between mesh versions."""
-    compare_cellbox_count(mesh_pair["old_mesh"], mesh_pair["new_mesh"])
-
-
-def test_mesh_cellbox_ids(mesh_pair):
-    """Test that cellbox IDs are preserved between mesh versions."""
-    compare_cellbox_ids(mesh_pair["old_mesh"], mesh_pair["new_mesh"])
-
-
-def test_mesh_cellbox_values(mesh_pair):
-    """Test that cellbox values are preserved between mesh versions."""
-    compare_cellbox_values(mesh_pair["old_mesh"], mesh_pair["new_mesh"])
-
-
-def test_mesh_cellbox_attributes(mesh_pair):
-    """Test that cellbox attributes are preserved between mesh versions."""
-    compare_cellbox_attributes(mesh_pair["old_mesh"], mesh_pair["new_mesh"])
-
-
-def test_mesh_neighbour_graph_count(mesh_pair):
-    """Test that neighbour graph node count is preserved between mesh versions."""
-    compare_neighbour_graph_count(mesh_pair["old_mesh"], mesh_pair["new_mesh"])
-
-
-def test_mesh_neighbour_graph_ids(mesh_pair):
-    """Test that neighbour graph node IDs are preserved between mesh versions."""
-    compare_neighbour_graph_ids(mesh_pair["old_mesh"], mesh_pair["new_mesh"])
-
-
-def test_mesh_neighbour_graph_values(mesh_pair):
-    """Test that neighbour graph edge values are preserved between mesh versions."""
-    compare_neighbour_graph_values(mesh_pair["old_mesh"], mesh_pair["new_mesh"])
