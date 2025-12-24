@@ -7,41 +7,36 @@ from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.utils import longitude_domain
+from tests.unit_tests.test_utils import create_ng_from_dict
 
 
 # Define which direction each cardinal direction lies
-NORTHERN_DIRECTIONS  = [Direction.north_east, Direction.north, Direction.north_west]
-EASTERN_DIRECTIONS   = [Direction.north_east, Direction.east,  Direction.south_east]
-SOUTHERN_DIRECTIONS  = [Direction.south_east, Direction.south, Direction.south_west]
-WESTERN_DIRECTIONS   = [Direction.south_west, Direction.west,  Direction.north_west]
-DIAGONAL_DIRECTIONS  = [Direction.north_east, Direction.north_west, Direction.south_east, Direction.south_west]
-ALL_DIRECTIONS = [Direction.north, Direction.north_east,
-                    Direction.east,  Direction.south_east,
-                    Direction.south, Direction.south_west,
-                    Direction.west,  Direction.north_west]
+NORTHERN_DIRECTIONS = [Direction.north_east, Direction.north, Direction.north_west]
+EASTERN_DIRECTIONS = [Direction.north_east, Direction.east, Direction.south_east]
+SOUTHERN_DIRECTIONS = [Direction.south_east, Direction.south, Direction.south_west]
+WESTERN_DIRECTIONS = [Direction.south_west, Direction.west, Direction.north_west]
+DIAGONAL_DIRECTIONS = [Direction.north_east, Direction.north_west, Direction.south_east, Direction.south_west]
+ALL_DIRECTIONS = [Direction.north, Direction.north_east, Direction.east, Direction.south_east,
+                  Direction.south, Direction.south_west, Direction.west, Direction.north_west]
 
 
-def create_ng_from_dict(ng_dict, global_mesh=False):
-    ng = NeighbourGraph()
-    ng.neighbour_graph = copy.deepcopy(ng_dict)
-    ng._is_global_mesh = global_mesh
-
-    return ng
-
-class TestNeighbourGraph (unittest.TestCase):
+class TestNeighbourGraph(unittest.TestCase):
+    """Tests for NeighbourGraph class"""
     
     def setUp(self):
-        
+        """Set up test neighbour graphs"""
         # Neighbour graph of a 3x3 array of cellboxes        
-        self.ng_dict_3x3 = {1: {1: [ ], 2: [2], 3: [5], 4: [4], -1: [ ], -2: [ ], -3: [ ], -4: [ ]},
-                            2: {1: [ ], 2: [3], 3: [6], 4: [5], -1: [4], -2: [1], -3: [ ], -4: [ ]},
-                            3: {1: [ ], 2: [ ], 3: [ ], 4: [6], -1: [5], -2: [2], -3: [ ], -4: [ ]},
-                            4: {1: [2], 2: [5], 3: [8], 4: [7], -1: [ ], -2: [ ], -3: [ ], -4: [1]},
-                            5: {1: [3], 2: [6], 3: [9], 4: [8], -1: [7], -2: [4], -3: [1], -4: [2]},
-                            6: {1: [ ], 2: [ ], 3: [ ], 4: [9], -1: [8], -2: [5], -3: [2], -4: [3]},
-                            7: {1: [5], 2: [8], 3: [ ], 4: [ ], -1: [ ], -2: [ ], -3: [ ], -4: [4]},
-                            8: {1: [6], 2: [9], 3: [ ], 4: [ ], -1: [ ], -2: [7], -3: [4], -4: [5]},
-                            9: {1: [ ], 2: [ ], 3: [ ], 4: [ ], -1: [ ], -2: [8], -3: [5], -4: [6]}}
+        self.ng_dict_3x3 = {
+            1: {1: [], 2: [2], 3: [5], 4: [4], -1: [], -2: [], -3: [], -4: []},
+            2: {1: [], 2: [3], 3: [6], 4: [5], -1: [4], -2: [1], -3: [], -4: []},
+            3: {1: [], 2: [], 3: [], 4: [6], -1: [5], -2: [2], -3: [], -4: []},
+            4: {1: [2], 2: [5], 3: [8], 4: [7], -1: [], -2: [], -3: [], -4: [1]},
+            5: {1: [3], 2: [6], 3: [9], 4: [8], -1: [7], -2: [4], -3: [1], -4: [2]},
+            6: {1: [], 2: [], 3: [], 4: [9], -1: [8], -2: [5], -3: [2], -4: [3]},
+            7: {1: [5], 2: [8], 3: [], 4: [], -1: [], -2: [], -3: [], -4: [4]},
+            8: {1: [6], 2: [9], 3: [], 4: [], -1: [], -2: [7], -3: [4], -4: [5]},
+            9: {1: [], 2: [], 3: [], 4: [], -1: [], -2: [8], -3: [5], -4: [6]}
+        }
         
         # Non-global 3x3 Neighbour graph, "5" in the middle, with the others all surrounding it
         self.neighbour_graph = create_ng_from_dict(self.ng_dict_3x3)

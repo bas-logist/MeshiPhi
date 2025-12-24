@@ -1,293 +1,286 @@
-
 import unittest
+import pytest
 import shapely
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from meshiphi.mesh_generation.boundary import Boundary
-class TestBoundary (unittest.TestCase):
-    def setUp(self):
-            # Set up boundaries that are interesting test cases
-            # Note that these aren't used in all the tests
-            self.temporal_boundary     = Boundary([ 10,  20], [ 30,  40], ['1970-01-01','2021-12-31'])
-            self.arbitrary_boundary    = Boundary([ 10,  20], [ 30,  40])
-            self.meridian_boundary     = Boundary([-50, -40], [-10,  10])
-            self.antimeridian_boundary = Boundary([-50, -40], [170,-170])
-            self.equatorial_boundary   = Boundary([-10,  10], [ 30,  40])
 
-    def test_load_from_json (self):
-        # Create a dict in same format as expected JSON inputs
-        # Dict/JSON using same bounds as self.arbitrary_boundary
-        boundary_config = {
-            "region": {
-            "lat_min": 10,
-            "lat_max": 20,
-            "long_min": 30,
-            "long_max": 40,
-            "start_time": "1970-01-01",
-            "end_time": "2021-12-31"
-            }
+
+class TestBoundary(unittest.TestCase):
+    """Tests for Boundary class"""
+    
+    def setUp(self):
+        """Set up boundaries that are interesting test cases"""
+        self.temporal_boundary = Boundary([10, 20], [30, 40], ['1970-01-01', '2021-12-31'])
+        self.arbitrary_boundary = Boundary([10, 20], [30, 40])
+        self.meridian_boundary = Boundary([-50, -40], [-10, 10])
+        self.antimeridian_boundary = Boundary([-50, -40], [170, -170])
+        self.equatorial_boundary = Boundary([-10, 10], [30, 40])
+
+        # Mapping for parametric tests
+        self.boundaries = {
+            'arbitrary': self.arbitrary_boundary,
+            'meridian': self.meridian_boundary,
+            'antimeridian': self.antimeridian_boundary,
+            'equatorial': self.equatorial_boundary,
+            'temporal': self.temporal_boundary
         }
 
+    def test_load_from_json(self):
+        """Test loading boundary from JSON config"""
+        boundary_config = {
+            "region": {
+                "lat_min": 10,
+                "lat_max": 20,
+                "long_min": 30,
+                "long_max": 40,
+                "start_time": "1970-01-01",
+                "end_time": "2021-12-31"
+            }
+        }
         boundary = Boundary.from_json(boundary_config)
         self.assertEqual(boundary, self.arbitrary_boundary)
 
     def test_from_poly_string(self):
-        arbitrary_poly_string = "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"
-        self.assertEqual(self.arbitrary_boundary, 
-                        Boundary.from_poly_string(arbitrary_poly_string))
+        """Test creating boundary from polygon strings"""
+        test_cases = [
+            (self.arbitrary_boundary, "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"),
+            (self.meridian_boundary, "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"),
+            (self.antimeridian_boundary, "MULTIPOLYGON (((170 -50, 170 -40, 180 -40, 180 -50, 170 -50)), ((-180 -50, -180 -40, -170 -40, -170 -50, -180 -50)))"),
+            (self.equatorial_boundary, "POLYGON ((30 -10, 30 10, 40 10, 40 -10, 30 -10))"),
+        ]
         
-        meridian_poly_string = "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"
-        self.assertEqual(self.meridian_boundary, 
-                        Boundary.from_poly_string(meridian_poly_string))
+        for expected_boundary, poly_string in test_cases:
+            with self.subTest(poly_string=poly_string):
+                self.assertEqual(expected_boundary, Boundary.from_poly_string(poly_string))
+
+    def test_parse_datetime_relative(self):
+        """Test parsing relative datetime strings"""
+        date_format = '%Y-%m-%d'
         
-        antimeridian_poly_string = "MULTIPOLYGON (((170 -50, 170 -40, 180 -40, 180 -50, 170 -50)), ((-180 -50, -180 -40, -170 -40, -170 -50, -180 -50)))"
-        self.assertEqual(self.antimeridian_boundary, 
-                        Boundary.from_poly_string(antimeridian_poly_string))
+        test_cases = [
+            ('TODAY', 0),
+            ('TODAY - 5', -5),
+            ('TODAY + 5', 5)
+        ]
         
-        equatorial_poly_string = "POLYGON ((30 -10, 30 10, 40 10, 40 -10, 30 -10))"
-        self.assertEqual(self.equatorial_boundary, 
-                        Boundary.from_poly_string(equatorial_poly_string))
+        for date_string, day_offset in test_cases:
+            with self.subTest(date_string=date_string):
+                expected_datetime = datetime.today() + timedelta(days=day_offset)
+                expected_string = expected_datetime.strftime(date_format)
+                self.assertEqual(Boundary.parse_datetime(date_string), expected_string)
 
-    def test_parse_datetime(self):
+    def test_parse_datetime_absolute(self):
+        """Test parsing absolute datetime strings"""
+        test_datestring = '2000-01-01'
+        self.assertEqual(Boundary.parse_datetime(test_datestring), '2000-01-01')
 
-        desired_date_format = '%Y-%m-%d'
+    def test_parse_datetime_malformed(self):
+        """Test that malformed dates raise ValueError"""
+        malformed_dates = ['20000101', '01-01-2000', 'Jan 01 2000', '1st Jan 2000']
+        
+        for malformed_date in malformed_dates:
+            with self.subTest(malformed_date=malformed_date):
+                self.assertRaises(ValueError, Boundary.parse_datetime, malformed_date)
 
-        test_current_datestring  = 'TODAY'
-        soln_current_datetime   = datetime.today()
-        soln_current_datestring = soln_current_datetime.strftime(desired_date_format)
-        self.assertEqual(Boundary.parse_datetime(test_current_datestring),
-                         soln_current_datestring)
-
-        test_past_datestring = 'TODAY - 5'
-        soln_past_datetime   = datetime.today() - timedelta(days = 5)
-        soln_past_datestring = soln_past_datetime.strftime(desired_date_format)
-        self.assertEqual(Boundary.parse_datetime(test_past_datestring),
-                         soln_past_datestring)
-
-        test_future_datestring = 'TODAY + 5'
-        soln_future_datetime   = datetime.today() + timedelta(days = 5)
-        soln_future_datestring = soln_future_datetime.strftime(desired_date_format)
-        self.assertEqual(Boundary.parse_datetime(test_future_datestring),
-                         soln_future_datestring)
-
-        test_absolute_datestring = '2000-01-01'
-        soln_absolute_datestring = '2000-01-01'
-        self.assertEqual(Boundary.parse_datetime(test_absolute_datestring),
-                         soln_absolute_datestring)
-
-        malformed_datestring_1 = '20000101'
-        malformed_datestring_2 = '01-01-2000'
-        malformed_datestring_3 = 'Jan 01 2000'
-        malformed_datestring_4 = '1st Jan 2000'
-
-        self.assertRaises(ValueError, 
-                          Boundary.parse_datetime, 
-                          malformed_datestring_1)
-        self.assertRaises(ValueError, 
-                          Boundary.parse_datetime, 
-                          malformed_datestring_2)
-        self.assertRaises(ValueError, 
-                          Boundary.parse_datetime, 
-                          malformed_datestring_3)
-        self.assertRaises(ValueError, 
-                          Boundary.parse_datetime, 
-                          malformed_datestring_4)
-
-    def test_validate_bounds (self):
-        # Set up constants for later legibility
-        valid_lat_range  = [10, 20]
+    def test_validate_bounds(self):
+        """Test that invalid bounds raise ValueError"""
+        valid_lat_range = [10, 20]
         valid_long_range = [10, 20]
         valid_time_range = ['2000-01-01', '2000-12-31']
 
-        invalid_lat_range  = [20, 10]
-        invalid_long_range = [-190, 190]
-        invalid_time_range = ['2000-12-31', '2000-01-01']
+        invalid_cases = [
+            ([20, 10], valid_long_range, valid_time_range, "invalid_lat"),
+            (valid_lat_range, [-190, 190], valid_time_range, "invalid_long"),
+            (valid_lat_range, valid_long_range, ['2000-12-31', '2000-01-01'], "invalid_time"),
+            ([], valid_long_range, valid_time_range, "empty_lat"),
+            (valid_lat_range, [], valid_time_range, "empty_long"),
+        ]
+        
+        for lat_range, long_range, time_range, description in invalid_cases:
+            with self.subTest(case=description):
+                self.assertRaises(ValueError, Boundary, lat_range, long_range, time_range)
 
-        empty_range = []
+    def test_get_bounds(self):
+        """Test getting boundary coordinates"""
+        test_cases = [
+            ('arbitrary', [[30.0, 10.0], [30.0, 20.0], [40.0, 20.0], [40.0, 10.0], [30.0, 10.0]]),
+            ('meridian', [[-10.0, -50.0], [-10.0, -40.0], [10.0, -40.0], [10.0, -50.0], [-10.0, -50.0]]),
+            ('antimeridian', [[170.0, -50.0], [170.0, -40.0], [-170.0, -40.0], [-170.0, -50.0], [170.0, -50.0]]),
+            ('equatorial', [[30.0, -10.0], [30.0, 10.0], [40.0, 10.0], [40.0, -10.0], [30.0, -10.0]]),
+        ]
+        
+        for boundary_name, expected_bounds in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].get_bounds(), expected_bounds)
 
-        self.assertRaises(ValueError, Boundary , invalid_lat_range,   valid_long_range,   valid_time_range)
-        self.assertRaises(ValueError, Boundary ,   valid_lat_range, invalid_long_range,   valid_time_range)
-        self.assertRaises(ValueError, Boundary ,   valid_lat_range,   valid_long_range, invalid_time_range)
+    def test_getcx(self):
+        """Test getting center x coordinate"""
+        test_cases = [('arbitrary', 35), ('meridian', 0), ('antimeridian', 180), ('equatorial', 35)]
+        
+        for boundary_name, expected_cx in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].getcx(), expected_cx)
 
-        self.assertRaises(ValueError, Boundary ,       empty_range,   valid_long_range,   valid_time_range)
-        self.assertRaises(ValueError, Boundary ,   valid_lat_range,        empty_range,   valid_time_range)
-        # Empty time_range is valid, so won't raise an error
-
-
-    def test_get_bounds (self):
-        arbitrary_bounds = [[30.0, 10.0], [30.0, 20.0], [40.0, 20.0], [40.0, 10.0], [30.0, 10.0]]
-        self.assertEqual(arbitrary_bounds, self.arbitrary_boundary.get_bounds())
-
-        meridian_bounds = [[-10.0, -50.0], [-10.0, -40.0], [10.0, -40.0], [10.0, -50.0], [-10.0, -50.0]]
-        self.assertEqual(meridian_bounds, self.meridian_boundary.get_bounds())
-
-        antimeridian_bounds = [[170.0, -50.0], [170.0, -40.0], [-170.0, -40.0], [-170.0, -50.0], [170.0, -50.0]]
-        self.assertEqual(antimeridian_bounds, self.antimeridian_boundary.get_bounds())
-
-        equatorial_bounds = [[30.0, -10.0], [30.0, 10.0], [40.0, 10.0], [40.0, -10.0], [30.0, -10.0]]
-        self.assertEqual(equatorial_bounds, self.equatorial_boundary.get_bounds())
-
-
-    def test_getcx (self):
-        self.assertEqual( 35, self.arbitrary_boundary.getcx())
-        self.assertEqual(  0, self.meridian_boundary.getcx())
-        self.assertEqual(180, self.antimeridian_boundary.getcx())
-        self.assertEqual( 35, self.equatorial_boundary.getcx())
-
-    def test_getcy (self):
-        self.assertEqual( 15, self.arbitrary_boundary.getcy())
-        self.assertEqual(-45, self.meridian_boundary.getcy())
-        self.assertEqual(-45, self.antimeridian_boundary.getcy())
-        self.assertEqual(  0, self.equatorial_boundary.getcy())
+    def test_getcy(self):
+        """Test getting center y coordinate"""
+        test_cases = [('arbitrary', 15), ('meridian', -45), ('antimeridian', -45), ('equatorial', 0)]
+        
+        for boundary_name, expected_cy in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].getcy(), expected_cy)
 
     def test_get_height(self):
-        self.assertEqual(10, self.arbitrary_boundary.get_height())
-        self.assertEqual(10, self.meridian_boundary.get_height())
-        self.assertEqual(10, self.antimeridian_boundary.get_height())
-        self.assertEqual(20, self.equatorial_boundary.get_height())
+        """Test getting boundary height"""
+        test_cases = [('arbitrary', 10), ('meridian', 10), ('antimeridian', 10), ('equatorial', 20)]
+        
+        for boundary_name, expected_height in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].get_height(), expected_height)
 
-    def test_get_width (self):
-        self.assertEqual(10, self.arbitrary_boundary.get_width())
-        self.assertEqual(20, self.meridian_boundary.get_width())
-        self.assertEqual(20, self.antimeridian_boundary.get_width())
-        self.assertEqual(10, self.equatorial_boundary.get_width())
+    def test_get_width(self):
+        """Test getting boundary width"""
+        test_cases = [('arbitrary', 10), ('meridian', 20), ('antimeridian', 20), ('equatorial', 10)]
+        
+        for boundary_name, expected_width in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].get_width(), expected_width)
 
     def test_get_time_range(self):
-        self.assertEqual(['1970-01-01','2021-12-31'], 
-                        self.temporal_boundary.get_time_range())
+        """Test getting time range"""
+        self.assertEqual(self.temporal_boundary.get_time_range(), ['1970-01-01', '2021-12-31'])
 
     def test_getdcx(self):
-        self.assertEqual( 5, self.arbitrary_boundary.getdcx())
-        self.assertEqual(10, self.meridian_boundary.getdcx())
-        self.assertEqual(10, self.antimeridian_boundary.getdcx())
-        self.assertEqual( 5, self.equatorial_boundary.getdcx())
+        """Test getting half-width"""
+        test_cases = [('arbitrary', 5), ('meridian', 10), ('antimeridian', 10), ('equatorial', 5)]
+        
+        for boundary_name, expected_dcx in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].getdcx(), expected_dcx)
 
     def test_getdcy(self):
-        self.assertEqual( 5, self.arbitrary_boundary.getdcy())
-        self.assertEqual( 5, self.meridian_boundary.getdcy())
-        self.assertEqual( 5, self.antimeridian_boundary.getdcy())
-        self.assertEqual(10, self.equatorial_boundary.getdcy())
+        """Test getting half-height"""
+        test_cases = [('arbitrary', 5), ('meridian', 5), ('antimeridian', 5), ('equatorial', 10)]
+        
+        for boundary_name, expected_dcy in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].getdcy(), expected_dcy)
 
     def test_get_lat_min(self):
-        self.assertEqual( 10, self.arbitrary_boundary.get_lat_min())
-        self.assertEqual(-50, self.meridian_boundary.get_lat_min())
-        self.assertEqual(-50, self.antimeridian_boundary.get_lat_min())
-        self.assertEqual(-10, self.equatorial_boundary.get_lat_min())
+        """Test getting minimum latitude"""
+        test_cases = [('arbitrary', 10), ('meridian', -50), ('antimeridian', -50), ('equatorial', -10)]
+        
+        for boundary_name, expected_min in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].get_lat_min(), expected_min)
 
     def test_get_lat_max(self):
-        self.assertEqual( 20, self.arbitrary_boundary.get_lat_max())
-        self.assertEqual(-40, self.meridian_boundary.get_lat_max())
-        self.assertEqual(-40, self.antimeridian_boundary.get_lat_max())
-        self.assertEqual( 10, self.equatorial_boundary.get_lat_max())
+        """Test getting maximum latitude"""
+        test_cases = [('arbitrary', 20), ('meridian', -40), ('antimeridian', -40), ('equatorial', 10)]
+        
+        for boundary_name, expected_max in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].get_lat_max(), expected_max)
 
     def test_get_long_min(self):
-        self.assertEqual( 30, self.arbitrary_boundary.get_long_min())
-        self.assertEqual(-10, self.meridian_boundary.get_long_min())
-        self.assertEqual(170, self.antimeridian_boundary.get_long_min())
-        self.assertEqual( 30, self.equatorial_boundary.get_long_min())
+        """Test getting minimum longitude"""
+        test_cases = [('arbitrary', 30), ('meridian', -10), ('antimeridian', 170), ('equatorial', 30)]
+        
+        for boundary_name, expected_min in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].get_long_min(), expected_min)
 
     def test_get_long_max(self):
-        self.assertEqual(  40, self.arbitrary_boundary.get_long_max())
-        self.assertEqual(  10, self.meridian_boundary.get_long_max())
-        self.assertEqual(-170, self.antimeridian_boundary.get_long_max())
-        self.assertEqual(  40, self.equatorial_boundary.get_long_max())
+        """Test getting maximum longitude"""
+        test_cases = [('arbitrary', 40), ('meridian', 10), ('antimeridian', -170), ('equatorial', 40)]
+        
+        for boundary_name, expected_max in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].get_long_max(), expected_max)
 
     def test_get_time_min(self):
-        self.assertEqual('1970-01-01', self.temporal_boundary.get_time_min())
+        """Test getting minimum time"""
+        self.assertEqual(self.temporal_boundary.get_time_min(), '1970-01-01')
 
     def test_get_time_max(self):
-        self.assertEqual('2021-12-31', self.temporal_boundary.get_time_max())
+        """Test getting maximum time"""
+        self.assertEqual(self.temporal_boundary.get_time_max(), '2021-12-31')
 
     def test_calc_size(self):
-        # Calculate accurately to 5 decimal places
-        self.assertAlmostEqual(1092308.5466932291, self.arbitrary_boundary.calc_size(),    5)
-        self.assertAlmostEqual(1354908.6430361348, self.meridian_boundary.calc_size(),     5)
-        self.assertAlmostEqual(1354908.6430361343, self.antimeridian_boundary.calc_size(), 5)
-        self.assertAlmostEqual(1756355.5062820115, self.equatorial_boundary.calc_size(),   5)
+        """Test calculating boundary size"""
+        test_cases = [
+            ('arbitrary', 1092308.5466932291),
+            ('meridian', 1354908.6430361348),
+            ('antimeridian', 1354908.6430361343),
+            ('equatorial', 1756355.5062820115),
+        ]
+        
+        for boundary_name, expected_size in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertAlmostEqual(self.boundaries[boundary_name].calc_size(), expected_size, 5)
 
     def test_to_polygon(self):
-        arbitrary_polygon = shapely.wkt.loads("POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))")
-        self.assertEqual(self.arbitrary_boundary.to_polygon(), 
-                         arbitrary_polygon)
+        """Test converting boundary to polygon"""
+        test_cases = [
+            ('arbitrary', "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"),
+            ('meridian', "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"),
+            ('antimeridian', "MULTIPOLYGON (((170 -50, 170 -40, 180 -40, 180 -50, 170 -50)), ((-180 -50, -180 -40, -170 -40, -170 -50, -180 -50)))"),
+            ('equatorial', "POLYGON ((30 -10, 30 10, 40 10, 40 -10, 30 -10))"),
+        ]
         
-        meridian_polygon = shapely.wkt.loads("POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))")
-        self.assertEqual(self.meridian_boundary.to_polygon(), 
-                         meridian_polygon)
-        
-        antimeridian_polygon = shapely.wkt.loads("MULTIPOLYGON (((170 -50, 170 -40, 180 -40, 180 -50, 170 -50)), ((-180 -50, -180 -40, -170 -40, -170 -50, -180 -50)))")
-        self.assertEqual(self.antimeridian_boundary.to_polygon(), 
-                         antimeridian_polygon)
-        
-        equatorial_polygon = shapely.wkt.loads("POLYGON ((30 -10, 30 10, 40 10, 40 -10, 30 -10))")
-        self.assertEqual(self.equatorial_boundary.to_polygon(), 
-                         equatorial_polygon)
+        for boundary_name, poly_wkt in test_cases:
+            with self.subTest(boundary=boundary_name):
+                expected_polygon = shapely.wkt.loads(poly_wkt)
+                self.assertEqual(self.boundaries[boundary_name].to_polygon(), expected_polygon)
 
     def test_to_poly_string(self):
-        arbitrary_poly_string = "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"
-        self.assertEqual(self.arbitrary_boundary.to_poly_string(), 
-                         arbitrary_poly_string)
+        """Test converting boundary to polygon string"""
+        test_cases = [
+            ('arbitrary', "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"),
+            ('meridian', "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"),
+            ('antimeridian', "MULTIPOLYGON (((170 -50, 170 -40, 180 -40, 180 -50, 170 -50)), ((-180 -50, -180 -40, -170 -40, -170 -50, -180 -50)))"),
+            ('equatorial', "POLYGON ((30 -10, 30 10, 40 10, 40 -10, 30 -10))"),
+        ]
         
-        meridian_poly_string = "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"
-        self.assertEqual(self.meridian_boundary.to_poly_string(), 
-                         meridian_poly_string)
-        
-        antimeridian_poly_string = "MULTIPOLYGON (((170 -50, 170 -40, 180 -40, 180 -50, 170 -50)), ((-180 -50, -180 -40, -170 -40, -170 -50, -180 -50)))"
-        self.assertEqual(self.antimeridian_boundary.to_poly_string(), 
-                         antimeridian_poly_string)
-        
-        equatorial_poly_string = "POLYGON ((30 -10, 30 10, 40 10, 40 -10, 30 -10))"
-        self.assertEqual(self.equatorial_boundary.to_poly_string(), 
-                         equatorial_poly_string)
+        for boundary_name, expected_poly_string in test_cases:
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].to_poly_string(), expected_poly_string)
 
     def test_split(self):
-
-        temporal_split_boundaries = [
-            Boundary([ 10,  15], [ 30,  35], ['1970-01-01','2021-12-31']),
-            Boundary([ 15,  20], [ 30,  35], ['1970-01-01','2021-12-31']),
-            Boundary([ 10,  15], [ 35,  40], ['1970-01-01','2021-12-31']),
-            Boundary([ 15,  20], [ 35,  40], ['1970-01-01','2021-12-31'])
-        ]
-
-        arbitrary_split_boundaries = [
-            Boundary([ 10,  15], [ 30,  35]),
-            Boundary([ 15,  20], [ 30,  35]),
-            Boundary([ 10,  15], [ 35,  40]),
-            Boundary([ 15,  20], [ 35,  40])
-        ]
-
-        meridian_split_boundaries = [
-            Boundary([-50, -45], [-10,   0]),
-            Boundary([-45, -40], [-10,   0]),
-            Boundary([-50, -45], [  0,  10]),
-            Boundary([-45, -40], [  0,  10])
-        ]
-
-        antimeridian_split_boundaries = [
-            Boundary([-50, -45], [170, 180]),
-            Boundary([-45, -40], [170, 180]),
-            Boundary([-50, -45], [180,-170]),
-            Boundary([-45, -40], [180,-170])
-        ]
-
-        equatorial_split_boundaries = [
-            Boundary([-10,   0], [ 30,  35]),
-            Boundary([  0,  10], [ 30,  35]),
-            Boundary([-10,   0], [ 35,  40]),
-            Boundary([  0,  10], [ 35,  40])
-        ]
-
-        self.assertEqual(temporal_split_boundaries, 
-                         self.temporal_boundary.split())
+        """Test splitting boundary into four sub-boundaries"""
+        test_cases = {
+            'temporal': [
+                Boundary([10, 15], [30, 35], ['1970-01-01', '2021-12-31']),
+                Boundary([15, 20], [30, 35], ['1970-01-01', '2021-12-31']),
+                Boundary([10, 15], [35, 40], ['1970-01-01', '2021-12-31']),
+                Boundary([15, 20], [35, 40], ['1970-01-01', '2021-12-31'])
+            ],
+            'arbitrary': [
+                Boundary([10, 15], [30, 35]),
+                Boundary([15, 20], [30, 35]),
+                Boundary([10, 15], [35, 40]),
+                Boundary([15, 20], [35, 40])
+            ],
+            'meridian': [
+                Boundary([-50, -45], [-10, 0]),
+                Boundary([-45, -40], [-10, 0]),
+                Boundary([-50, -45], [0, 10]),
+                Boundary([-45, -40], [0, 10])
+            ],
+            'antimeridian': [
+                Boundary([-50, -45], [170, 180]),
+                Boundary([-45, -40], [170, 180]),
+                Boundary([-50, -45], [180, -170]),
+                Boundary([-45, -40], [180, -170])
+            ],
+            'equatorial': [
+                Boundary([-10, 0], [30, 35]),
+                Boundary([0, 10], [30, 35]),
+                Boundary([-10, 0], [35, 40]),
+                Boundary([0, 10], [35, 40])
+            ],
+        }
         
-        self.assertEqual(arbitrary_split_boundaries,
-                         self.arbitrary_boundary.split())
-        
-        self.assertEqual(meridian_split_boundaries, 
-                         self.meridian_boundary.split())
-        
-        self.assertEqual(antimeridian_split_boundaries,
-                         self.antimeridian_boundary.split())
-        
-        self.assertEqual(equatorial_split_boundaries,
-                         self.equatorial_boundary.split())
+        for boundary_name, expected_splits in test_cases.items():
+            with self.subTest(boundary=boundary_name):
+                self.assertEqual(self.boundaries[boundary_name].split(), expected_splits)

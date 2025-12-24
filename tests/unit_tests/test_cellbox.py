@@ -1,203 +1,158 @@
 import unittest
 import warnings
 from meshiphi.mesh_generation.metadata import Metadata
-from meshiphi.dataloaders.factory import DataLoaderFactory
 from meshiphi.mesh_generation.cellbox import CellBox
-
 from meshiphi.mesh_generation.boundary import Boundary
+from tests.unit_tests.test_utils import create_cellbox, create_dataloader, create_metadata, compare_cellbox_lists
 
 
-def create_cellbox(bounds, id=0, parent=None, params=None, splitting_conds=None, min_dp=5):
-    """
-    Helper function that simplifies creation of test cases
-
-    Args:
-        bounds (Boundary): Boundary of cellbox
-        id (int, optional): Cellbox ID to initialise. Defaults to 0.
-        parent (CellBox, optional): Cellbox to link as a parent. Defaults to None.
-
-    Returns:
-        CellBox: Cellbox with completed attributes
-    """
-    dataloader = create_dataloader(bounds, params, min_dp=min_dp)
-    metadata = create_metadata(bounds, dataloader, splitting_conds=splitting_conds)
-
-    new_cellbox = CellBox(bounds, id)
-    new_cellbox.data_source = [metadata]
-    new_cellbox.parent = parent
-    
-    return new_cellbox
-
-def create_dataloader(bounds, params=None, min_dp=5):
-    if params is None:
-        params = {
-            'dataloader_name': 'rectangle',
-            'data_name': 'dummy_data',
-            'width': bounds.get_width()/4,
-            'height': bounds.get_height()/4,
-            'centre': (bounds.getcx(), bounds.getcy()),
-            'nx': 15,
-            'ny': 15,
-            "aggregate_type": "MEAN",
-            "value_fill_type": 'parent'
-        }
-    dataloader = DataLoaderFactory().get_dataloader(params['dataloader_name'],
-                                                    bounds,
-                                                    params,
-                                                    min_dp=min_dp)
-    return dataloader
-
-def create_metadata(bounds, dataloader, splitting_conds = None):
-    if splitting_conds is None:
-        splitting_conds = [{
-            'threshold': 0.5,
-            'upper_bound': 0.75,
-            'lower_bound': 0.25
-        }]
-    data_source = Metadata(dataloader,
-                           splitting_conditions=splitting_conds,
-                           value_fill_type='parent',
-                           data_subset=dataloader.trim_datapoints(bounds))
-    return data_source
-
-def compare_cellbox_lists(s, t):
-    t = list(t)   # make a mutable copy
-    try:
-        for elem in s:
-            t.remove(elem)
-    except ValueError:
-        return False
-    return not t
-
-class TestCellBox (unittest.TestCase):
+class TestCellBox(unittest.TestCase):
+    """Tests for CellBox class"""
 
     def setUp(self):
-
+        """Set up test cellboxes"""
         # Cellbox to modify on the fly
         self.dummy_cellbox = create_cellbox(Boundary([10, 20], [30, 40]))
+        
         # Cellboxes to test splitting conditions        
         arbitrary_bounds = Boundary([-10, 10], [-10, 10])
 
         het_splitting_conds = {
-                    'threshold': 0.5,
-                    'upper_bound': 1,
-                    'lower_bound': 0
-                }
+            'threshold': 0.5,
+            'upper_bound': 1,
+            'lower_bound': 0
+        }
         hom_splitting_conds = {
-                    'threshold': 0.5,
-                    'upper_bound': 0.5,
-                    'lower_bound': 0.5
-                }
-        
+            'threshold': 0.5,
+            'upper_bound': 0.5,
+            'lower_bound': 0.5
+        }
         clr_splitting_conds = {
-                    'threshold': 1,
-                    'upper_bound': 1,
-                    'lower_bound': 1
-                }
+            'threshold': 1,
+            'upper_bound': 1,
+            'lower_bound': 1
+        }
         
-        self.het_cellbox = create_cellbox(arbitrary_bounds, 
-                                          splitting_conds=[het_splitting_conds])
-        self.hom_cellbox = create_cellbox(arbitrary_bounds, 
-                                          splitting_conds=[hom_splitting_conds])
-        self.clr_cellbox = create_cellbox(arbitrary_bounds, 
-                                          splitting_conds=[clr_splitting_conds])
-        self.min_cellbox = create_cellbox(arbitrary_bounds, 
-                                          splitting_conds=[het_splitting_conds], 
-                                          min_dp=99999999)
+        self.het_cellbox = create_cellbox(arbitrary_bounds, splitting_conds=[het_splitting_conds])
+        self.hom_cellbox = create_cellbox(arbitrary_bounds, splitting_conds=[hom_splitting_conds])
+        self.clr_cellbox = create_cellbox(arbitrary_bounds, splitting_conds=[clr_splitting_conds])
+        self.min_cellbox = create_cellbox(arbitrary_bounds, splitting_conds=[het_splitting_conds], min_dp=99999999)
 
 
-    def test_set_minimum_datapoints(self):
+
+    def test_getter_setter_minimum_datapoints(self):
+        """Test minimum datapoints getter and setter"""
         self.assertRaises(ValueError, self.dummy_cellbox.set_minimum_datapoints, -1)
         
         self.dummy_cellbox.set_minimum_datapoints(5)
         self.assertEqual(self.dummy_cellbox.minimum_datapoints, 5)
-
-    def test_get_minimum_datapoints(self):
+        
         self.dummy_cellbox.minimum_datapoints = 10
         self.assertEqual(self.dummy_cellbox.get_minimum_datapoints(), 10)
 
-    def test_set_data_source(self):
+    def test_getter_setter_data_source(self):
+        """Test data source getter and setter"""
         arbitrary_bounds = Boundary([-50, -40], [-30, -20])
         arbitrary_params = {
             'dataloader_name': 'gradient',
             'data_name': 'dummy_data',
             'vertcal': True
         }
-        arbitrary_dataloader  = create_dataloader(arbitrary_bounds, arbitrary_params)
+        arbitrary_dataloader = create_dataloader(arbitrary_bounds, arbitrary_params)
         arbitrary_data_source = create_metadata(arbitrary_bounds, arbitrary_dataloader)
         
         self.dummy_cellbox.set_data_source([arbitrary_data_source])
         self.assertEqual(self.dummy_cellbox.data_source, [arbitrary_data_source])
-
-    def test_get_data_source(self):
-        arbitrary_bounds = Boundary([-40, -20], [-20, 0])
-        arbitrary_params = {
+        
+        # Test getter
+        arbitrary_bounds2 = Boundary([-40, -20], [-20, 0])
+        arbitrary_params2 = {
             'dataloader_name': 'gradient',
             'data_name': 'dummy_data',
             'vertcal': False
         }
-        arbitrary_dataloader  = create_dataloader(arbitrary_bounds, arbitrary_params)
-        arbitrary_data_source = create_metadata(arbitrary_bounds, arbitrary_dataloader)
+        arbitrary_dataloader2 = create_dataloader(arbitrary_bounds2, arbitrary_params2)
+        arbitrary_data_source2 = create_metadata(arbitrary_bounds2, arbitrary_dataloader2)
+        
+        self.dummy_cellbox.data_source = arbitrary_data_source2
+        self.assertEqual(self.dummy_cellbox.get_data_source(), arbitrary_data_source2)
 
-        self.dummy_cellbox.data_source = arbitrary_data_source
-        self.assertEqual(self.dummy_cellbox.get_data_source(), arbitrary_data_source)
+    def test_getter_setter_parent(self):
+        """Test parent getter and setter"""
+        test_cases = [
+            Boundary([10, 30], [30, 50]),
+            Boundary([0, 20], [20, 40])
+        ]
+        
+        for bounds in test_cases:
+            with self.subTest(bounds=bounds):
+                arbitrary_cellbox = create_cellbox(bounds)
+                self.dummy_cellbox.set_parent(arbitrary_cellbox)
+                self.assertEqual(self.dummy_cellbox.parent, arbitrary_cellbox)
+                
+                # Test getter
+                self.dummy_cellbox.parent = arbitrary_cellbox
+                self.assertEqual(self.dummy_cellbox.get_parent(), arbitrary_cellbox)
 
-    def test_set_parent(self):
-        arbitrary_cellbox = create_cellbox(Boundary([10, 30], [30, 50]))
-        self.dummy_cellbox.set_parent(arbitrary_cellbox)
-        self.assertEqual(self.dummy_cellbox.parent, arbitrary_cellbox)
-
-    def test_get_parent(self):
-        # Make sure to set bounds values different to test_set_parent() method
-        # to ensure that the value being checked isn't leftover from a previous test
-        arbitrary_cellbox = create_cellbox(Boundary([0, 20], [20, 40]))
-        self.dummy_cellbox.parent = arbitrary_cellbox
-        self.assertEqual(self.dummy_cellbox.get_parent(), arbitrary_cellbox)
-
-    def test_set_split_depth(self):
+    def test_getter_setter_split_depth(self):
+        """Test split depth getter and setter"""
         self.assertRaises(ValueError, self.dummy_cellbox.set_split_depth, -1)
 
         self.dummy_cellbox.set_split_depth(5)
         self.assertEqual(self.dummy_cellbox.split_depth, 5)
-
-    def test_get_split_depth(self):
-        # Make sure to set split_depth values different to test_set_split_depth() method
-        # to ensure that the value being checked isn't leftover from a previous test
+        
         self.dummy_cellbox.split_depth = 3
         self.assertEqual(self.dummy_cellbox.get_split_depth(), 3)
 
-    def test_set_id(self):
+    def test_getter_setter_id(self):
+        """Test ID getter and setter"""
         self.dummy_cellbox.set_id(123)
         self.assertEqual(self.dummy_cellbox.id, 123)
         
-    def test_get_id(self):
         self.dummy_cellbox.id = 321
         self.assertEqual(self.dummy_cellbox.get_id(), 321)
 
-    def test_set_bounds(self):
-        arbitrary_bounds = Boundary([30, 50], [50, 70])
-        self.dummy_cellbox.set_bounds(arbitrary_bounds)
-        self.assertEqual(self.dummy_cellbox.bounds, arbitrary_bounds)
-
-    def test_get_bounds(self):
-        # Make sure to set bounds values different to test_set_bounds() method
-        # to ensure that the value being checked isn't leftover from a previous test
-        arbitrary_bounds = Boundary([20, 40], [40, 60])
-        self.dummy_cellbox.bounds = arbitrary_bounds
-        self.assertEqual(self.dummy_cellbox.get_bounds(), arbitrary_bounds)
+    def test_getter_setter_bounds(self):
+        """Test bounds getter and setter"""
+        test_bounds = [
+            Boundary([30, 50], [50, 70]),
+            Boundary([20, 40], [40, 60])
+        ]
+        
+        for bounds in test_bounds:
+            with self.subTest(bounds=bounds):
+                self.dummy_cellbox.set_bounds(bounds)
+                self.assertEqual(self.dummy_cellbox.bounds, bounds)
+                
+                # Test getter
+                self.dummy_cellbox.bounds = bounds
+                self.assertEqual(self.dummy_cellbox.get_bounds(), bounds)
 
     def test_should_split(self):
-        self.assertTrue(self.het_cellbox.should_split(1))
-        self.assertFalse(self.hom_cellbox.should_split(1))
-        self.assertFalse(self.clr_cellbox.should_split(1))
-        self.assertFalse(self.min_cellbox.should_split(1))
-
+        """Test should_split method"""
+        test_cases = [
+            (self.het_cellbox, True, "heterogeneous"),
+            (self.hom_cellbox, False, "homogeneous"),
+            (self.clr_cellbox, False, "clear"),
+            (self.min_cellbox, False, "minimum_datapoints"),
+        ]
+        
+        for cellbox, expected, description in test_cases:
+            with self.subTest(case=description):
+                self.assertEqual(cellbox.should_split(1), expected)
 
     def test_should_split_breadth_first(self):
-        self.assertTrue(self.het_cellbox.should_split_breadth_first())
-        self.assertFalse(self.hom_cellbox.should_split_breadth_first())
-        self.assertFalse(self.clr_cellbox.should_split_breadth_first())
-        self.assertFalse(self.min_cellbox.should_split_breadth_first())
+        """Test should_split_breadth_first method"""
+        test_cases = [
+            (self.het_cellbox, True, "heterogeneous"),
+            (self.hom_cellbox, False, "homogeneous"),
+            (self.clr_cellbox, False, "clear"),
+            (self.min_cellbox, False, "minimum_datapoints"),
+        ]
+        
+        for cellbox, expected, description in test_cases:
+            with self.subTest(case=description):
+                self.assertEqual(cellbox.should_split_breadth_first(), expected)
 
     def test_split(self):
         parent_cellbox   = create_cellbox(Boundary([-10, 10], [-10, 10]), 

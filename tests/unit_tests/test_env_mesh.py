@@ -11,36 +11,36 @@ from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 
 
 class TestEnvMesh(unittest.TestCase):
+    """Tests for EnvironmentMesh class"""
+    
     def setUp(self):
-        self.config = None
-        self.env_mesh = None
-        # Use Path to construct absolute path from repository root
+        """Set up test environment mesh"""
         test_dir = Path(__file__).parent.parent
-        self.json_file = test_dir / "regression_tests/example_meshes/env_meshes/grf_reprojection.json"
-        with open(self.json_file, "r") as config_file:
+        self.json_file_path = test_dir / "regression_tests/example_meshes/env_meshes/grf_reprojection.json"
+        
+        with open(self.json_file_path, "r") as config_file:
             self.json_file = json.load(config_file)
             self.config = self.json_file['config']['mesh_info']
             self.env_mesh = MeshBuilder(self.config).build_environmental_mesh()
+        
         self.loaded_env_mesh = EnvironmentMesh.load_from_json(self.json_file)
 
     def test_load_from_json(self):
+        """Test loading environment mesh from JSON"""
         self.assertEqual(self.loaded_env_mesh.bounds.get_bounds(), self.env_mesh.bounds.get_bounds())
-
         self.assertEqual(len(self.loaded_env_mesh.agg_cellboxes), len(self.env_mesh.agg_cellboxes))
         self.assertEqual(len(self.loaded_env_mesh.neighbour_graph.get_graph()),
                          len(self.env_mesh.neighbour_graph.get_graph()))
 
     def test_update_agg_cellbox(self):
+        """Test updating aggregated cellbox data"""
         self.loaded_env_mesh.update_cellbox(0, {"x": "5"})
         self.assertEqual(self.loaded_env_mesh.agg_cellboxes[0].get_agg_data()["x"], "5")
 
     def test_to_tif(self):
-        """Test GDAL import and basic tif functionality without full mesh processing"""
-        # Test that GDAL imports work
+        """Test GDAL import and basic tif functionality"""
         try:
             from osgeo import gdal
-        # The reason for doing this is that GDAL is an optional dependency, and only used for
-        # exporting to tif. If GDAL is not installed, we skip this test.
         except ImportError:
             self.skipTest("GDAL not available - install with: conda install -c conda-forge gdal")
         
