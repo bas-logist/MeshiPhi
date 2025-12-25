@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 
+logger = logging.getLogger(__name__)
+
 
 class ShapeDataLoader(ScalarDataLoader):
     

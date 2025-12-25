@@ -21,6 +21,8 @@ import collections.abc
 import math
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
+
 class EnvironmentMesh:
     """
         a class that defines the environmental mesh structure and contains each cellbox aggregate information

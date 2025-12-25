@@ -8,9 +8,6 @@ consistency between old and new mesh versions.
 import pandas as pd
 
 from .utils import (
-    extract_neighbour_graph,
-    extract_cellboxes,
-    extract_common_boundaries,
     round_dataframe_values,
     extract_common_boundaries_for_comparison
 )
@@ -31,8 +28,8 @@ def test_mesh_cellbox_count(mesh_pair):
     mesh_a = mesh_pair["old_mesh"]
     mesh_b = mesh_pair["new_mesh"]
     
-    regression_mesh = extract_cellboxes(mesh_a)
-    new_mesh = extract_cellboxes(mesh_b)
+    regression_mesh = mesh_a['cellboxes']
+    new_mesh = mesh_b['cellboxes']
 
     cellbox_count_a = len(regression_mesh)
     cellbox_count_b = len(new_mesh)
@@ -54,8 +51,8 @@ def test_mesh_cellbox_ids(mesh_pair):
     mesh_a = mesh_pair["old_mesh"]
     mesh_b = mesh_pair["new_mesh"]
     
-    regression_mesh = extract_cellboxes(mesh_a)
-    new_mesh = extract_cellboxes(mesh_b)
+    regression_mesh = mesh_a['cellboxes']
+    new_mesh = mesh_b['cellboxes']
 
     indxed_a = {cellbox['id']: cellbox for cellbox in regression_mesh}
     indxed_b = {cellbox['id']: cellbox for cellbox in new_mesh}
@@ -85,8 +82,8 @@ def test_mesh_cellbox_values(mesh_pair):
     mesh_b = mesh_pair["new_mesh"]
     
     # Retrieve cellboxes from meshes as dataframes
-    df_a = pd.DataFrame(extract_cellboxes(mesh_a)).set_index('geometry')
-    df_b = pd.DataFrame(extract_cellboxes(mesh_b)).set_index('geometry')
+    df_a = pd.DataFrame(mesh_a['cellboxes']).set_index('geometry')
+    df_b = pd.DataFrame(mesh_b['cellboxes']).set_index('geometry')
     
     # Extract only cellboxes with same boundaries, drop ID as it may differ
     common_bounds = extract_common_boundaries_for_comparison(mesh_a, mesh_b)
@@ -121,8 +118,8 @@ def test_mesh_cellbox_attributes(mesh_pair):
     mesh_a = mesh_pair["old_mesh"]
     mesh_b = mesh_pair["new_mesh"]
     
-    regression_mesh = extract_cellboxes(mesh_a)
-    new_mesh = extract_cellboxes(mesh_b)
+    regression_mesh = mesh_a['cellboxes']
+    new_mesh = mesh_b['cellboxes']
 
     regression_mesh_attributes = set(regression_mesh[0].keys())
     new_mesh_attributes = set(new_mesh[0].keys())
@@ -150,8 +147,8 @@ def test_mesh_neighbour_graph_count(mesh_pair):
     mesh_a = mesh_pair["old_mesh"]
     mesh_b = mesh_pair["new_mesh"]
     
-    regression_graph = extract_neighbour_graph(mesh_a)
-    new_graph = extract_neighbour_graph(mesh_b)
+    regression_graph = mesh_a['neighbour_graph']
+    new_graph = mesh_b['neighbour_graph']
 
     regression_graph_count = len(regression_graph.keys())
     new_graph_count = len(new_graph.keys())
@@ -174,8 +171,8 @@ def test_mesh_neighbour_graph_ids(mesh_pair):
     mesh_a = mesh_pair["old_mesh"]
     mesh_b = mesh_pair["new_mesh"]
     
-    regression_graph = extract_neighbour_graph(mesh_a)
-    new_graph = extract_neighbour_graph(mesh_b)
+    regression_graph = mesh_a['neighbour_graph']
+    new_graph = mesh_b['neighbour_graph']
 
     regression_graph_ids = set(regression_graph.keys())
     new_graph_ids = set(new_graph.keys())
@@ -201,8 +198,8 @@ def test_mesh_neighbour_graph_values(mesh_pair):
     mesh_a = mesh_pair["old_mesh"]
     mesh_b = mesh_pair["new_mesh"]
     
-    regression_graph = extract_neighbour_graph(mesh_a)
-    new_graph = extract_neighbour_graph(mesh_b)
+    regression_graph = mesh_a['neighbour_graph']
+    new_graph = mesh_b['neighbour_graph']
 
     mismatch_neighbours = {}
 

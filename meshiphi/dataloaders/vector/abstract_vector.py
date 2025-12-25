@@ -11,6 +11,8 @@ from rasterio.enums import Resampling
 
 from meshiphi.mesh_generation.boundary import Boundary
 
+logger = logging.getLogger(__name__)
+
 
 class VectorDataLoader(DataLoaderInterface):
     '''
