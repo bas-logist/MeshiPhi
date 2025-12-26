@@ -34,7 +34,6 @@ This includes a collection of test files which should be run according to which 
 
 # Checklist
 
-- [ ] My code follows [pep8](https://peps.python.org/pep-0008/) style guidelines.  
 - [ ] I have commented my code, particularly in hard-to-understand areas.  
 - [ ] I have updated the documentation of the codebase where required.  
 - [ ] My changes generate no new warnings.   

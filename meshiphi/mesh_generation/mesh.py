@@ -80,13 +80,10 @@ class Mesh:
     def get_config(self):
         return self.config
 
-    def get_cellboxes(self):
-        return self.cellboxes
-
     def set_cellboxes(self, cellboxes):
         self.cellboxes = cellboxes
 
-    def to_json(self):
+    def get_cellboxes(self):
         """
         returns a list of dictionaries containing information about each cellbox
         in this Mesh.
