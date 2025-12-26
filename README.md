@@ -2,12 +2,13 @@
 
 ![](logo.jpg)
 
-<!-- <a href="https://colab.research.google.com/drive/12D-CN10X7xAcXn_df0zNLHtdiiXxZVkz?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" alt="Colab"> -->
-<a href="https://bas-amop.github.io/MeshiPhi/"><img src="https://img.shields.io/badge/Manual%20-github.io%2FMeshiPhi%2F-red" alt="Manual Page"></a>
-<a href="https://pypi.org/project/meshiphi/"><img src="https://img.shields.io/pypi/v/meshiphi" alt="PyPi"></a>
-<a href="https://github.com/bas-amop/meshiphi/tags"><img src="https://img.shields.io/github/v/tag/bas-amop/MeshiPhi" alt="Release Tag"></a>
-<a href="https://github.com/bas-amop/MeshiPhi/issues"><img src="https://img.shields.io/github/issues/bas-amop/MeshiPhi" alt="Issues"></a>
-<a href="https://github.com/bas-amop/MeshiPhi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/bas-amop/MeshiPhi" alt="License"></a> 
+![Dev Status](https://img.shields.io/badge/Status-Active-green)
+[![Documentation](https://img.shields.io/badge/Manual%20-github.io%2FMeshiPhi%2F-red)](https://bas-amop.github.io/MeshiPhi/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/meshiphi)
+[![PyPi](https://img.shields.io/pypi/v/meshiphi)](https://pypi.org/project/meshiphi/)
+[![Release Tag](https://img.shields.io/github/v/tag/bas-amop/MeshiPhi)](https://github.com/bas-amop/meshiphi/tags)
+[![Issues](https://img.shields.io/github/issues/bas-amop/MeshiPhi)](https://github.com/bas-amop/MeshiPhi/issues)
+[![License](https://img.shields.io/github/license/bas-amop/MeshiPhi)](https://github.com/bas-amop/MeshiPhi/blob/main/LICENSE)
 
 
 
