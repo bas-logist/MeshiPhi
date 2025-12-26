@@ -133,9 +133,13 @@ class DataLoaderFactory:
         else: 
             raise ValueError(f'{name} not in known list of DataLoaders')
 
-        # Assert dataloader will get all required params to work
-        assert all(key in params for key in required_params), \
-            f'Dataloader {name} is missing some parameters! Requires {required_params}. Has {list(params.keys())}'
+        # Check dataloader will get all required params to work
+        missing_params = [key for key in required_params if key not in params]
+        if missing_params:
+            raise KeyError(
+                f'Dataloader {name} is missing required parameters: {missing_params}. '
+                f'Required: {required_params}. Provided: {list(params.keys())}'
+            )
 
         # Create instance of dataloader
         return data_loader(bounds, params)
