@@ -32,6 +32,28 @@ The Meshiφ package has an optional dependency on GDAL, which is required to pro
 
 > NOTE: The installation process may vary slightly dependent on OS. Please consult the documentation for further installation guidance.
 
+## Usage
+
+Meshiφ provides CLI commands. For example, to create a mesh:
+
+```
+create_mesh --config path/to/config.json --output path/to/output.geojson
+```
+
+Example configs are provided in `examples/environment_config/`.
+
+To export a mesh:
+```
+export_mesh --input path/to/meshfile --format geojson --output path/to/output.geojson
+```
+
+For a full list of commands and options, run:
+```
+create_mesh --help
+```
+
+See the [documentation](https://bas-amop.github.io/MeshiPhi/) for more details and advanced usage.
+
 ## Documentation
 Sphinx is used to generate documentation for this project. The dependencies can be installed through pip:
 ```
@@ -64,5 +86,5 @@ This software is licensed under a MIT license, but request users cite our public
 
 Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne,  J. Alexander Brearley, Derek Long, Michael Meredith, Maria Fox,  (2022), Autonomous Passage Planning for a Polar Vessel, arXiv, https://arxiv.org/abs/2209.02389
 
-For more information please see the attached ``LICENSE`` file. 
+For more information please see the attached ``LICENSE`` file.
 
