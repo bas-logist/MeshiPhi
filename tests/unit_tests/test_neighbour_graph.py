@@ -1,5 +1,6 @@
-import pytest
 import copy
+
+import pytest
 
 from meshiphi.mesh_generation.direction import Direction
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph

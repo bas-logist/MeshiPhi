@@ -231,10 +231,11 @@ def test_aggregate():
     assert parent_agg_cb.agg_data['dummy_data'] == pytest.approx(0.25, abs=0.001)
 
     # Create a child, set values to NaN, and test that it inherits parent value 
-    # intead of aggregating to NaN        
+    # instead of aggregating to NaN        
     child_cellbox = parent_cellbox.split(1)[0]
     child_data = child_cellbox.get_data_source()[0].get_data_loader().data.dummy_data
-    nan_data = child_data.where(child_data==float('nan'), other=float('nan'))
+    import math
+    nan_data = child_data.where(child_data==math.nan, other=math.nan)
     child_cellbox.get_data_source()[0].get_data_loader().data['dummy_data'] = nan_data
     child_agg_cb  = child_cellbox.aggregate()
 
@@ -268,7 +269,8 @@ def test_check_vector_data():
                                   parent=vector_parent_cb)
     
     parent_agg_val = {'dummy_data_u': float('3'), 'dummy_data_v': float('1')}
-    child_agg_val = {'dummy_data_u': float('nan'), 'dummy_data_v': float('nan')}
+    import math
+    child_agg_val = {'dummy_data_u': math.nan, 'dummy_data_v': math.nan}
 
     assert vector_parent_cb.check_vector_data(vector_parent_cb.data_source[0],
                                               vector_parent_cb.data_source[0].get_data_loader(),
