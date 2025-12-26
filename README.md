@@ -90,3 +90,11 @@ Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne
 
 For more information please see the attached ``LICENSE`` file.
 
+## How to Cite
+
+If you use Meshiφ in your research, please cite our software and publication:
+
+- See the [CITATION.cff](./CITATION.cff) file for citation metadata.
+
+You can also use the "Cite this repository" button on GitHub for formatted citations.
+
