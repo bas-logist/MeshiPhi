@@ -9,7 +9,8 @@
 [![Release Tag](https://img.shields.io/github/v/tag/bas-amop/MeshiPhi)](https://github.com/bas-amop/meshiphi/tags)
 [![Issues](https://img.shields.io/github/issues/bas-amop/MeshiPhi)](https://github.com/bas-amop/MeshiPhi/issues)
 [![License](https://img.shields.io/github/license/bas-amop/MeshiPhi)](https://github.com/bas-amop/MeshiPhi/blob/main/LICENSE)
-
+[![Test Status](https://github.com/bas-amop/MeshiPhi/actions/workflows/test.yml/badge.svg)](https://github.com/bas-amop/MeshiPhi/actions/workflows/test.yml)
+[![Ruff](https://img.shields.io/badge/code%20style-ruff-0C3A5C?logo=ruff&logoColor=white)](https://github.com/astral-sh/ruff)
 
 
 Introducing Meshiφ, a versatile software package designed for comprehensive earth modeling and navigation planning. Meshiφ works by discretizing the Earth's surface into a non-uniform grid, allocating higher resolution in regions of geographic diversity, and conserving lower resolution in more uniform regions. These mesh objects can be output in standard formats, such as GeoJSON and GeoTIFF, enabling data-visualisation via GIS software such as ArcGIS. The default end products are designed to work with <a href="https://github.com/bas-amop/PolarRoute/">PolarRoute</a>.
