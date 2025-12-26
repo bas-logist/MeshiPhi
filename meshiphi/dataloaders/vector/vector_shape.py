@@ -4,6 +4,8 @@ import logging
 import pandas as pd
 import numpy as np
 
+logger = logging.getLogger(__name__)
+
 
 class VectorShapeDataLoader(VectorDataLoader):
     def add_default_params(self, params):
@@ -95,13 +97,13 @@ class VectorShapeDataLoader(VectorDataLoader):
         Args:
             bounds (Boundary): Limits of lat/long to generate within
         """
-        logging.info("\tSetting up boundary of dataset")
+        logger.info("\tSetting up boundary of dataset")
         # Generate rows
         self.lat = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny)
         # Generate cols
         self.long = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
-        logging.info("\tCreating gradient of values")
+        logger.info("\tCreating gradient of values")
         # Create 1D gradient
         if self.vertical:
             gradient = np.linspace(0, 1, self.ny)
@@ -109,7 +111,7 @@ class VectorShapeDataLoader(VectorDataLoader):
             gradient = np.linspace(0, 1, self.nx)
 
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data_u", "dummy_data_v"])
-        logging.info("- Generating vector dataset")
+        logger.info("- Generating vector dataset")
         # For each combination of lat/long
         for i in range(self.ny):
             for j in range(self.nx):
@@ -156,7 +158,7 @@ class VectorShapeDataLoader(VectorDataLoader):
         Args:
             bounds (Boundary): Limits of lat/long to generate within
         """
-        logging.info("\tSetting up boundary of dataset")
+        logger.info("\tSetting up boundary of dataset")
         # Generate rows
         self.lat = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny)
         # Generate cols
@@ -170,14 +172,14 @@ class VectorShapeDataLoader(VectorDataLoader):
         y = np.vstack(np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny))
         x = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
-        logging.info("\tCreating mask of circle")
+        logger.info("\tCreating mask of circle")
         # Create a 2D-array with distance from defined centre
         dist_from_centre = np.sqrt((x - c_x) ** 2 + (y - c_y) ** 2)
         # Turn this into a mask of values within radius
         mask = dist_from_centre <= self.radius
         # Set up empty dataframe to populate with dummy data
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data_u", "dummy_data_v"])
-        logging.info("\tGenerating vector dataset")
+        logger.info("\tGenerating vector dataset")
         # For each combination of lat/long
         for i in range(self.ny):
             for j in range(self.nx):
@@ -214,7 +216,7 @@ class VectorShapeDataLoader(VectorDataLoader):
         Args:
             bounds (Boundary): Limits of lat/long to generate within
         """
-        logging.info("\tSetting up boundary of dataset")
+        logger.info("\tSetting up boundary of dataset")
         # Generate rows
         self.lat = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny)
         # Generate cols
@@ -228,7 +230,7 @@ class VectorShapeDataLoader(VectorDataLoader):
         y = np.vstack(np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny))
         x = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
-        logging.info("\tCreating mask of a rectangle")
+        logger.info("\tCreating mask of a rectangle")
         # Create a 2D-array with distance along cartesian axes from defined centre
         x_dist_from_centre = np.abs(x - c_x)
         y_dist_from_centre = np.abs(y - c_y)
@@ -238,7 +240,7 @@ class VectorShapeDataLoader(VectorDataLoader):
         )
         # Set up empty dataframe to populate with dummy data
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data_u", "dummy_data_v"])
-        logging.info("\tGenerating vector dataset")
+        logger.info("\tGenerating vector dataset")
         # For each combination of lat/long
         for i in range(self.ny):
             for j in range(self.nx):

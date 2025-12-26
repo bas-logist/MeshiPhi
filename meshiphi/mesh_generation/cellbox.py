@@ -24,6 +24,8 @@ from meshiphi.mesh_generation.metadata import Metadata
 import logging
 from meshiphi.utils import longitude_domain
 
+logger = logging.getLogger(__name__)
+
 
 class CellBox:
     """
@@ -355,7 +357,7 @@ class CellBox:
             # If already and value for {data_name} in cellbox and it's a NaN, overwrite
             if data_name in agg_dict:
                 if np.isnan(agg_dict[data_name]):
-                    logging.warning(
+                    logger.warning(
                         f"\t{data_name} already exists in cellbox! Overwriting only NaN values"
                     )
                     agg_dict.update(agg_value)

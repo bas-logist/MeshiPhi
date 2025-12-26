@@ -18,9 +18,7 @@ Example:
 
 import logging
 import numpy as np
-
 from tqdm import tqdm
-
 from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.direction import Direction
@@ -30,8 +28,9 @@ from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 from meshiphi.mesh_generation.mesh import Mesh
 from meshiphi.dataloaders.factory import DataLoaderFactory
 from meshiphi.config_validation.config_validator import validate_mesh_config
-
 from meshiphi.utils import longitude_distance, longitude_domain
+
+logger = logging.getLogger(__name__)
 
 
 class MeshBuilder:
@@ -77,7 +76,7 @@ class MeshBuilder:
                 "j_grid" (bool): True if the Mesh to be constructed should be of the same format as the original Java CellGrid, to be used for regression testing.\n
 
         """
-        logging.info("Initialising Mesh Builder")
+        logger.info("Initialising Mesh Builder")
         validate_mesh_config(config)
         self.config = config
         bounds = Boundary.from_json(config)
@@ -93,8 +92,8 @@ class MeshBuilder:
 
         self.validate_bounds(bounds, cell_width, cell_height)
 
-        logging.info("Initialising mesh...")
-        logging.info("Initialising cellboxes...")
+        logger.info("Initialising mesh...")
+        logger.info("Initialising cellboxes...")
 
         cellboxes = []
         cellboxes = self.initialize_cellboxes(bounds, cell_width, cell_height)
@@ -109,7 +108,7 @@ class MeshBuilder:
 
         # Initialise the metadata for each cellbox, including subsets of each
         # dataloader's data set
-        logging.info("Initialising cellbox metadata...")
+        logger.info("Initialising cellbox metadata...")
         for cellbox in tqdm(
             cellboxes,
             bar_format="{desc}{n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
@@ -125,7 +124,7 @@ class MeshBuilder:
                 # assign meta data to each cellbox
                 cellbox.set_data_source(updated_meta_data_list)
 
-        logging.info("Initialising neighbour graph...")
+        logger.info("Initialising neighbour graph...")
         self.neighbour_graph = NeighbourGraph(cellboxes, grid_width)
         self.neighbour_graph.set_global_mesh(
             self.check_global_mesh(bounds, cellboxes, int(grid_width))
@@ -162,7 +161,7 @@ class MeshBuilder:
                     loader_name, bounds, data_source["params"], min_datapoints
                 )
 
-                logging.debug("Creating data loader {}".format(data_source["loader"]))
+                logger.debug("Creating data loader {}".format(data_source["loader"]))
                 updated_splitting_cond = []  # create this list to get rid of the data_name in the conditions as it is not handeled by the DataLoader, remove after talking to Harry to address this in the loader
                 if "splitting_conditions" in data_source["params"]:
                     splitting_conds = data_source["params"]["splitting_conditions"]
@@ -201,7 +200,7 @@ class MeshBuilder:
                 Array of metadata objects; one for each data source. Includes
                 data_subsets
         """
-        logging.debug(f"Initilizing data subset for {bounds}")
+        logger.debug(f"Initilizing data subset for {bounds}")
         updated_meta_data_list = []
         # For each set of data within the cellbox
         for source in meta_data_list:
@@ -236,7 +235,7 @@ class MeshBuilder:
             ]["value_fill_types"] in ["parent", "Nan"]:
                 value_fill_type = data_source["params"]["value_fill_types"]
             else:
-                logging.warning(
+                logger.warning(
                     "Invalid value for value_fill_types, setting to the default(parent) instead."
                 )
         return value_fill_type
@@ -300,7 +299,7 @@ class MeshBuilder:
         if bounds is None:
             bounds = Boundary.from_json(self.config)
 
-        logging.debug("Adding dataloader")
+        logger.debug("Adding dataloader")
         dataloader = Dataloader(bounds, params)
         updated_splitting_cond = []
         if "splitting_conditions" in params:
@@ -722,7 +721,7 @@ class MeshBuilder:
             split_depth (int): The maximum split depth reached by any CellBox
                 within this Mesh after splitting.
         """
-        logging.info("Splitting cellboxes...")
+        logger.info("Splitting cellboxes...")
         # loop over the data_sources then cellboxes to implement depth-first splitting. should be simpler and loop over cellboxes only once we switch to breadth-first splitting
         # this impl assumws all the cellboxes have the same data sources. should not be the caase once we switch to breadth-first splitting.
         data_sources = self.mesh.cellboxes[0].get_data_source()
@@ -785,14 +784,14 @@ class MeshBuilder:
         agg_cellboxes = []
 
         agg_cell_count = 0
-        logging.info("Aggregating cellboxes...")
+        logger.info("Aggregating cellboxes...")
         for cellbox in tqdm(
             self.mesh.cellboxes,
             bar_format=" Aggregating cellboxes: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
         ):
             agg_cell_count += 1
             if isinstance(cellbox, CellBox):
-                logging.debug(
+                logger.debug(
                     f"aggregating cellbox ({agg_cell_count}/{len(self.mesh.cellboxes)})"
                 )
                 agg_cellboxes.append(cellbox.aggregate())

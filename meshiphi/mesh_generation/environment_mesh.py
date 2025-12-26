@@ -17,6 +17,8 @@ from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 import collections.abc
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
+
 
 class EnvironmentMesh:
     """
@@ -1366,7 +1368,7 @@ class EnvironmentMesh:
                 data = f.read()
                 format_params = json.loads(data)
             data_name = format_params["data_name"]
-            logging.info("exporting layer : " + str(data_name))
+            logger.info("exporting layer : " + str(data_name))
 
         # Formatting mesh to geoJSON
         mesh_df = pd.DataFrame(mesh_json["cellboxes"])
@@ -1478,7 +1480,7 @@ class EnvironmentMesh:
                     try:
                         value = agg_cellbox.agg_data[data_name]
                     except KeyError:
-                        logging.debug(f"{data_name} not found in cellbox!")
+                        logger.debug(f"{data_name} not found in cellbox!")
                         value = np.nan
 
                     if isinstance(
@@ -1633,7 +1635,7 @@ class EnvironmentMesh:
             self.bounds.get_lat_max(),
         ]
 
-        logging.info("Generating the tif image ...")
+        logger.info("Generating the tif image ...")
         samples = generate_samples()
         # create raster band and populate with sampled data of image_size (sampling_resolution)
         driver = gdal.GetDriverByName("GTiff")
@@ -1659,7 +1661,7 @@ class EnvironmentMesh:
         driver.CreateCopy(path, grid_data, 0)
         transform_proj(path, params, DEFAULT_PROJ)
         set_colour(data, path, params)
-        logging.info(f"Generated GeoTIFF: {path}")
+        logger.info(f"Generated GeoTIFF: {path}")
 
     def cellboxes_to_json(self):
         """
@@ -1719,7 +1721,7 @@ class EnvironmentMesh:
                     - GEOJSON
         """
 
-        logging.info(f"Saving mesh in {format} format to {path}")
+        logger.info(f"Saving mesh in {format} format to {path}")
         if format.upper() == "TIF":
             self.to_tif(format_params, path)
 
@@ -1735,4 +1737,4 @@ class EnvironmentMesh:
             self.to_png(format_params, path)
 
         else:
-            logging.warning(f"Cannot save mesh in a {format} format")
+            logger.warning(f"Cannot save mesh in a {format} format")

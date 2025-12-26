@@ -3,6 +3,8 @@ from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 import logging
 import xarray as xr
 
+logger = logging.getLogger(__name__)
+
 
 class VisualIcedDataLoader(ScalarDataLoader):
     def import_data(self, bounds):
@@ -27,10 +29,10 @@ class VisualIcedDataLoader(ScalarDataLoader):
             elif self.files[0].split(".")[-1] == "nc":
                 visual_ice = self.import_from_nc(visual_ice)
             else:
-                logging.error("File type not supported")
+                logger.error("File type not supported")
                 return None
         else:
-            logging.error(
+            logger.error(
                 "Multiple tiff files not supported. Only single tiff file supported"
             )
             raise ValueError(

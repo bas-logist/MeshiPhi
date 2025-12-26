@@ -16,6 +16,8 @@ from matplotlib.colors import to_rgba
 from meshiphi.mesh_validation.mesh_comparator import MeshComparator
 from meshiphi import REGRESSION_TESTS_BY_FILE, UNIT_TESTS_BY_FILE
 
+logger = logging.getLogger(__name__)
+
 
 class TestAutomater:
     def __init__(
@@ -68,27 +70,27 @@ class TestAutomater:
         )
 
         # Run relevant tests
-        logging.info(self._double_separator)
+        logger.info(self._double_separator)
         if regression:
             self.run_regression_tests(diff_files, save_to=temp_dir, plot=plot)
         if unit:
             self.run_unit_tests(diff_files, save_to=temp_dir)
 
         # Write status for all tests to terminal
-        logging.info(self._double_separator)
+        logger.info(self._double_separator)
         for test_info in self.passes:
-            logging.debug(str(test_info))
+            logger.debug(str(test_info))
         for test_info in self.fails:
-            logging.info(str(test_info))
+            logger.info(str(test_info))
         for test_info in self.errors:
-            logging.info(str(test_info))
+            logger.info(str(test_info))
 
         # Write out stats about each test suite run
-        logging.info(self._double_separator)
+        logger.info(self._double_separator)
         self.summarise_test_stats()
 
         # Save output if requested
-        logging.info(self._single_separator)
+        logger.info(self._single_separator)
         if save:
             output_folder = self._setup_output_folder()
             # Save failing test output to current working directory
@@ -125,11 +127,11 @@ class TestAutomater:
 
         # If there are tests to run
         if relevant_tests:
-            logging.info("Running the following tests:")
+            logger.info("Running the following tests:")
             # Run each test
             for test in relevant_tests:
                 test_file_path = os.path.join(test_dir, test)
-                logging.info(f"\t- {test_file_path}")
+                logger.info(f"\t- {test_file_path}")
 
                 command = ["pytest", test_file_path, "-rA", "--basetemp", save_to]
                 pytest_output = sp.run(command, stdout=sp.PIPE)
@@ -141,7 +143,7 @@ class TestAutomater:
 
         # Otherwise provide a message
         else:
-            logging.info(" --- No relevant tests found --- ")
+            logger.info(" --- No relevant tests found --- ")
 
         # Change back to repo base directory
         os.chdir(self.repo_dir)
@@ -156,7 +158,7 @@ class TestAutomater:
         """
         # Get base directory for regression tests
         reg_test_dir = os.path.join(self.repo_dir, "tests", "regression_tests")
-        logging.info("Attempting regression tests...")
+        logger.info("Attempting regression tests...")
         self._run_tests(
             diff_files, reg_test_dir, REGRESSION_TESTS_BY_FILE, save_to=save_to
         )
@@ -176,9 +178,9 @@ class TestAutomater:
                     self.plot_test(test_output_path, save_to=save_to)
 
                 # Write summary to CLI
-                logging.info(f"Analysing {test_output_file}")
+                logger.info(f"Analysing {test_output_file}")
                 self.summarise_reg_tests(test_output_path)
-                logging.info(self._single_separator)
+                logger.info(self._single_separator)
 
     def run_unit_tests(self, diff_files, save_to=None):
         """
@@ -190,7 +192,7 @@ class TestAutomater:
         """
         # Get base directory for unit tests
         unit_test_dir = os.path.join(self.repo_dir, "tests", "unit_tests")
-        logging.info("Attempting unit tests...")
+        logger.info("Attempting unit tests...")
         self._run_tests(diff_files, unit_test_dir, UNIT_TESTS_BY_FILE, save_to=save_to)
 
     def _setup_output_folder(self):
@@ -205,9 +207,9 @@ class TestAutomater:
         # Remove folder if it exists
         try:
             shutil.rmtree(output_folder)
-            logging.warning(f"Overwriting {output_folder}")
+            logger.warning(f"Overwriting {output_folder}")
         except FileNotFoundError:
-            logging.debug(f"{output_folder} doesn't exist, nothing to remove")
+            logger.debug(f"{output_folder} doesn't exist, nothing to remove")
         # Recreate folder
         os.makedirs(output_folder, exist_ok=True)
 
@@ -312,19 +314,19 @@ class TestAutomater:
         # Sanitise raw list to avoid empty lines
         diff_files = []
         if from_branch:
-            logging.info(
+            logger.info(
                 "Following files different between "
                 + f'"{from_branch}" and "{into_branch}"'
             )
         else:
-            logging.info(
+            logger.info(
                 "Following files different between "
                 + f'current branch and "{into_branch}"'
             )
 
         for filename in raw_filenames:
             if filename != "":
-                logging.info(f"\t- {filename}")
+                logger.info(f"\t- {filename}")
                 diff_files += [filename]
 
         return diff_files
@@ -453,13 +455,13 @@ class TestAutomater:
             else:
                 save_filename = os.path.join(output_folder, basename + ".json")
                 plot_filename = os.path.join(output_folder, basename + ".svg")
-                logging.info(save_filename)
+                logger.info(save_filename)
                 shutil.copyfile(pytest_output_basename + ".json", save_filename)
                 # Try / Except in case plotting not done
                 try:
                     shutil.copyfile(pytest_output_basename + ".svg", plot_filename)
                 except IOError as e:
-                    logging.debug(e)
+                    logger.debug(e)
 
     def plot_test(self, test_output, save_to=None):
         """
@@ -499,7 +501,7 @@ class TestAutomater:
             """
             # Only attempt plotting if there's something to plot
             if df.empty:
-                logging.debug("Nothing to plot, skipping")
+                logger.debug("Nothing to plot, skipping")
                 return ax, None
             # Turn geometry wkt to shapely polygons
             df = df.reset_index()
@@ -600,23 +602,23 @@ class TestAutomater:
             in the old mesh compared to the new mesh
             """
 
-            logging.info(f"Comparing {summary_key}:")
+            logger.info(f"Comparing {summary_key}:")
             # Extract out the relevant dfs
             new_df = comparison["new_mesh"]
             diff_df = comparison[summary_key]
 
             if diff_df.empty:
-                logging.info("\tNo differences found!")
+                logger.info("\tNo differences found!")
             else:
                 # Get length of dfs to get fractional values
                 num_new_cbs = len(new_df.index)
                 num_diff_cbs = len(diff_df.index)
                 # Write to terminal
-                logging.info(
+                logger.info(
                     f"\t{num_diff_cbs}/{num_new_cbs} are different in the "
                     "newly generated mesh"
                 )
-                logging.debug(
+                logger.debug(
                     "\tDifferent cellboxes have the following id's in the "
                     f"new mesh: \n{diff_df['id'].to_list()}"
                 )
@@ -647,7 +649,7 @@ class TestAutomater:
         for test_file, statuses in status_by_file.items():
             num_passes = statuses.count("PASSED")
             num_tests = len(statuses)
-            logging.info(f"{num_passes}/{num_tests} tests passed for {test_file}")
+            logger.info(f"{num_passes}/{num_tests} tests passed for {test_file}")
 
 
 class TestInfo:

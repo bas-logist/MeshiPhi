@@ -6,11 +6,12 @@ import logging
 import time
 import tracemalloc
 import numpy as np
-
 from datetime import datetime, timedelta
 from functools import wraps
 from calendar import monthrange
 from scipy.fftpack import fftshift
+
+logger = logging.getLogger(__name__)
 
 
 def longitude_domain(long):
@@ -261,7 +262,7 @@ def timed_call(func):
         start = time.perf_counter()
         res = func(*args, **kwargs)
         end = time.perf_counter()
-        logging.info(
+        logger.info(
             "Timed call to {} took {:02f} seconds".format(func.__name__, end - start)
         )
         return res

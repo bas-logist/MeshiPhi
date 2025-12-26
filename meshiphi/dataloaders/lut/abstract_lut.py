@@ -8,6 +8,8 @@ import pandas as pd
 from shapely.strtree import STRtree
 from shapely.ops import unary_union
 
+logger = logging.getLogger(__name__)
+
 
 class LutDataLoader(DataLoaderInterface):
     """
@@ -40,7 +42,7 @@ class LutDataLoader(DataLoaderInterface):
         """
         # Translates parameters from config input to desired inputs
         params = self.add_default_params(params)
-        logging.info(f"Initialising {params['dataloader_name']} dataloader")
+        logger.info(f"Initialising {params['dataloader_name']} dataloader")
         # Creates a class attribute for all keys in params
         for key, val in params.items():
             setattr(self, key, val)
@@ -48,17 +50,17 @@ class LutDataLoader(DataLoaderInterface):
         # Read in and manipulate data to standard form
         self.data = self.import_data(bounds)
         if "files" in params:
-            logging.info("\tFiles read:")
+            logger.info("\tFiles read:")
             for file in self.files:
-                logging.info(f"\t\t{file}")
+                logger.info(f"\t\t{file}")
 
         # Get data name from column name if not set in params
         if self.data_name is None:
-            logging.debug("\tSetting self.data_name from column name")
+            logger.debug("\tSetting self.data_name from column name")
             self.data_name = self.get_data_col_name()
         # or if set in params, set col name to data name
         else:
-            logging.debug(f"\tSetting data column name to {self.data_name}")
+            logger.debug(f"\tSetting data column name to {self.data_name}")
             self.data = self.set_data_col_name(self.data_name)
 
         # Verify that all geometries are acceptable inputs
@@ -66,21 +68,21 @@ class LutDataLoader(DataLoaderInterface):
 
         # Calculate fraction of boundary that data covers
         data_coverage = self.calculate_coverage(bounds)
-        logging.info(
+        logger.info(
             "\tMercator data range (roughly) covers "
             + f"{np.round(data_coverage * 100, 0).astype(int)}% "
             + "of initial boundary"
         )
         # If there's 0 datapoints in the initial boundary, raise ValueError
         if data_coverage == 0:
-            logging.error("\tDataloader has no data in initial region!")
+            logger.error("\tDataloader has no data in initial region!")
             raise ValueError(
                 f"Dataloader {params['dataloader_name']}"
                 + " contains no data within initial region!"
             )
         else:
             # Cut dataset down to initial boundary
-            logging.info(
+            logger.info(
                 "\tTrimming data to initial boundary: {min} to {max}".format(
                     min=(bounds.get_lat_min(), bounds.get_long_min()),
                     max=(bounds.get_lat_max(), bounds.get_long_max()),
@@ -251,7 +253,7 @@ class LutDataLoader(DataLoaderInterface):
             ValueError: aggregation type not in list of available methods
         """
         polygons = self.trim_datapoints(bounds, data=data)
-        logging.debug(
+        logger.debug(
             f"\t{len(polygons)} polygons found for attribute "
             + f"'{self.data_name}' within bounds '{bounds}'"
         )
@@ -360,13 +362,13 @@ class LutDataLoader(DataLoaderInterface):
         """
         Reprojection not supported by LookUpTable Dataloader
         """
-        logging.warning("Reprojection not supported by LookUpTable Dataloader")
+        logger.warning("Reprojection not supported by LookUpTable Dataloader")
 
     def downsample(self):
         """
         Downsampling not supported by LookUpTable Dataloader
         """
-        logging.warning("Downsampling not supported by LookUpTable Dataloader")
+        logger.warning("Downsampling not supported by LookUpTable Dataloader")
 
     def get_data_col_name(self):
         """
@@ -383,7 +385,7 @@ class LutDataLoader(DataLoaderInterface):
                 name
         """
 
-        logging.debug(f"\tRetrieving data name from {type(self.data)}")
+        logger.debug(f"\tRetrieving data name from {type(self.data)}")
 
         unique_cols = list(set(self.data.columns) - set(["time", "geometry"]))
 
@@ -407,8 +409,8 @@ class LutDataLoader(DataLoaderInterface):
 
         old_name = self.get_data_col_name()
         if old_name != new_name:
-            logging.info(f"\tChanging data name from {old_name} to {new_name}")
+            logger.info(f"\tChanging data name from {old_name} to {new_name}")
             return self.data.rename({old_name: new_name})
         else:
-            logging.info(f"\tData is already labelled '{new_name}'")
+            logger.info(f"\tData is already labelled '{new_name}'")
             return self.data

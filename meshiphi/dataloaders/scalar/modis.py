@@ -3,6 +3,8 @@ from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 import logging
 import xarray as xr
 
+logger = logging.getLogger(__name__)
+
 
 class MODISDataLoader(ScalarDataLoader):
     def import_data(self, bounds):
@@ -18,7 +20,7 @@ class MODISDataLoader(ScalarDataLoader):
                 MODIS dataset within limits of bounds.
                 Dataset has coordinates 'lat', 'long', and variable 'SIC'
         """
-        logging.info(f"- Opening file {self.file}")
+        logger.info(f"- Opening file {self.file}")
         # Open Dataset
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
