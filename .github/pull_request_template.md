@@ -12,7 +12,7 @@ Version Number: <!--- Include version number of MeshiPhi the PR will be included
 
 # Checklist
 
-- [ ] My code follows [pep8](https://peps.python.org/pep-0008/) style guidelines.  
+- [ ] I have commented my code, particularly in hard-to-understand areas.  
 - [ ] I have updated the documentation of the codebase where required.  
 - [ ] My PR has been made to the `2.2.x` branch (**DO NOT SUBMIT A PR TO MAIN**)  
 

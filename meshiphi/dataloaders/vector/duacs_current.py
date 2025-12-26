@@ -1,11 +1,11 @@
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
-import logging
 
 import xarray as xr
 
 from datetime import datetime
 from os.path import basename
+
 
 class DuacsCurrentDataLoader(VectorDataLoader):
     def import_data(self, bounds):
@@ -22,26 +22,32 @@ class DuacsCurrentDataLoader(VectorDataLoader):
                 Near real-time current dataset within limits of bounds.
                 Dataset has coordinates 'lat', 'long', and variable 'uC', 'vC'
         """
-        time_range = [datetime.strptime(time_str, "%Y-%m-%d") 
-                      for time_str in bounds.get_time_range()]
+        time_range = [
+            datetime.strptime(time_str, "%Y-%m-%d")
+            for time_str in bounds.get_time_range()
+        ]
         # Reduce files to those within date range
-        self.files = [file for file in self.files 
-                      if time_range[0] \
-                      <= datetime.strptime(basename(file)[10:-3], "%Y-%m-%d") \
-                      <= time_range[1]]
-        
+        self.files = [
+            file
+            for file in self.files
+            if time_range[0]
+            <= datetime.strptime(basename(file)[10:-3], "%Y-%m-%d")
+            <= time_range[1]
+        ]
+
         # Open Dataset
-        if len(self.files) == 1:    data = xr.open_dataset(self.files[0])
-        else:                       data = xr.open_mfdataset(self.files).compute()
+        if len(self.files) == 1:
+            data = xr.open_dataset(self.files[0])
+        else:
+            data = xr.open_mfdataset(self.files).compute()
         # Change column names
-        data = data.rename({'latitude': 'lat',
-                            'longitude': 'long',
-                            'ugos': 'uC',
-                            'vgos': 'vC'})
+        data = data.rename(
+            {"latitude": "lat", "longitude": "long", "ugos": "uC", "vgos": "vC"}
+        )
 
         # Drop unnecessary variable, if present
-        if 'crs' in data.keys():
-            data = data.drop_vars('crs')
+        if "crs" in data.keys():
+            data = data.drop_vars("crs")
 
         # Trim to initial datapoints
         data = self.trim_datapoints(bounds, data=data)

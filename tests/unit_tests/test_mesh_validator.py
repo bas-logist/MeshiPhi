@@ -1,6 +1,7 @@
 """
 MeshValidator class tests.
 """
+
 import pytest
 from meshiphi.mesh_validation.sampler import Sampler
 from meshiphi.mesh_validation.mesh_validator import MeshValidator
@@ -19,7 +20,7 @@ def test_sampler():
     sampler = Sampler(2, 20)
     ranges = [[10, 20], [100, 200]]
     mapped_samples = sampler.generate_samples(ranges)
-    
+
     for sample in mapped_samples:
         assert sample[0] <= ranges[0][1]
         assert sample[0] >= ranges[0][0]

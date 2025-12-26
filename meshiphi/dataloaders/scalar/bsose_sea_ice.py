@@ -4,6 +4,7 @@ import logging
 
 import xarray as xr
 
+
 class BSOSESeaIceDataLoader(ScalarDataLoader):
     def import_data(self, bounds):
         """
@@ -25,33 +26,35 @@ class BSOSESeaIceDataLoader(ScalarDataLoader):
                 and value not 'fraction' or 'percentage'
         """
         # Open Dataset
-        if len(self.files) == 1:    data = xr.open_dataset(self.files[0])
-        else:                       data = xr.open_mfdataset(self.files)
+        if len(self.files) == 1:
+            data = xr.open_dataset(self.files[0])
+        else:
+            data = xr.open_mfdataset(self.files)
         # Change column names
-        data = data.rename({'SIarea': 'SIC',
-                            'YC': 'lat',
-                            'XC': 'long'})
-        
+        data = data.rename({"SIarea": "SIC", "YC": "lat", "XC": "long"})
+
         # Change domain of dataset from [0:360) to [-180:180)
         data = data.assign_coords(long=((data.long + 180) % 360) - 180)
         # Sort the 'long' axis so that sel() will work
-        data = data.sortby('long')
+        data = data.sortby("long")
         # Trim to initial datapoints
         data = self.trim_datapoints(bounds, data=data)
 
-        if hasattr(self, 'units'):
-            logger.info(f'- Changing units of data to {self.units}')
+        if hasattr(self, "units"):
+            logging.info(f"- Changing units of data to {self.units}")
             # Convert to percentage form if requested in params
-            if self.units == 'percentage':
-                data = data.assign(SIC= data['SIC'] * 100)
-            elif self.units == 'fraction':
-                pass # BSOSE data already in fraction form
+            if self.units == "percentage":
+                data = data.assign(SIC=data["SIC"] * 100)
+            elif self.units == "fraction":
+                pass  # BSOSE data already in fraction form
             else:
-                raise ValueError("Parameter 'units' not understood."
-                                 "Expected 'percentage' or 'fraction',"
-                                f"but received {self.units}")
+                raise ValueError(
+                    "Parameter 'units' not understood."
+                    "Expected 'percentage' or 'fraction',"
+                    f"but received {self.units}"
+                )
         else:
             # Convert to percentage form by default (as expected by the vessel performance models)
-            data = data.assign(SIC=data['SIC'] * 100)
+            data = data.assign(SIC=data["SIC"] * 100)
 
         return data

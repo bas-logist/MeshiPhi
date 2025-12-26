@@ -5,6 +5,7 @@ import xarray as xr
 from datetime import datetime
 from os.path import basename
 
+
 class ERA5MaxWaveHeightDataLoader(ScalarDataLoader):
     def import_data(self, bounds):
         """
@@ -19,28 +20,34 @@ class ERA5MaxWaveHeightDataLoader(ScalarDataLoader):
                 ERA5 wave dataset within limits of bounds.
                 Dataset has coordinates 'lat', 'long', and variable 'hmax'
         """
-        time_range = [datetime.strptime(time_str, "%Y-%m-%d") 
-                      for time_str in bounds.get_time_range()]
+        time_range = [
+            datetime.strptime(time_str, "%Y-%m-%d")
+            for time_str in bounds.get_time_range()
+        ]
         # Reduce files to those within date range
-        self.files = [file for file in self.files 
-                      if time_range[0] \
-                      <= datetime.strptime(basename(file)[10:-3], "%Y-%m-%d") \
-                      <= time_range[1]]
+        self.files = [
+            file
+            for file in self.files
+            if time_range[0]
+            <= datetime.strptime(basename(file)[10:-3], "%Y-%m-%d")
+            <= time_range[1]
+        ]
         # Open Dataset
-        if len(self.files) == 1:    data = xr.open_dataset(self.files[0])
-        else:                       data = xr.open_mfdataset(self.files).compute()
+        if len(self.files) == 1:
+            data = xr.open_dataset(self.files[0])
+        else:
+            data = xr.open_mfdataset(self.files).compute()
         # Change column names
-        data = data.rename({'latitude': 'lat',
-                            'longitude': 'long'})
+        data = data.rename({"latitude": "lat", "longitude": "long"})
         # Change domain of dataset from [0:360) to [-180:180)
         data = data.assign_coords(long=((data.long + 180) % 360) - 180)
         # Sort the 'long' axis so that sel() will work
-        data = data.sortby('long')
+        data = data.sortby("long")
         # Limit to just rnn variables
-        data = data['hmax'].to_dataset()
+        data = data["hmax"].to_dataset()
         # Reverse order of lat as array goes from max to min
         data = data.reindex(lat=data.lat[::-1])
         # Trim to initial datapoints
         data = self.trim_datapoints(bounds, data=data)
-        
+
         return data
