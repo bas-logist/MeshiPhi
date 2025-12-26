@@ -219,7 +219,8 @@ class EnvironmentMesh:
                 mesh2 (EnvironmentMesh): the mesh to be merged with this mesh
         """
 
-        assert self.validate_merge_compatibility(mesh2), "The given mesh is not compatible with merging with this mesh" 
+        if not self.validate_merge_compatibility(mesh2):
+            raise ValueError("The given mesh is not compatible with merging with this mesh")
 
         # append config files
         if "merged" not in self.config.keys():

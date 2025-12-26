@@ -319,13 +319,17 @@ class MeshBuilder:
         
 
     def validate_bounds(self, bounds, cell_width, cell_height):
-        assert (bounds.get_long_max() - bounds.get_long_min()) % 360 % cell_width == 0, \
-            f"""The defined longitude region <{bounds.get_long_min()} :{bounds.get_long_max()}>
-            is not divisable by the initial cell width <{cell_width}>"""
+        if (bounds.get_long_max() - bounds.get_long_min()) % 360 % cell_width != 0:
+            raise ValueError(
+                f"The defined longitude region <{bounds.get_long_min()} :{bounds.get_long_max()}> "
+                f"is not divisable by the initial cell width <{cell_width}>"
+            )
 
-        assert (bounds.get_lat_max() - bounds.get_lat_min()) % cell_height == 0, \
-            f"""The defined longitude region <{bounds.get_lat_min()} :{bounds.get_lat_max()}>
-            is not divisable by the initial cell width <{cell_height}>"""
+        if (bounds.get_lat_max() - bounds.get_lat_min()) % cell_height != 0:
+            raise ValueError(
+                f"The defined latitude region <{bounds.get_lat_min()} :{bounds.get_lat_max()}> "
+                f"is not divisable by the initial cell height <{cell_height}>"
+            )
 
     def check_global_mesh(self, bounds , cellboxes, grid_width):
         """

@@ -29,12 +29,12 @@ class LutCSV(LutDataLoader):
         csv_df = pd.concat(df_list, ignore_index=True)
         
         # Make sure .csv is well formed
-        assert ('geometry' in csv_df.columns), \
-                "'geometry' column required"
-        assert (csv_df.geometry.str.contains('POLYGON').all()), \
-                "Only 'Polygon' or 'MultiPolygon' geometry allowed"
-        assert (len(csv_df.columns) == 2), \
-                "Dataloader only accepts .csv with 2 columns, 'geometry' and {{data_name}}"
+        if 'geometry' not in csv_df.columns:
+            raise KeyError("'geometry' column required in CSV file")
+        if not csv_df.geometry.str.contains('POLYGON').all():
+            raise ValueError("Only 'Polygon' or 'MultiPolygon' geometry allowed")
+        if len(csv_df.columns) != 2:
+            raise ValueError("Dataloader only accepts .csv with 2 columns, 'geometry' and {data_name}")
         
         # Set data name to column in CSV
         self.data_name = list(set(csv_df.columns.values) - set(['geometry']))[0]

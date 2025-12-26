@@ -913,7 +913,8 @@ class VectorDataLoader(DataLoaderInterface):
         # Get existing column names
         old_names = self.get_data_col_name().split(',')
         # Ensure that can do replacement of columns
-        assert len(old_names) == len(new_names)
+        if len(old_names) != len(new_names):
+            raise ValueError(f"Cannot rename columns: old names count ({len(old_names)}) doesn't match new names count ({len(new_names)})")
         # Set up mapping of old names to new names
         name_dict = {old_col: new_names[i] 
                      for i, old_col in enumerate(old_names)}
@@ -938,10 +939,13 @@ class VectorDataLoader(DataLoaderInterface):
                 Original dataset with data variables renamed
         '''
         # Check validity of input
-        assert type(new_names) == list, f"'new_names' must be a list! Instead it is a {type(new_names)}"
-        assert len(new_names) == 2, f"'new_names' must have a length of 2! Instead it has length {len(new_names)}"
+        if not isinstance(new_names, list):
+            raise TypeError(f"'new_names' must be a list! Instead it is a {type(new_names)}")
+        if len(new_names) != 2:
+            raise ValueError(f"'new_names' must have a length of 2! Instead it has length {len(new_names)}")
         str_items = [isinstance(name, str) for name in new_names]
-        assert all(str_items), f"'new_names' must be list of 'str'. Currently {sum(str_items)} / 2 are strings!"
+        if not all(str_items):
+            raise TypeError(f"'new_names' must be list of 'str'. Currently {sum(str_items)} / 2 are strings!")
         new_data_name = ','.join(new_names)
         
         # Set names
