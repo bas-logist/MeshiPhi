@@ -28,7 +28,8 @@ class AggregatedCellBox:
             # Take case where crossing antimeridian
             if shape.geom_type == 'MultiPolygon':
                 shapes = list(shape.geoms)
-                assert (len(shapes) == 2), 'Too many polygons in MultiPolygon boundary!'
+                if len(shapes) != 2:
+                    raise ValueError('Too many polygons in MultiPolygon boundary!')
                 bounds_a = shapes[0].bounds
                 bounds_b = shapes[1].bounds
 

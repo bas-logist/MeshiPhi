@@ -53,11 +53,11 @@ class IceNetDataLoader(ScalarDataLoader):
         max_leadtime = int(ds.leadtime.max())
         
         # Ensure that temporal boundary is possible before extracting
-        assert time_range < timedelta(days=max_leadtime),\
-            f'Time boundary too large! Forecast only runs for max of {max_leadtime} days'
+        if time_range >= timedelta(days=max_leadtime):
+            raise ValueError(f'Time boundary too large! Forecast only runs for max of {max_leadtime} days')
         
-        assert closest_date + timedelta(days=max_leadtime) > max_time,\
-            'Time boundary runs beyond max forecast date!'
+        if closest_date + timedelta(days=max_leadtime) <= max_time:
+            raise ValueError('Time boundary runs beyond max forecast date!')
         
         logging.info(f"- Searching for closest date prior to {bounds.get_time_min()}")
         # For the days in forecast range of IceNet dataset
@@ -76,11 +76,12 @@ class IceNetDataLoader(ScalarDataLoader):
             # If ran through entire dataset with no valid dates
             raise EOFError('No valid start date found in IceNet data!')
         
-        assert (time_range.days < max_leadtime - days_ago),\
-            f'''Not enough leadtime to support date range specified!
-            End ({max_time}) - Start({min_time}) = {time_range.days} days
-            Leadtime ({max_leadtime}) days - Prediction({days_ago}) days ago = {max_leadtime-days_ago} days
-            '''
+        if time_range.days >= max_leadtime - days_ago:
+            raise ValueError(
+                f'Not enough leadtime to support date range specified!\n'
+                f'End ({max_time}) - Start({min_time}) = {time_range.days} days\n'
+                f'Leadtime ({max_leadtime}) days - Prediction({days_ago}) days ago = {max_leadtime-days_ago} days'
+            )
         
         # TODO fix logging bug.
         #logging.info(f"- Found date {datetime.strftime('%Y-%m-%d')}")
