@@ -6,6 +6,7 @@ of the MeshiPhi python package.
 import json
 import os
 import logging
+import pytest
 
 import meshiphi
 
@@ -15,6 +16,9 @@ from . import test_comparisons  # noqa: F401
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
+# Apply markers to all tests in this module
+pytestmark = pytest.mark.slow
+
 
 def setup_module():
     """Log MeshiPhi version at module setup"""
@@ -23,7 +27,10 @@ def setup_module():
 
 def test_record_output(mesh_pair, tmp_path):
     """
-    Store fixtures after generation to avoid recomputing meshes for diagnosis upon failure.
+    Store generated meshes to avoid recomputing for diagnosis upon failure.
+    
+    Saves test fixtures after generation to enable post-failure analysis without
+    regenerating computationally expensive meshes.
 
     Args:
         mesh_pair (dict): Fixture holding generated meshes

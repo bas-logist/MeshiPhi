@@ -49,7 +49,12 @@ def test_update_agg_cellbox(env_mesh_data):
 
 
 def test_to_tif():
-    """Test GDAL import and basic tif functionality"""
+    """
+    Test TIFF export functionality with GDAL.
+    
+    Verifies that environment meshes can be exported to GeoTIFF format
+    and that the resulting files are valid.
+    """
     pytest.importorskip("osgeo.gdal", reason="GDAL not available - install with: conda install -c conda-forge gdal")
     
     # Create a simple test mesh with minimal data

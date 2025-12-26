@@ -3,10 +3,8 @@ MeshBuilder class tests.
 """
 import pytest
 import json
-from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
 from meshiphi.mesh_generation.mesh_builder import MeshBuilder
 from meshiphi.mesh_generation.direction import Direction
-from meshiphi.mesh_generation.boundary import Boundary
 from tests.conftest import UNIT_TESTS_DIR
 
 
@@ -31,7 +29,7 @@ def test_check_global_mesh(mesh_builder):
     """Test global mesh functionality"""
     builder = mesh_builder['builder']
     # grid_width is 72 in this mesh
-    assert builder.neighbour_graph.is_global_mesh() == True
+    assert builder.neighbour_graph.is_global_mesh()
 
 
 @pytest.mark.parametrize("cb1_idx,cb2_idx,expected_dir,description", [

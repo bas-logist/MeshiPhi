@@ -42,6 +42,32 @@ def neighbour_graph(ng_dict_3x3):
     return create_ng_from_dict(ng_dict_3x3)
 
 
+@pytest.fixture
+def cellbox_3x3_grid():
+    """Fixture for standard 3x3 cellbox grid used across multiple tests."""
+    return [
+        CellBox(Boundary([2,3],[0,1]), 1), CellBox(Boundary([2,3],[1,2]), 2), CellBox(Boundary([2,3],[2,3]), 3),
+        CellBox(Boundary([1,2],[0,1]), 4), CellBox(Boundary([1,2],[1,2]), 5), CellBox(Boundary([1,2],[2,3]), 6),
+        CellBox(Boundary([0,1],[0,1]), 7), CellBox(Boundary([0,1],[1,2]), 8), CellBox(Boundary([0,1],[2,3]), 9),
+    ]
+
+
+@pytest.fixture
+def reference_neighbour_graph_3x3():
+    """Fixture for expected 3x3 neighbour graph structure."""
+    return {
+        0: {1: [4], 2: [1], 3: [ ], 4: [ ], -1: [ ], -2: [ ], -3: [ ], -4: [3]}, 
+        1: {1: [5], 2: [2], 3: [ ], 4: [ ], -1: [ ], -2: [0], -3: [3], -4: [4]}, 
+        2: {1: [ ], 2: [ ], 3: [ ], 4: [ ], -1: [ ], -2: [1], -3: [4], -4: [5]}, 
+        3: {1: [7], 2: [4], 3: [1], 4: [0], -1: [ ], -2: [ ], -3: [ ], -4: [6]}, 
+        4: {1: [8], 2: [5], 3: [2], 4: [1], -1: [0], -2: [3], -3: [6], -4: [7]}, 
+        5: {1: [ ], 2: [ ], 3: [ ], 4: [2], -1: [1], -2: [4], -3: [7], -4: [8]}, 
+        6: {1: [ ], 2: [7], 3: [4], 4: [3], -1: [ ], -2: [ ], -3: [ ], -4: [ ]}, 
+        7: {1: [ ], 2: [8], 3: [5], 4: [4], -1: [3], -2: [6], -3: [ ], -4: [ ]}, 
+        8: {1: [ ], 2: [ ], 3: [ ], 4: [5], -1: [4], -2: [7], -3: [ ], -4: [ ]}
+    }
+
+
 def test_from_json(ng_dict_3x3):
     ng = NeighbourGraph.from_json(ng_dict_3x3)
 
@@ -153,15 +179,11 @@ def test_remove_node(ng_dict_3x3):
     assert ng.get_graph() == manually_removed_ng_dict
 
 
-def test_update_neighbours(ng_dict_3x3):
+def test_update_neighbours(ng_dict_3x3, cellbox_3x3_grid):
     # Initialise a new neighbour graph to modify
     ng = create_ng_from_dict(ng_dict_3x3)
     # Initial CB layout that matches ng
-    cbs = [
-        CellBox(Boundary([2,3],[0,1]), 1), CellBox(Boundary([2,3],[1,2]), 2), CellBox(Boundary([2,3],[2,3]), 3),
-        CellBox(Boundary([1,2],[0,1]), 4), CellBox(Boundary([1,2],[1,2]), 5), CellBox(Boundary([1,2],[2,3]), 6),
-        CellBox(Boundary([0,1],[0,1]), 7), CellBox(Boundary([0,1],[1,2]), 8), CellBox(Boundary([0,1],[2,3]), 9),
-    ]
+    cbs = cellbox_3x3_grid
 
     # Creates the cellboxes that the centre cellbox would become when split
     split_cbs = [
@@ -434,63 +456,29 @@ def test_remove_neighbour(ng_dict_3x3):
     assert ng.get_graph() == manually_adjusted_ng
 
 
-def test_initialise_neighbour_graph():
+def test_initialise_neighbour_graph(cellbox_3x3_grid, reference_neighbour_graph_3x3):
     # Initialise a new neighbour graph to modify
     ng = NeighbourGraph()
     # Initial CB layout
-    cbs = [
-        CellBox(Boundary([2,3],[0,1]), 1), CellBox(Boundary([2,3],[1,2]), 2), CellBox(Boundary([2,3],[2,3]), 3),
-        CellBox(Boundary([1,2],[0,1]), 4), CellBox(Boundary([1,2],[1,2]), 5), CellBox(Boundary([1,2],[2,3]), 6),
-        CellBox(Boundary([0,1],[0,1]), 7), CellBox(Boundary([0,1],[1,2]), 8), CellBox(Boundary([0,1],[2,3]), 9),
-    ]
+    cbs = cellbox_3x3_grid
     # Create neighbourgraph based on cb list
     ng.initialise_neighbour_graph(cbs, 3)
 
-    # Manually define what the output should be
-    reference_neighbour_graph = {
-        0: {1: [4], 2: [1], 3: [ ], 4: [ ], -1: [ ], -2: [ ], -3: [ ], -4: [3]}, 
-        1: {1: [5], 2: [2], 3: [ ], 4: [ ], -1: [ ], -2: [0], -3: [3], -4: [4]}, 
-        2: {1: [ ], 2: [ ], 3: [ ], 4: [ ], -1: [ ], -2: [1], -3: [4], -4: [5]}, 
-        3: {1: [7], 2: [4], 3: [1], 4: [0], -1: [ ], -2: [ ], -3: [ ], -4: [6]}, 
-        4: {1: [8], 2: [5], 3: [2], 4: [1], -1: [0], -2: [3], -3: [6], -4: [7]}, 
-        5: {1: [ ], 2: [ ], 3: [ ], 4: [2], -1: [1], -2: [4], -3: [7], -4: [8]}, 
-        6: {1: [ ], 2: [7], 3: [4], 4: [3], -1: [ ], -2: [ ], -3: [ ], -4: [ ]}, 
-        7: {1: [ ], 2: [8], 3: [5], 4: [4], -1: [3], -2: [6], -3: [ ], -4: [ ]}, 
-        8: {1: [ ], 2: [ ], 3: [ ], 4: [5], -1: [4], -2: [7], -3: [ ], -4: [ ]}
-    }
-
-    assert ng.get_graph() == reference_neighbour_graph
+    assert ng.get_graph() == reference_neighbour_graph_3x3
 
 
-def test_initialise_map():
+def test_initialise_map(cellbox_3x3_grid, reference_neighbour_graph_3x3):
     # Initialise a new neighbour graph to modify
     ng = NeighbourGraph()
     # Initial CB layout
-    cbs = [
-        CellBox(Boundary([2,3],[0,1]), 1), CellBox(Boundary([2,3],[1,2]), 2), CellBox(Boundary([2,3],[2,3]), 3),
-        CellBox(Boundary([1,2],[0,1]), 4), CellBox(Boundary([1,2],[1,2]), 5), CellBox(Boundary([1,2],[2,3]), 6),
-        CellBox(Boundary([0,1],[0,1]), 7), CellBox(Boundary([0,1],[1,2]), 8), CellBox(Boundary([0,1],[2,3]), 9),
-    ]
-    
-    # Manually define what the output should be
-    reference_neighbour_graph = {
-        0: {1: [4], 2: [1], 3: [ ], 4: [ ], -1: [ ], -2: [ ], -3: [ ], -4: [3]}, 
-        1: {1: [5], 2: [2], 3: [ ], 4: [ ], -1: [ ], -2: [0], -3: [3], -4: [4]}, 
-        2: {1: [ ], 2: [ ], 3: [ ], 4: [ ], -1: [ ], -2: [1], -3: [4], -4: [5]}, 
-        3: {1: [7], 2: [4], 3: [1], 4: [0], -1: [ ], -2: [ ], -3: [ ], -4: [6]}, 
-        4: {1: [8], 2: [5], 3: [2], 4: [1], -1: [0], -2: [3], -3: [6], -4: [7]}, 
-        5: {1: [ ], 2: [ ], 3: [ ], 4: [2], -1: [1], -2: [4], -3: [7], -4: [8]}, 
-        6: {1: [ ], 2: [7], 3: [4], 4: [3], -1: [ ], -2: [ ], -3: [ ], -4: [ ]}, 
-        7: {1: [ ], 2: [8], 3: [5], 4: [4], -1: [3], -2: [6], -3: [ ], -4: [ ]}, 
-        8: {1: [ ], 2: [ ], 3: [ ], 4: [5], -1: [4], -2: [7], -3: [ ], -4: [ ]}
-    }
+    cbs = cellbox_3x3_grid
 
     # Run through each cellbox and create the neighbour map
     for cb in cbs:
         cb_idx = cbs.index(cb)
         neighbour_map = ng.initialise_map(cb_idx, 3, 9)
 
-        assert neighbour_map == reference_neighbour_graph[cb_idx]
+        assert neighbour_map == reference_neighbour_graph_3x3[cb_idx]
 
 
 def test_set_global_mesh(ng_dict_3x3):

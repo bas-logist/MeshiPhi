@@ -1,5 +1,4 @@
 import pytest
-import warnings
 from meshiphi.mesh_generation.metadata import Metadata
 from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.boundary import Boundary
@@ -7,51 +6,53 @@ from tests.conftest import create_cellbox, create_dataloader, create_metadata
 
 
 @pytest.fixture
-def het_cellbox():
+def standard_test_bounds():
+    """Standard [-10, 10] x [-10, 10] boundary used across multiple tests."""
+    return Boundary([-10, 10], [-10, 10])
+
+
+@pytest.fixture
+def het_cellbox(standard_test_bounds):
     """Cellbox with heterogeneous splitting conditions"""
-    arbitrary_bounds = Boundary([-10, 10], [-10, 10])
     het_splitting_conds = {
         'threshold': 0.5,
         'upper_bound': 1,
         'lower_bound': 0
     }
-    return create_cellbox(arbitrary_bounds, splitting_conds=[het_splitting_conds])
+    return create_cellbox(standard_test_bounds, splitting_conds=[het_splitting_conds])
 
 
 @pytest.fixture
-def hom_cellbox():
+def hom_cellbox(standard_test_bounds):
     """Cellbox with homogeneous splitting conditions"""
-    arbitrary_bounds = Boundary([-10, 10], [-10, 10])
     hom_splitting_conds = {
         'threshold': 0.5,
         'upper_bound': 0.5,
         'lower_bound': 0.5
     }
-    return create_cellbox(arbitrary_bounds, splitting_conds=[hom_splitting_conds])
+    return create_cellbox(standard_test_bounds, splitting_conds=[hom_splitting_conds])
 
 
 @pytest.fixture
-def clr_cellbox():
+def clr_cellbox(standard_test_bounds):
     """Cellbox with clear splitting conditions"""
-    arbitrary_bounds = Boundary([-10, 10], [-10, 10])
     clr_splitting_conds = {
         'threshold': 1,
         'upper_bound': 1,
         'lower_bound': 1
     }
-    return create_cellbox(arbitrary_bounds, splitting_conds=[clr_splitting_conds])
+    return create_cellbox(standard_test_bounds, splitting_conds=[clr_splitting_conds])
 
 
 @pytest.fixture
-def min_cellbox():
+def min_cellbox(standard_test_bounds):
     """Cellbox with minimum datapoints condition"""
-    arbitrary_bounds = Boundary([-10, 10], [-10, 10])
     het_splitting_conds = {
         'threshold': 0.5,
         'upper_bound': 1,
         'lower_bound': 0
     }
-    return create_cellbox(arbitrary_bounds, splitting_conds=[het_splitting_conds], min_dp=99999999)
+    return create_cellbox(standard_test_bounds, splitting_conds=[het_splitting_conds], min_dp=99999999)
 
 
 def test_getter_setter_minimum_datapoints(dummy_cellbox):
@@ -287,8 +288,10 @@ def test_check_vector_data():
 
 
 def test_deallocate_cellbox():
-
-    ### Test code commented in case method is fixed rather than deprecated
+    """Test cellbox deallocation - currently skipped as method doesn't work as intended."""
+    pytest.skip("Method doesn't work as intended, skipping test until fixed")
+    
+    # TODO: Fix deallocate_cellbox method, then uncomment and verify test
     # parent_cellbox   = create_cellbox(Boundary([-10, 10], [-10, 10]), 
     #                                   id=1, 
     #                                   parent=None)
@@ -301,5 +304,3 @@ def test_deallocate_cellbox():
     #     pass
     # else:
     #     pytest.fail(f'Cellbox still exists after running deallocate_cellbox()')
-    
-    warnings.warn("Method doesn't work as intended, avoiding tests for now")

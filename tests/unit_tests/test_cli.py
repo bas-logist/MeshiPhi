@@ -4,9 +4,8 @@ CLI command tests.
 import pytest
 import tempfile
 import sys
-import json
 from unittest.mock import patch
-from meshiphi.cli import get_args, rebuild_mesh_cli, create_mesh_cli, export_mesh_cli, merge_mesh_cli, meshiphi_test_cli
+from meshiphi.cli import rebuild_mesh_cli, create_mesh_cli, merge_mesh_cli
 from meshiphi import __version__ as MESHIPHI_VERSION
 
 # Import helper functions that are now in conftest.py
@@ -93,7 +92,7 @@ def basic_half_mesh_2():
 
 @pytest.fixture
 def temp_files():
-    """Create temporary files for testing"""
+    """Create temporary files for testing."""
     files = {
         'config': tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json'),
         'mesh': tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json'),
@@ -105,22 +104,27 @@ def temp_files():
     
     yield files
     
-    # Cleanup
+    # Cleanup temporary files
+    import os
     for f in files.values():
         try:
             f.close()
-        except:
-            pass
+            if os.path.exists(f.name):
+                os.remove(f.name)
+        except Exception:
+            pass  # Ignore cleanup errors
 
 
 def test_get_args_cli():
-    """Test argparser - placeholder for future implementation"""
-    # TODO:
-    #   - Set up arbitrary arguments to patch into sys.argv
-    #   - Test that argparser correctly ID's these arguments
-    #       - Should have entries for each possible combination of arguments,
-    #         so should be updated whenever CLI is updated
-    pass
+    """Test argparser - placeholder for future implementation.
+    
+    TODO:
+    - Set up arbitrary arguments to patch into sys.argv
+    - Test that argparser correctly identifies these arguments
+    - Should have entries for each possible combination of arguments
+    - Update whenever CLI is updated
+    """
+    pytest.skip("Argparser testing not yet implemented")
 
 
 def test_rebuild_mesh_cli(basic_mesh, temp_files):

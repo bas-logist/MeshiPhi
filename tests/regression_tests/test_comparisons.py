@@ -6,11 +6,15 @@ consistency between old and new mesh versions.
 """
 
 import pandas as pd
+import pytest
 
 from .utils import (
     round_dataframe_values,
     extract_common_boundaries_for_comparison
 )
+
+# Apply markers to all tests in this module
+pytestmark = pytest.mark.slow
 
 
 # Cellbox comparison test functions
@@ -97,7 +101,7 @@ def test_mesh_cellbox_values(mesh_pair):
     # Find differences
     diff = df_a.compare(df_b).rename({'self': 'old', 'other': 'new'})
 
-    assert len(diff) == 0, \
+    assert diff.empty, \
         f'Mismatch between values in common cellboxes:\n{diff.to_string(max_colwidth=10)}'
 
 
@@ -216,6 +220,6 @@ def test_mesh_neighbour_graph_values(mesh_pair):
             if sorted_neighbours_b != sorted_neighbours_a:
                 mismatch_neighbours[node] = sorted_neighbours_b
 
-    assert len(mismatch_neighbours) == 0, \
+    assert not mismatch_neighbours, \
         f"Mismatch in neighbour graph neighbours. {len(mismatch_neighbours.keys())} nodes " \
         f"have changed in the new mesh."

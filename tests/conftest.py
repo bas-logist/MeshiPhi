@@ -1,7 +1,6 @@
 """
 Shared pytest configuration and constants for MeshiPhi tests.
 """
-
 import json
 import os
 import time
@@ -15,6 +14,7 @@ from meshiphi.dataloaders.factory import DataLoaderFactory
 from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
+from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
 
 # Logger for test execution
 LOGGER = logging.getLogger(__name__)
@@ -54,10 +54,7 @@ ALL_TEST_MESHES = (
 )
 
 
-# ============================================================================
-# UNIT TEST HELPER FUNCTIONS
-# ============================================================================
-
+# Unit test helper functions
 def create_cellbox(bounds, id=0, parent=None, params=None, splitting_conds=None, min_dp=5):
     """
     Helper function that simplifies creation of test cases.
@@ -203,10 +200,7 @@ def create_ng_from_dict(ng_dict, global_mesh=False):
     return ng
 
 
-# ============================================================================
-# REGRESSION TEST FIXTURES AND HELPERS
-# ============================================================================
-
+# Regresstion test helper functions
 def calculate_env_mesh(mesh_config):
     """
     Creates a new environmental mesh from the old mesh's config.
@@ -260,10 +254,7 @@ def mesh_pair(request):
     }
 
 
-# ============================================================================
-# UNIT TEST FIXTURES
-# ============================================================================
-
+# Unit test fixtures
 @pytest.fixture
 def arbitrary_boundary():
     """Standard arbitrary boundary for testing."""
@@ -303,7 +294,6 @@ def dummy_cellbox(arbitrary_boundary):
 @pytest.fixture
 def dummy_agg_cellbox():
     """Basic aggregated cellbox for testing."""
-    from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
     arbitrary_agg_data = {'dummy_data': 1}
     return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, '0')
 
@@ -311,7 +301,6 @@ def dummy_agg_cellbox():
 @pytest.fixture
 def arbitrary_agg_cellbox():
     """Arbitrary aggregated cellbox for testing."""
-    from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
     arbitrary_agg_data = {'dummy_data': 1}
     return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, '1')
 
@@ -319,7 +308,6 @@ def arbitrary_agg_cellbox():
 @pytest.fixture
 def equatorial_agg_cellbox():
     """Aggregated cellbox crossing equator."""
-    from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
     arbitrary_agg_data = {'dummy_data': 1}
     return AggregatedCellBox(Boundary([-10, 10], [45, 60]), arbitrary_agg_data, '2')
 
@@ -327,7 +315,6 @@ def equatorial_agg_cellbox():
 @pytest.fixture
 def meridian_agg_cellbox():
     """Aggregated cellbox crossing prime meridian."""
-    from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
     arbitrary_agg_data = {'dummy_data': 1}
     return AggregatedCellBox(Boundary([45, 60], [-10, 10]), arbitrary_agg_data, '3')
 
@@ -335,6 +322,5 @@ def meridian_agg_cellbox():
 @pytest.fixture
 def antimeridian_agg_cellbox():
     """Aggregated cellbox crossing antimeridian."""
-    from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
     arbitrary_agg_data = {'dummy_data': 1}
     return AggregatedCellBox(Boundary([45, 60], [170, -170]), arbitrary_agg_data, '4')
