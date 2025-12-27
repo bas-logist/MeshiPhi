@@ -18,7 +18,7 @@ Introducing Meshiφ, a versatile software package designed for comprehensive ear
 ## Installation
 Meshiφ can be installed via pip or by cloning the repository from GitHub.
 
- Pip: 
+ Pip:
 ```
 pip install meshiphi
 ```
@@ -30,9 +30,7 @@ cd MeshiPhi
 pip install -e .
 ```
 
-The Meshiφ package has an optional dependency on GDAL, which is required to produce outputs in GeoJSON or GeoTIFF formats. More information on setting up GDAL can be found in the manual pages linked above. Once these requirements are met then the software can be installed by:
-
-> NOTE: The installation process may vary slightly dependent on OS. Please consult the documentation for further installation guidance.
+The Meshiφ package has an optional dependency on GDAL, which is required to produce outputs in GeoJSON or GeoTIFF formats. More information on setting up GDAL can be found in the manual pages linked above.
 
 ## Usage
 
@@ -71,20 +69,20 @@ rm -r docs/build/.doctrees/
 ```
 
 ## Required Data sources
-Meshiφ has been built to work with a variety of open-source atmospheric and oceanographic data sources. 
-A list of supported data sources and their associated data-loaders is given in the 
+Meshiφ has been built to work with a variety of open-source atmospheric and oceanographic data sources.
+A list of supported data sources and their associated data-loaders is given in the
 'Data Loaders' section of the manual
 
 
 ## Developers
-Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, David Wyld, Thomas Zwagerman, Jonathan Smith, Maria Fox, and James Byrne 
+Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, David Wyld, Thomas Zwagerman, Jonathan Smith, Maria Fox, and James Byrne
 
 ## Collaboration
 We are currently assessing the best practice for collaboration on the codebase, until then please contact [polarroute@bas.ac.uk](polarroute@bas.ac.uk) for further info.
 
 
 ## License
-This software is licensed under a MIT license, but request users cite our publication.  
+This software is licensed under a MIT license, but request users cite our publication.
 
 Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne,  J. Alexander Brearley, Derek Long, Michael Meredith, Maria Fox,  (2022), Autonomous Passage Planning for a Polar Vessel, arXiv, https://arxiv.org/abs/2209.02389
 
@@ -97,4 +95,3 @@ If you use Meshiφ in your research, please cite our software and publication:
 - See the [CITATION.cff](./CITATION.cff) file for citation metadata.
 
 You can also use the "Cite this repository" button on GitHub for formatted citations.
-

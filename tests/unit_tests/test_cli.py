@@ -2,17 +2,18 @@
 CLI command tests.
 """
 
-import pytest
-import tempfile
+import contextlib
 import sys
-from unittest.mock import patch
-from meshiphi.cli import rebuild_mesh_cli, create_mesh_cli, merge_mesh_cli
+import tempfile
+
+import pytest
+
 from meshiphi import __version__ as MESHIPHI_VERSION
+from meshiphi.cli import create_mesh_cli, merge_mesh_cli, rebuild_mesh_cli
 
 # Import helper functions that are now in conftest.py
 # These are automatically available in test functions but need explicit import for module level
-from tests.conftest import json_dict_to_file, file_to_json_dict
-
+from tests.conftest import file_to_json_dict, json_dict_to_file
 
 # Constants for test data
 BASIC_CONFIG = {
@@ -245,27 +246,29 @@ def basic_half_mesh_2():
 @pytest.fixture
 def temp_files():
     """Create temporary files for testing."""
-    files = {
-        "config": tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json"),
-        "mesh": tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json"),
-        "mesh_1": tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json"),
-        "mesh_2": tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json"),
-        "merge": tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json"),
-        "output": tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json"),
-    }
+    import os
+
+    # Use mkstemp to create temp file paths
+    files = {}
+    file_handles = []
+
+    for key in ["config", "mesh", "mesh_1", "mesh_2", "merge", "output"]:
+        fd, path = tempfile.mkstemp(suffix=".json")
+        file_handles.append(fd)
+        # Create a simple object with .name attribute for compatibility
+        files[key] = type("TempFile", (), {"name": path})()
 
     yield files
 
-    # Cleanup temporary files
-    import os
+    # Cleanup: close file descriptors and remove files
+    for fd in file_handles:
+        with contextlib.suppress(Exception):
+            os.close(fd)
 
-    for f in files.values():
-        try:
-            f.close()
-            if os.path.exists(f.name):
-                os.remove(f.name)
-        except Exception:
-            pass  # Ignore cleanup errors
+    for file_obj in files.values():
+        with contextlib.suppress(Exception):
+            if os.path.exists(file_obj.name):
+                os.remove(file_obj.name)
 
 
 def test_get_args_cli():
@@ -280,7 +283,7 @@ def test_get_args_cli():
     pytest.skip("Argparser testing not yet implemented")
 
 
-def test_rebuild_mesh_cli(basic_mesh, temp_files):
+def test_rebuild_mesh_cli(basic_mesh, temp_files, mocker):
     """Test rebuild mesh CLI command"""
     # Write mesh to temp file
     json_dict_to_file(basic_mesh, temp_files["mesh"].name)
@@ -293,8 +296,8 @@ def test_rebuild_mesh_cli(basic_mesh, temp_files):
         temp_files["output"].name,
     ]
 
-    with patch.object(sys, "argv", test_args):
-        rebuild_mesh_cli()
+    mocker.patch.object(sys, "argv", test_args)
+    rebuild_mesh_cli()
 
     # Verify output was created
     rebuilt_mesh = file_to_json_dict(temp_files["output"].name)
@@ -302,7 +305,7 @@ def test_rebuild_mesh_cli(basic_mesh, temp_files):
     assert "neighbour_graph" in rebuilt_mesh
 
 
-def test_create_mesh_cli(temp_files):
+def test_create_mesh_cli(temp_files, mocker):
     """Test create mesh CLI command"""
     # Write config to temp file
     json_dict_to_file(BASIC_CONFIG, temp_files["config"].name)
@@ -315,8 +318,8 @@ def test_create_mesh_cli(temp_files):
         temp_files["output"].name,
     ]
 
-    with patch.object(sys, "argv", test_args):
-        create_mesh_cli()
+    mocker.patch.object(sys, "argv", test_args)
+    create_mesh_cli()
 
     # Verify output was created
     created_mesh = file_to_json_dict(temp_files["output"].name)
@@ -324,7 +327,7 @@ def test_create_mesh_cli(temp_files):
     assert "config" in created_mesh
 
 
-def test_merge_mesh_cli(basic_half_mesh_1, basic_half_mesh_2, temp_files):
+def test_merge_mesh_cli(basic_half_mesh_1, basic_half_mesh_2, temp_files, mocker):
     """Test merge mesh CLI command"""
     # Write meshes to temp files
     json_dict_to_file(basic_half_mesh_1, temp_files["mesh_1"].name)
@@ -339,8 +342,8 @@ def test_merge_mesh_cli(basic_half_mesh_1, basic_half_mesh_2, temp_files):
         temp_files["output"].name,
     ]
 
-    with patch.object(sys, "argv", test_args):
-        merge_mesh_cli()
+    mocker.patch.object(sys, "argv", test_args)
+    merge_mesh_cli()
 
     # Verify merged mesh
     merged_mesh = file_to_json_dict(temp_files["output"].name)
