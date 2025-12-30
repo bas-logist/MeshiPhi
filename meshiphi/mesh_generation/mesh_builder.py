@@ -16,18 +16,22 @@ Example:
 
 """
 
+from __future__ import annotations
+
 import logging
+
 import numpy as np
 from tqdm import tqdm
+
+from meshiphi.config_validation.config_validator import validate_mesh_config
+from meshiphi.dataloaders.factory import DataLoaderFactory
 from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.direction import Direction
 from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
+from meshiphi.mesh_generation.mesh import Mesh
 from meshiphi.mesh_generation.metadata import Metadata
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
-from meshiphi.mesh_generation.mesh import Mesh
-from meshiphi.dataloaders.factory import DataLoaderFactory
-from meshiphi.config_validation.config_validator import validate_mesh_config
 from meshiphi.utils import longitude_distance, longitude_domain
 
 logger = logging.getLogger(__name__)
@@ -40,7 +44,7 @@ class MeshBuilder:
 
     """
 
-    def __init__(self, config):
+    def __init__(self, config: dict) -> None:
         """
 
         Constructs a Mesh from a given config file.\n
@@ -154,7 +158,7 @@ class MeshBuilder:
         """
         meta_data_list = []
         splitting_conds = []
-        if "data_sources" in self.config.keys():
+        if "data_sources" in self.config:
             for data_source in self.config["data_sources"]:
                 loader_name = data_source["loader"]
                 loader = DataLoaderFactory.get_dataloader(
@@ -230,9 +234,9 @@ class MeshBuilder:
 
         value_fill_type = "parent"
         if "value_fill_types" in data_source["params"]:
-            if is_float(data_source["params"]["value_fill_types"]) or data_source[
-                "params"
-            ]["value_fill_types"] in ["parent", "Nan"]:
+            if is_float(data_source["params"]["value_fill_types"]) or data_source["params"][
+                "value_fill_types"
+            ] in ["parent", "Nan"]:
                 value_fill_type = data_source["params"]["value_fill_types"]
             else:
                 logger.warning(
@@ -250,13 +254,9 @@ class MeshBuilder:
         (longitude_distance(bounds.get_long_min(), bounds.get_long_max()) / cell_width)
 
         if bounds.get_long_min() < bounds.get_long_max():
-            long_range = np.arange(
-                bounds.get_long_min(), bounds.get_long_max(), cell_width
-            )
+            long_range = np.arange(bounds.get_long_min(), bounds.get_long_max(), cell_width)
         else:
-            long_range = np.arange(
-                bounds.get_long_min(), bounds.get_long_max() + 360, cell_width
-            )
+            long_range = np.arange(bounds.get_long_min(), bounds.get_long_max() + 360, cell_width)
         # Cast to within -180:180
         long_range = longitude_domain(long_range)
 
@@ -268,17 +268,13 @@ class MeshBuilder:
                     cell_long_range = [long, long + cell_width]
                 else:
                     cell_long_range = [long, long + cell_width - 360]
-                cell_bounds = Boundary(
-                    cell_lat_range, cell_long_range, bounds.get_time_range()
-                )
+                cell_bounds = Boundary(cell_lat_range, cell_long_range, bounds.get_time_range())
                 cell_id = str(len(cellboxes))
                 cellbox = CellBox(cell_bounds, cell_id)
                 cellboxes.append(cellbox)
         return cellboxes
 
-    def add_dataloader(
-        self, Dataloader, params, bounds=None, name="myDataLoader", min_dp=5
-    ):
+    def add_dataloader(self, Dataloader, params, bounds=None, name="myDataLoader", min_dp=5):
         """
         Adds a dataloader to a pre-existing mesh by adding to the metadata
 
@@ -317,7 +313,7 @@ class MeshBuilder:
             if isinstance(cellbox, CellBox):
                 cellbox.set_minimum_datapoints(min_dp)
                 # Add new meta data to list of data sources per cellbox
-                cellbox.set_data_source(cellbox.get_data_source() + [meta_data_obj])
+                cellbox.set_data_source([*cellbox.get_data_source(), meta_data_obj])
 
     def validate_bounds(self, bounds, cell_width, cell_height):
         if (bounds.get_long_max() - bounds.get_long_min()) % 360 % cell_width != 0:
@@ -352,7 +348,7 @@ class MeshBuilder:
             min_long_cellboxes = cellboxes[::grid_width]
             max_long_cellboxes = cellboxes[grid_width - 1 :: grid_width]
             # update NG to connect cellboxes
-            for i in range(0, len(min_long_cellboxes)):
+            for i in range(len(min_long_cellboxes)):
                 self.neighbour_graph.add_neighbour(
                     int(min_long_cellboxes[i].get_id()),
                     Direction.west,
@@ -402,7 +398,7 @@ class MeshBuilder:
                     "neighbour_graph": a graph representing the adjacency of CellBoxes within the Mesh
                 }
         """
-        output = dict()
+        output = {}
         output["config"] = {"mesh_info": self.config}
         output["cellboxes"] = self.mesh.get_cellboxes()
         output["neighbour_graph"] = self.neighbour_graph.get_graph()
@@ -557,31 +553,23 @@ class MeshBuilder:
         cellboxes = self.mesh.cellboxes
         for indx in south_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_east_indx], cellboxes[indx])
                 == Direction.south
             ):
                 se_neighbour_map[4].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_east_indx], cellboxes[indx])
                 == Direction.south_west
             ):
                 se_neighbour_map[-1].append(indx)
         for indx in east_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_east_indx], cellboxes[indx])
                 == Direction.east
             ):
                 se_neighbour_map[2].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_east_indx], cellboxes[indx])
                 == Direction.north_east
             ):
                 se_neighbour_map[1].append(indx)
@@ -599,31 +587,23 @@ class MeshBuilder:
         cellboxes = self.mesh.cellboxes
         for indx in north_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_east_indx], cellboxes[indx])
                 == Direction.north
             ):
                 ne_neighbour_map[-4].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_east_indx], cellboxes[indx])
                 == Direction.north_west
             ):
                 ne_neighbour_map[-3].append(indx)
         for indx in east_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_east_indx], cellboxes[indx])
                 == Direction.east
             ):
                 ne_neighbour_map[2].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_east_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_east_indx], cellboxes[indx])
                 == Direction.south_east
             ):
                 ne_neighbour_map[3].append(indx)
@@ -641,31 +621,23 @@ class MeshBuilder:
         cellboxes = self.mesh.cellboxes
         for indx in north_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_west_indx], cellboxes[indx])
                 == Direction.north
             ):
                 nw_neighbour_map[-4].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_west_indx], cellboxes[indx])
                 == Direction.north_east
             ):
                 nw_neighbour_map[1].append(indx)
         for indx in west_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_west_indx], cellboxes[indx])
                 == Direction.west
             ):
                 nw_neighbour_map[-2].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[north_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[north_west_indx], cellboxes[indx])
                 == Direction.south_west
             ):
                 nw_neighbour_map[-1].append(indx)
@@ -683,31 +655,23 @@ class MeshBuilder:
         cellboxes = self.mesh.cellboxes
         for indx in south_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_west_indx], cellboxes[indx])
                 == Direction.south_east
             ):
                 sw_neighbour_map[3].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_west_indx], cellboxes[indx])
                 == Direction.south
             ):
                 sw_neighbour_map[4].append(indx)
         for indx in west_neighbour_indx:
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_west_indx], cellboxes[indx])
                 == Direction.west
             ):
                 sw_neighbour_map[-2].append(indx)
             if (
-                self.neighbour_graph.get_neighbour_case(
-                    cellboxes[south_west_indx], cellboxes[indx]
-                )
+                self.neighbour_graph.get_neighbour_case(cellboxes[south_west_indx], cellboxes[indx])
                 == Direction.north_west
             ):
                 sw_neighbour_map[-3].append(indx)
@@ -728,12 +692,12 @@ class MeshBuilder:
 
         # Set up data_source progress bar
         ds_pbar = tqdm(
-            range(0, len(data_sources)),
+            range(len(data_sources)),
             position=0,
             bar_format="{desc}{n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
         )
         sd_pbar = tqdm(
-            range(0, split_depth),
+            range(split_depth),
             position=1,
             leave=False,
             bar_format=" Split depth: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%{postfix} ",
@@ -748,7 +712,7 @@ class MeshBuilder:
                 # Set up split depth progress bar
                 level = 0
                 sd_pbar = tqdm(
-                    range(0, split_depth),
+                    range(split_depth),
                     position=1,
                     leave=False,
                     bar_format=" Split depth: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%{postfix} ",
@@ -773,7 +737,7 @@ class MeshBuilder:
         ds_pbar.clear()
         sd_pbar.clear()
 
-    def build_environmental_mesh(self):
+    def build_environmental_mesh(self) -> EnvironmentMesh:
         """
         splits the mesh then goes through the mesh cellboxes and builds an evironmental mesh that contains the cellboxes aggregated data
 
@@ -783,29 +747,26 @@ class MeshBuilder:
         self.split_to_depth(self.mesh.get_max_split_depth())
         agg_cellboxes = []
 
-        agg_cell_count = 0
         logger.info("Aggregating cellboxes...")
-        for cellbox in tqdm(
-            self.mesh.cellboxes,
-            bar_format=" Aggregating cellboxes: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
+        for agg_cell_count, cellbox in enumerate(
+            tqdm(
+                self.mesh.cellboxes,
+                bar_format=" Aggregating cellboxes: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
+            ),
+            start=1,
         ):
-            agg_cell_count += 1
             if isinstance(cellbox, CellBox):
-                logger.debug(
-                    f"aggregating cellbox ({agg_cell_count}/{len(self.mesh.cellboxes)})"
-                )
+                logger.debug(f"aggregating cellbox ({agg_cell_count}/{len(self.mesh.cellboxes)})")
                 agg_cellboxes.append(cellbox.aggregate())
 
-        env_mesh = EnvironmentMesh(
+        return EnvironmentMesh(
             self.mesh.get_bounds(),
             agg_cellboxes,
             self.neighbour_graph,
             self.get_config(),
         )
 
-        return env_mesh
-
-    def get_config(self):
+    def get_config(self) -> dict:
         """
         returns the config
         """

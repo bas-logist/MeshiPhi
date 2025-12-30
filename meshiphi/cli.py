@@ -1,13 +1,15 @@
+from __future__ import annotations
+
 import argparse
-import json
 import inspect
+import json
 import logging
 
 from meshiphi import __version__ as version
-from meshiphi.utils import setup_logging, timed_call
-from meshiphi.mesh_generation.mesh_builder import MeshBuilder
 from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
+from meshiphi.mesh_generation.mesh_builder import MeshBuilder
 from meshiphi.test_automation.test_automater import TestAutomater
+from meshiphi.utils import setup_logging, timed_call
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +21,7 @@ def get_args(
     mesh_arg: bool = False,
     format_arg: bool = False,
     merge_arg: bool = False,
-):
+) -> argparse.Namespace:
     """
     Adds required command line arguments to all CLI entry points.
 
@@ -36,7 +38,7 @@ def get_args(
     ap.add_argument(
         "--version",
         action="version",
-        version="%(prog)s {version}".format(version=version),
+        version=f"%(prog)s {version}",
     )
 
     # Optional arguments used in all CLI entry points
@@ -77,9 +79,7 @@ def get_args(
         )
 
     if merge_arg:
-        ap.add_argument(
-            "merge", help="File location of the environmental mesh to merge with"
-        )
+        ap.add_argument("merge", help="File location of the environmental mesh to merge with")
         ap.add_argument(
             "-d",
             "--directory",
@@ -94,14 +94,14 @@ def get_args(
 
 
 @timed_call
-def rebuild_mesh_cli():
+def rebuild_mesh_cli() -> None:
     """
     CLI entry point for rebuilding the mesh based on its encoded config files.
     """
 
     default_output = "rebuild_mesh.output.json"
     args = get_args(default_output, mesh_arg=True, config_arg=False)
-    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info(f"{inspect.stack()[0][3][:-4]} {version}")
 
     mesh_json = json.load(args.mesh)
     config = mesh_json["config"]["mesh_info"]
@@ -110,33 +110,35 @@ def rebuild_mesh_cli():
     rebuilt_mesh = MeshBuilder(config).build_environmental_mesh()
     rebuilt_mesh_json = rebuilt_mesh.to_json()
 
-    logger.info("Saving mesh to {}".format(args.output))
+    logger.info(f"Saving mesh to {args.output}")
 
-    json.dump(rebuilt_mesh_json, open(args.output, "w"), indent=4)
+    with open(args.output, "w") as f:
+        json.dump(rebuilt_mesh_json, f, indent=4)
 
 
 @timed_call
-def create_mesh_cli():
+def create_mesh_cli() -> None:
     """
     CLI entry point for the mesh construction
     """
 
     default_output = "create_mesh.output.json"
     args = get_args(default_output)
-    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info(f"{inspect.stack()[0][3][:-4]} {version}")
 
     config = json.load(args.config)
 
     # Discrete Meshing
     cg = MeshBuilder(config).build_environmental_mesh()
 
-    logger.info("Saving mesh to {}".format(args.output))
+    logger.info(f"Saving mesh to {args.output}")
     info = cg.to_json()
-    json.dump(info, open(args.output, "w"), indent=4)
+    with open(args.output, "w") as f:
+        json.dump(info, f, indent=4)
 
 
 @timed_call
-def export_mesh_cli():
+def export_mesh_cli() -> None:
     """
     CLI entry point for exporting a mesh to standard formats.
     Currently supported formats are JSON, GEOJSON, TIF, PNG
@@ -145,9 +147,7 @@ def export_mesh_cli():
     args = get_args("mesh.json", config_arg=False, mesh_arg=True, format_arg=True)
 
     if args.format.upper() == "GEOJSON":
-        args = get_args(
-            "mesh_geo.json", config_arg=False, mesh_arg=True, format_arg=True
-        )
+        args = get_args("mesh_geo.json", config_arg=False, mesh_arg=True, format_arg=True)
 
     elif args.format.upper() == "TIF":
         args = get_args("mesh.tif", config_arg=False, mesh_arg=True, format_arg=True)
@@ -155,7 +155,7 @@ def export_mesh_cli():
     elif args.format.upper() == "PNG":
         args = get_args("mesh.png", config_arg=False, mesh_arg=True, format_arg=True)
 
-    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info(f"{inspect.stack()[0][3][:-4]} {version}")
 
     mesh = json.load(args.mesh)
     env_mesh = EnvironmentMesh.load_from_json(mesh)
@@ -166,7 +166,7 @@ def export_mesh_cli():
 
 
 @timed_call
-def merge_mesh_cli():
+def merge_mesh_cli() -> None:
     """
     CLI entry point for merging two meshes.
     """
@@ -176,31 +176,27 @@ def merge_mesh_cli():
 
     default_output = "merged_mesh.output.json"
     args = get_args(default_output, config_arg=False, mesh_arg=True, merge_arg=True)
-    logger.info("{} {}".format(inspect.stack()[0][3][:-4], version))
+    logger.info(f"{inspect.stack()[0][3][:-4]} {version}")
 
-    with open(args.mesh.name, "r") as f:
+    with open(args.mesh.name) as f:
         mesh1 = json.load(args.mesh)
     env_mesh1 = EnvironmentMesh.load_from_json(mesh1)
 
     if args.directory:
-        logger.debug(
-            "Merging multiple meshes from directory {} with input mesh".format(
-                args.merge
-            )
-        )
+        logger.debug(f"Merging multiple meshes from directory {args.merge} with input mesh")
 
         merge_dir = args.merge
         merge_meshes = [f for f in listdir(merge_dir) if isfile(join(merge_dir, f))]
 
         for mesh in merge_meshes:
             path = join(merge_dir, mesh)
-            with open(path, "r") as f:
+            with open(path) as f:
                 merge_mesh = json.load(f)
             env_mesh_merge = EnvironmentMesh.load_from_json(merge_mesh)
 
             env_mesh1.merge_mesh(env_mesh_merge)
     else:
-        with open(args.merge, "r") as f:
+        with open(args.merge) as f:
             mesh2 = json.load(f)
         env_mesh2 = EnvironmentMesh.load_from_json(mesh2)
 
@@ -208,12 +204,13 @@ def merge_mesh_cli():
 
     merged_mesh_json = env_mesh1.to_json()
 
-    logger.info("Saving merged mesh to {}".format(args.output))
-    json.dump(merged_mesh_json, open(args.output, "w"), indent=4)
+    logger.info(f"Saving merged mesh to {args.output}")
+    with open(args.output, "w") as f:
+        json.dump(merged_mesh_json, f, indent=4)
 
 
 @timed_call
-def meshiphi_test_cli():
+def meshiphi_test_cli() -> None:
     """
     CLI Entry point for automated testing. Assumes you have git and pytest installed.
 

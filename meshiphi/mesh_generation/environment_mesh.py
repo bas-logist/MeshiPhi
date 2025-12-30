@@ -1,21 +1,22 @@
-import json
-import logging
-import geopandas as gpd
-import pandas as pd
-from shapely import wkt
-import numpy as np
-import subprocess
-import os
-import tempfile
-
-from meshiphi import __version__ as meshiphi_version
-from meshiphi.mesh_generation.boundary import Boundary
-from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
-from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
-
+from __future__ import annotations
 
 import collections.abc
+import json
+import logging
+import os
+import subprocess
+import tempfile
 from pathlib import Path
+
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+from shapely import wkt
+
+from meshiphi import __version__ as meshiphi_version
+from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
+from meshiphi.mesh_generation.boundary import Boundary
+from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class EnvironmentMesh:
     """
 
     @classmethod
-    def load_from_json(cls, mesh_json):
+    def load_from_json(cls, mesh_json: dict) -> EnvironmentMesh:
         """
         Constructs an Env.Mesh from a given env-mesh json file to be used by other modules (ex.Vessel Performance Modeller).
 
@@ -93,10 +94,15 @@ class EnvironmentMesh:
             agg_cellbox = AggregatedCellBox.from_json(cellbox_json)
             agg_cellboxes.append(agg_cellbox)
         neighbour_graph = NeighbourGraph.from_json(mesh_json["neighbour_graph"])
-        obj = EnvironmentMesh(bounds, agg_cellboxes, neighbour_graph, config)
-        return obj
+        return EnvironmentMesh(bounds, agg_cellboxes, neighbour_graph, config)
 
-    def __init__(self, bounds, agg_cellboxes, neighbour_graph, config):
+    def __init__(
+        self,
+        bounds: Boundary,
+        agg_cellboxes: list,
+        neighbour_graph: NeighbourGraph,
+        config: dict,
+    ) -> None:
         """
         Args:
           bounds (Boundary): the boundaries of this mesh
@@ -110,7 +116,7 @@ class EnvironmentMesh:
         self.neighbour_graph = neighbour_graph
         self.config = config
 
-    def query_inside_mesh(self, point):
+    def query_inside_mesh(self, point: tuple[float, float]) -> bool:
         """
         Returns a bool whether the given point is within the cell
 
@@ -120,15 +126,11 @@ class EnvironmentMesh:
             inside_mesh (bool) - Boolean stating if point inside mesh
         """
         inside_cell = [
-            agg_cell.contains_point(point[0], point[1])
-            for agg_cell in self.agg_cellboxes
+            agg_cell.contains_point(point[0], point[1]) for agg_cell in self.agg_cellboxes
         ]
-        if any(inside_cell):
-            return True
-        else:
-            return False
+        return bool(any(inside_cell))
 
-    def query_index(self, point):
+    def query_index(self, point: tuple[float, float]) -> str:
         """
         Returns a index of the aggregate cellbox that contains the point
 
@@ -138,19 +140,16 @@ class EnvironmentMesh:
             cellbox_index (str) - Cellbox index containing the point
         """
         inside_cell = [
-            agg_cell.contains_point(point[0], point[1])
-            for agg_cell in self.agg_cellboxes
+            agg_cell.contains_point(point[0], point[1]) for agg_cell in self.agg_cellboxes
         ]
 
         if any(inside_cell):
             indices = np.where(inside_cell)[0]
             if len(indices) > 1:
                 raise Exception("Point within more than one cellbox")
-            else:
-                indx = indices[0]
-                return self.agg_cellboxes[indx].id
-        else:
-            raise Exception("Point not within the mesh")
+            indx = indices[0]
+            return self.agg_cellboxes[indx].id
+        raise Exception("Point not within the mesh")
 
     def _split_loc(self, point):
         """
@@ -181,10 +180,9 @@ class EnvironmentMesh:
         if (cb_width <= min_dcx) or (cb_height <= min_dcy):
             # Continue if cellbox is at max split depth
             return False
-        else:
-            # Split mesh if at maximum split depth
-            self.split_and_replace(agg_cellbox_wp.id)
-            return True
+        # Split mesh if at maximum split depth
+        self.split_and_replace(agg_cellbox_wp.id)
+        return True
 
     def split_points(self, points):
         """
@@ -212,6 +210,7 @@ class EnvironmentMesh:
         for cellbox in self.agg_cellboxes:
             if str(cellbox.get_id()) == str(cellbox_id):
                 return cellbox
+        raise ValueError(f"Cellbox with id {cellbox_id} not found")
 
     # Merging meshes
     def merge_mesh(self, mesh2):
@@ -223,12 +222,10 @@ class EnvironmentMesh:
         """
 
         if not self.validate_merge_compatibility(mesh2):
-            raise ValueError(
-                "The given mesh is not compatible with merging with this mesh"
-            )
+            raise ValueError("The given mesh is not compatible with merging with this mesh")
 
         # append config files
-        if "merged" not in self.config.keys():
+        if "merged" not in self.config:
             self.config["merged"] = []
 
         self.config["merged"].append(mesh2.config)
@@ -246,7 +243,7 @@ class EnvironmentMesh:
             self.add_cellbox(cellbox)
 
         # Appened neighbour graph from mesh2 to this mesh
-        for index in mesh2.neighbour_graph.get_graph().keys():
+        for index in mesh2.neighbour_graph.get_graph():
             neighbour_map = mesh2.neighbour_graph.neighbour_graph[index]
 
             self.neighbour_graph.add_node(index, neighbour_map)
@@ -300,10 +297,7 @@ class EnvironmentMesh:
             return False
 
         long_diff = l_bounds.get_long_min() - s_bounds.get_long_min()
-        if long_diff % l_cell_width != 0:
-            return False
-
-        return True
+        return long_diff % l_cell_width == 0
 
     def tie_northern_cellbox_ng(self, north_ext_cellboxes, north_int_cellboxes):
         """
@@ -337,17 +331,11 @@ class EnvironmentMesh:
                     south_east_neighbours.append(int(cellbox_s.get_id()))
 
             for neighbour in south_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["4"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["4"].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(neighbour)
 
         # Tie northen interior cellboxes to northen exterior cellboxes
 
@@ -372,17 +360,11 @@ class EnvironmentMesh:
                     north_east_neighbours.append(int(cellbox_l.get_id()))
 
             for neighbour in north_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-4"].append(
-                    neighbour
-                )  #
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-4"].append(neighbour)  #
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(neighbour)
 
     def tie_southern_cellbox_ng(self, south_ext_cellboxes, south_int_cellboxes):
         """
@@ -416,17 +398,11 @@ class EnvironmentMesh:
                     north_east_neighbours.append(int(cellbox_s.get_id()))
 
             for neighbour in north_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-4"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-4"].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(neighbour)
 
         # Tie southern interior cellboxes to southern exterior cellboxes
 
@@ -451,17 +427,11 @@ class EnvironmentMesh:
                     south_east_neighbours.append(int(cellbox_l.get_id()))
 
             for neighbour in south_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["4"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["4"].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(neighbour)
 
     def tie_eastern_cellbox_ng(self, east_ext_cellboxes, east_int_cellboxes):
         """
@@ -495,17 +465,11 @@ class EnvironmentMesh:
                     north_west_neighbours.append(int(cellbox_s.get_id()))
 
             for neighbour in west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-2"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-2"].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(neighbour)
 
         # Tie eastern interior cellboxes to eastern exterior cellboxes
 
@@ -530,17 +494,11 @@ class EnvironmentMesh:
                     north_east_neighbours.append(int(cellbox_l.get_id()))
 
             for neighbour in east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["2"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["2"].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(neighbour)
 
     def tie_western_cellbox_ng(self, west_ext_cellboxes, west_int_cellboxes):
         """
@@ -574,17 +532,11 @@ class EnvironmentMesh:
                     north_east_neighbours.append(int(cellbox_s.get_id()))
 
             for neighbour in east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["2"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["2"].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(neighbour)
 
         # Tie western interior cellboxes to western exterior cellboxes
 
@@ -609,17 +561,11 @@ class EnvironmentMesh:
                     north_west_neighbours.append(int(cellbox_l.get_id()))
 
             for neighbour in west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-2"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-2"].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(
-                    neighbour
-                )
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(neighbour)
 
     def get_cellboxes_within_bounds(self, bounds):
         """
@@ -956,21 +902,13 @@ class EnvironmentMesh:
         sw_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, "-1")
 
         if len(ne_corner_index) > 0:
-            self.neighbour_graph.update_neighbour(
-                str(ne_corner_index[0]), "-1", [north_east_index]
-            )
+            self.neighbour_graph.update_neighbour(str(ne_corner_index[0]), "-1", [north_east_index])
         if len(se_corner_index) > 0:
-            self.neighbour_graph.update_neighbour(
-                str(se_corner_index[0]), "-3", [south_east_index]
-            )
+            self.neighbour_graph.update_neighbour(str(se_corner_index[0]), "-3", [south_east_index])
         if len(nw_corner_index) > 0:
-            self.neighbour_graph.update_neighbour(
-                str(nw_corner_index[0]), "3", [north_west_index]
-            )
+            self.neighbour_graph.update_neighbour(str(nw_corner_index[0]), "3", [north_west_index])
         if len(sw_corner_index) > 0:
-            self.neighbour_graph.update_neighbour(
-                str(sw_corner_index[0]), "1", [south_west_index]
-            )
+            self.neighbour_graph.update_neighbour(str(sw_corner_index[0]), "1", [south_west_index])
 
         # update sides neighbours
         ne_bounds = self.get_cellbox(north_east_index).get_bounds()
@@ -988,17 +926,13 @@ class EnvironmentMesh:
                 cellbox_bounds, ne_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), north_east_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), north_east_index)
 
             crossing_case = self.neighbour_graph.get_neighbour_case_bounds(
                 cellbox_bounds, nw_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), north_west_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), north_west_index)
 
         # update south cellbox neighbours
         self.neighbour_graph.remove_node_from_neighbours(cellbox_id, 4)
@@ -1010,17 +944,13 @@ class EnvironmentMesh:
                 cellbox_bounds, se_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), south_east_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), south_east_index)
 
             crossing_case = self.neighbour_graph.get_neighbour_case_bounds(
                 cellbox_bounds, sw_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), south_west_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), south_west_index)
 
         # update east cellbox neighbours
         self.neighbour_graph.remove_node_from_neighbours(cellbox_id, 2)
@@ -1032,17 +962,13 @@ class EnvironmentMesh:
                 cellbox_bounds, ne_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), north_east_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), north_east_index)
 
             crossing_case = self.neighbour_graph.get_neighbour_case_bounds(
                 cellbox_bounds, se_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), south_east_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), south_east_index)
 
         # update west cellbox neighbours
         self.neighbour_graph.remove_node_from_neighbours(cellbox_id, -2)
@@ -1054,17 +980,13 @@ class EnvironmentMesh:
                 cellbox_bounds, nw_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), north_west_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), north_west_index)
 
             crossing_case = self.neighbour_graph.get_neighbour_case_bounds(
                 cellbox_bounds, sw_bounds
             )
             if crossing_case != 0:
-                self.neighbour_graph.add_neighbour(
-                    str(indx), str(crossing_case), south_west_index
-                )
+                self.neighbour_graph.add_neighbour(str(indx), str(crossing_case), south_west_index)
 
         # remove original cellbox from mesh.
         cellbox = self.get_cellbox(cellbox_id)
@@ -1092,36 +1014,16 @@ class EnvironmentMesh:
 
         for indx in south_neighbour_index:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    se_bounds, neighbour_bounds
-                )
-                == 4
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(se_bounds, neighbour_bounds) == 4:
                 se_neighbour_map["4"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    se_bounds, neighbour_bounds
-                )
-                == -1
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(se_bounds, neighbour_bounds) == -1:
                 se_neighbour_map["-1"].append(indx)
 
         for indx in east_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    se_bounds, neighbour_bounds
-                )
-                == 2
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(se_bounds, neighbour_bounds) == 2:
                 se_neighbour_map["2"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    se_bounds, neighbour_bounds
-                )
-                == 1
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(se_bounds, neighbour_bounds) == 1:
                 se_neighbour_map["1"].append(indx)
 
         return se_neighbour_map
@@ -1147,36 +1049,16 @@ class EnvironmentMesh:
 
         for indx in north_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    ne_bounds, neighbour_bounds
-                )
-                == -4
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(ne_bounds, neighbour_bounds) == -4:
                 ne_neighbour_map["-4"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    ne_bounds, neighbour_bounds
-                )
-                == -3
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(ne_bounds, neighbour_bounds) == -3:
                 ne_neighbour_map["-3"].append(indx)
 
         for indx in east_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    ne_bounds, neighbour_bounds
-                )
-                == 2
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(ne_bounds, neighbour_bounds) == 2:
                 ne_neighbour_map["2"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    ne_bounds, neighbour_bounds
-                )
-                == 3
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(ne_bounds, neighbour_bounds) == 3:
                 ne_neighbour_map["3"].append(indx)
 
         return ne_neighbour_map
@@ -1202,36 +1084,16 @@ class EnvironmentMesh:
 
         for indx in south_neighbour_index:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    sw_bounds, neighbour_bounds
-                )
-                == 3
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(sw_bounds, neighbour_bounds) == 3:
                 sw_neighbour_map["3"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    sw_bounds, neighbour_bounds
-                )
-                == 4
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(sw_bounds, neighbour_bounds) == 4:
                 sw_neighbour_map["4"].append(indx)
 
         for indx in west_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    sw_bounds, neighbour_bounds
-                )
-                == -2
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(sw_bounds, neighbour_bounds) == -2:
                 sw_neighbour_map["-2"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    sw_bounds, neighbour_bounds
-                )
-                == -3
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(sw_bounds, neighbour_bounds) == -3:
                 sw_neighbour_map["-3"].append(indx)
 
         return sw_neighbour_map
@@ -1257,41 +1119,21 @@ class EnvironmentMesh:
 
         for indx in north_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    nw_bounds, neighbour_bounds
-                )
-                == -4
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(nw_bounds, neighbour_bounds) == -4:
                 nw_neighbour_map["-4"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    nw_bounds, neighbour_bounds
-                )
-                == 1
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(nw_bounds, neighbour_bounds) == 1:
                 nw_neighbour_map["1"].append(indx)
 
         for indx in west_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    nw_bounds, neighbour_bounds
-                )
-                == -2
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(nw_bounds, neighbour_bounds) == -2:
                 nw_neighbour_map["-2"].append(indx)
-            if (
-                self.neighbour_graph.get_neighbour_case_bounds(
-                    nw_bounds, neighbour_bounds
-                )
-                == -1
-            ):
+            if self.neighbour_graph.get_neighbour_case_bounds(nw_bounds, neighbour_bounds) == -1:
                 nw_neighbour_map["-1"].append(indx)
 
         return nw_neighbour_map
 
-    def to_json(self):
+    def to_json(self) -> dict:
         """
         Returns this Mesh converted to a JSON object.\n
 
@@ -1305,7 +1147,7 @@ class EnvironmentMesh:
                     "meshiphi_version": the version of MeshiPhi.\n
                 }\n
         """
-        output = dict()
+        output = {}
         output["config"] = {"mesh_info": self.config}
         output["cellboxes"] = self.cellboxes_to_json()
         output["neighbour_graph"] = self.neighbour_graph.get_graph()
@@ -1314,14 +1156,9 @@ class EnvironmentMesh:
         return json.loads(json.dumps(output, indent=4))
 
     def to_shapely(self):
-        msh_shapely = gpd.GeoDataFrame(
-            pd.DataFrame(self.cellboxes_to_json())
-        ).set_index("id")
+        msh_shapely = gpd.GeoDataFrame(pd.DataFrame(self.cellboxes_to_json())).set_index("id")
         msh_shapely["geometry"] = msh_shapely["geometry"].apply(wkt.loads)
-        msh_shapely = gpd.GeoDataFrame(
-            msh_shapely, crs="EPSG:4326", geometry="geometry"
-        )
-        return msh_shapely
+        return gpd.GeoDataFrame(msh_shapely, crs="EPSG:4326", geometry="geometry")
 
     def to_png(self, params_file, path):
         """
@@ -1377,10 +1214,12 @@ class EnvironmentMesh:
             if column in ["id", "geometry"]:
                 continue
             # remove unnecessary columns
-            if (params_file is not None) and column not in [str(data_name)]:
-                mesh_df = mesh_df.drop(column, axis=1)
-            # remove unnecessary columns
-            elif column in ["cx", "cy", "dcx", "dcy"]:
+            if ((params_file is not None) and column not in [str(data_name)]) or column in [
+                "cx",
+                "cy",
+                "dcx",
+                "dcy",
+            ]:
                 mesh_df = mesh_df.drop(column, axis=1)
             # convert lists to mean
             elif mesh_df[column].dtype == list:
@@ -1428,6 +1267,13 @@ class EnvironmentMesh:
                             100 250 250 250  \n
             path (string): the path to save the generated tif image.\n
         """
+        # Only import if we need GDAL, to avoid having it as a requirement
+        try:
+            from osgeo import gdal, osr
+        except ImportError as err:
+            raise ImportError(
+                "GDAL is required for tif export. Install with: conda install -c conda-forge gdal"
+            ) from err
 
         def generate_samples():
             """
@@ -1449,17 +1295,12 @@ class EnvironmentMesh:
                 for long in np.arange(
                     self.bounds.get_long_min(), self.bounds.get_long_max(), pixel_width
                 ):
-                    pixel_lat = (
-                        lat - 0.5 * pixel_height
-                    )  # centeralize the pixel lat value
-                    pixel_long = (
-                        long + 0.5 * pixel_width
-                    )  # centeralize the pixel long value
+                    pixel_lat = lat - 0.5 * pixel_height  # centeralize the pixel lat value
+                    pixel_long = long + 0.5 * pixel_width  # centeralize the pixel long value
                     samples = np.append(samples, pixel_lat)
                     samples = np.append(samples, pixel_long)
             # shape the samples in 2d array (each entry in the array holds sample lat and long
-            samples = np.reshape(samples, (nlines * ncols, 2))
-            return samples
+            return np.reshape(samples, (nlines * ncols, 2))
 
         def get_sample_value(sample):
             """
@@ -1531,15 +1372,13 @@ class EnvironmentMesh:
                     data = f.read()
                     input_params = json.loads(data)
                 if input_params is not None:
-                    if "projection" in input_params.keys():
+                    if "projection" in input_params:
                         params["projection"] = input_params["projection"]
-                    if "data_name" in input_params.keys():
+                    if "data_name" in input_params:
                         params["data_name"] = input_params["data_name"]
-                    if "sampling_resolution" in input_params.keys():
-                        params["sampling_resolution"] = input_params[
-                            "sampling_resolution"
-                        ]
-                    if "colour_conf" in input_params.keys():
+                    if "sampling_resolution" in input_params:
+                        params["sampling_resolution"] = input_params["sampling_resolution"]
+                    if "colour_conf" in input_params:
                         params["colour_conf"] = input_params["colour_conf"]
             return params
 
@@ -1584,22 +1423,13 @@ class EnvironmentMesh:
             ]  # default color
             with open(color_file, "w") as f:
                 for i, c in enumerate(colors[:-1]):
-                    f.write(
-                        str(int(_min + (i + 1) * _range / len(colors))) + " " + c + "\n"
-                    )
+                    f.write(str(int(_min + (i + 1) * _range / len(colors))) + " " + c + "\n")
                 f.write(str(int(_max - _range / len(colors))) + " " + colors[-1] + "\n")
                 f.write(str(np.nan) + " " + inf_color + "\n")  # render nans in red
             os.close(fp)
-            if "colour_conf" in params.keys():
+            if "colour_conf" in params:
                 color_file = params["colour_conf"]
-            cmd = (
-                "gdaldem color-relief "
-                + input_file
-                + " "
-                + color_file
-                + " "
-                + input_file
-            )
+            cmd = "gdaldem color-relief " + input_file + " " + color_file + " " + input_file
             subprocess.check_call(cmd, shell=True)
             # remove additional files created while generating the tif
             file_path = os.path.abspath(input_file)
@@ -1609,14 +1439,6 @@ class EnvironmentMesh:
                 file_path = Path(dir_path + "/" + file)
                 if os.path.isfile(file_path):
                     os.remove(file_path)
-
-        # Only import if we need GDAL, to avoid having it as a requirement
-        try:
-            from osgeo import gdal, osr
-        except ImportError:
-            raise ImportError(
-                "GDAL is required for tif export. Install with: conda install -c conda-forge gdal"
-            )
 
         params = {}
         params = load_params(params_file)
@@ -1642,9 +1464,7 @@ class EnvironmentMesh:
         # reading the samples value
         data = []
         data = np.reshape(
-            np.asarray(
-                [get_sample_value(sample) for sample in samples], dtype=np.float32
-            ),
+            np.asarray([get_sample_value(sample) for sample in samples], dtype=np.float32),
             (nlines, ncols),
         )
         # create a temp grid
@@ -1708,7 +1528,7 @@ class EnvironmentMesh:
         else:
             raise ValueError("Invalid cellbox index")
 
-    def save(self, path, format="JSON", format_params=None):
+    def save(self, path: str, format: str = "JSON", format_params: str | None = None) -> None:
         """
         Saves this object to a location in local storage in a specific format.
 

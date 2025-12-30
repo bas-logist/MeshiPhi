@@ -1,4 +1,12 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from meshiphi.mesh_generation.cellbox import CellBox
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+    from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 
 
 class Mesh:
@@ -31,7 +39,13 @@ class Mesh:
 
     """
 
-    def __init__(self, boundary, cellboxes, neighbour_graph, max_split_depth):
+    def __init__(
+        self,
+        boundary: Boundary,
+        cellboxes: list,
+        neighbour_graph: NeighbourGraph,
+        max_split_depth: int,
+    ) -> None:
         """
         Constructs a Mesh object from a given parameters.
 
@@ -74,7 +88,7 @@ class Mesh:
 
     # Functions for outputting the Mesh
 
-    def set_config(self, config):
+    def set_config(self, config: dict) -> None:
         self.config = config
 
     def get_config(self):
@@ -133,9 +147,8 @@ class Mesh:
         """
         selected_cell = []
         for cellbox in self.cellboxes:
-            if isinstance(cellbox, CellBox):
-                if cellbox.contains_point(lat, long):
-                    selected_cell.append(cellbox)
+            if isinstance(cellbox, CellBox) and cellbox.contains_point(lat, long):
+                selected_cell.append(cellbox)
         return selected_cell[0]
 
     def get_bounds(self):
