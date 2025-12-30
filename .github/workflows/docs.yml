@@ -13,14 +13,14 @@ on:
 jobs:
   build-docs:
     if: github.event.pull_request.draft == false || github.event_name != 'pull_request'
-    permissions: 
+    permissions:
         contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v6
         with:
           python-version: 3.12
       - name: Install dependencies
@@ -35,4 +35,4 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: site
+          folder: docs/_build/html
