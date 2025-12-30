@@ -23,7 +23,7 @@ authors:
     given-names: Thomas
   - family-names: Fox
     given-names: Maria
-version: "2.2.4"
+version: "2.3.0"
 doi: 10.48550/arXiv.2209.02389
 url: https://github.com/bas-amop/MeshiPhi
 repository-code: https://github.com/bas-amop/MeshiPhi

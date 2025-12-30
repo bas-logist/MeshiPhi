@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - YYYY-MM-DD
+
 ### Added
 - Modern Python package tooling improvements
 - Ruff configuration for consistent code formatting and linting
@@ -14,11 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test coverage reporting
 - Enhanced CI/CD workflows with linting and type checking
 - Development dependencies section in pyproject.toml
+- Pre-commit hooks with comprehensive code quality checks
+- Dependabot configuration for automated dependency updates
+- Improved test fixtures using proper temporary file patterns
 
 ## [2.2.4] - YYYY-MM-DD
 
 ### Added
 - Initial changelog entry
 
-[Unreleased]: https://github.com/bas-amop/MeshiPhi/compare/v2.2.4...HEAD
+[Unreleased]: https://github.com/bas-amop/MeshiPhi/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/bas-amop/MeshiPhi/releases/tag/v2.3.0
 [2.2.4]: https://github.com/bas-amop/MeshiPhi/releases/tag/v2.2.4
