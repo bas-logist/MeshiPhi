@@ -17,11 +17,17 @@ this includes and is not limited to: Ocean Currents, Sea Ice Concentration and B
 
 """
 
-import numpy as np
-from meshiphi.mesh_generation.boundary import Boundary
-from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
-from meshiphi.mesh_generation.metadata import Metadata
+from __future__ import annotations
+
 import logging
+from typing import cast
+
+import numpy as np
+from shapely.geometry import Point
+
+from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
+from meshiphi.mesh_generation.boundary import Boundary
+from meshiphi.mesh_generation.metadata import Metadata
 from meshiphi.utils import longitude_domain
 
 logger = logging.getLogger(__name__)
@@ -61,9 +67,7 @@ class CellBox:
         set the minimum number of data contained within CellBox boundaries
         """
         if minimum_datapoints < 0:
-            raise ValueError(
-                "CellBox: minimum number of data contained can not be negative"
-            )
+            raise ValueError("CellBox: minimum number of data contained can not be negative")
         self.minimum_datapoints = minimum_datapoints
 
     def set_data_source(self, data_source):
@@ -147,6 +151,29 @@ class CellBox:
         """
         return self.split_depth
 
+    def contains_point(self, lat: float, long: float) -> bool:
+        """
+        Returns true if a given lat/long coordinate is contained within this cellbox.
+
+        Args:
+            lat (float): latitude of a given point
+            long (float): longitude of a given point
+
+        Returns:
+            contains_points (bool): True if this CellBox contains a point given by
+                parameters (lat, long)
+        """
+        shapely_boundary = self.bounds.to_polygon()
+        point = Point(long, lat)
+        point_within_bounds = cast("bool", shapely_boundary.contains(point))
+        point_on_bounds = cast("bool", shapely_boundary.boundary.contains(point))
+        point_on_north_edge = shapely_boundary.bounds[2] == point.x
+        point_on_east_edge = shapely_boundary.bounds[3] == point.y
+
+        return point_within_bounds or (
+            point_on_bounds and (point_on_north_edge or point_on_east_edge)
+        )
+
     ######################################################
     # methods used for splitting a cellbox
 
@@ -176,7 +203,7 @@ class CellBox:
         hom_conditions = []
 
         current_data_source = None
-        for index in range(0, stop_index):
+        for index in range(stop_index):
             current_data_source = self.get_data_source()[index]
             data_loader = current_data_source.get_data_loader()
             data_subset = current_data_source.get_data_subset()
@@ -189,10 +216,7 @@ class CellBox:
             return False
         if "MIN" in hom_conditions:
             return False
-        if hom_conditions.count("CLR") == len(hom_conditions):
-            return False
-
-        return True
+        return hom_conditions.count("CLR") != len(hom_conditions)
 
     def should_split_breadth_first(self):
         """
@@ -228,10 +252,7 @@ class CellBox:
             return False
         if "MIN" in hom_conditions:
             return False
-        if hom_conditions.count("CLR") == len(hom_conditions):
-            return False
-
-        return True
+        return hom_conditions.count("CLR") != len(hom_conditions)
 
     def split(self, start_id):
         """
@@ -308,8 +329,7 @@ class CellBox:
         index += 1
         south_east = CellBox(boundary, str(index))
 
-        split_boxes = [north_west, north_east, south_west, south_east]
-        return split_boxes
+        return [north_west, north_east, south_west, south_east]
 
     def aggregate(self):
         """
@@ -338,18 +358,13 @@ class CellBox:
                     while parent is not None and np.isnan(agg_value[data_name]):
                         # Search through parent metadata to find match
                         for parent_source in parent.get_data_source():
-                            if (
-                                parent_source.get_data_loader()
-                                == source.get_data_loader()
-                            ):
+                            if parent_source.get_data_loader() == source.get_data_loader():
                                 break
                         # If no match found
                         else:
                             raise ValueError("Dataloader not found in parent")
                         parent_data_subset = parent_source.get_data_subset()
-                        agg_value = loader.get_value(
-                            parent.bounds, data=parent_data_subset
-                        )
+                        agg_value = loader.get_value(parent.bounds, data=parent_data_subset)
                         parent = parent.get_parent()
                 else:  # not parent, so either float or Nan so set the agg_Data to value_fill_type
                     agg_value[data_name] = source.get_value_fill_type()
@@ -382,18 +397,15 @@ class CellBox:
                     while parent is not None and np.isnan(agg_value[name]):
                         # Search through parent metadata to find match
                         for parent_source in parent.get_data_source():
-                            if (
-                                parent_source.get_data_loader()
-                                == source.get_data_loader()
-                            ):
+                            if parent_source.get_data_loader() == source.get_data_loader():
                                 break
                         # If no match found
                         else:
                             raise ValueError("Dataloader not found in parent")
                         parent_data_subset = parent_source.get_data_subset()
-                        agg_value[name] = loader.get_value(
-                            parent.bounds, data=parent_data_subset
-                        )[name]
+                        agg_value[name] = loader.get_value(parent.bounds, data=parent_data_subset)[
+                            name
+                        ]
                         parent = parent.get_parent()
                 else:  # not parent, so either float or Nan so set the agg_Data to value_fill_type
                     agg_value[data_name] = source.get_value_fill_type()

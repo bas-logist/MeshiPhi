@@ -59,7 +59,7 @@ class Mesh:
         self.cellboxes = cellboxes
         self.neighbour_graph = neighbour_graph
         self.max_split_depth = max_split_depth
-        self.config = {}
+        self.config: dict = {}
 
     # Functions for adding data to the Mesh
 
@@ -75,16 +75,19 @@ class Mesh:
         """
         for cell_box in self.cellboxes:
             if isinstance(cell_box, CellBox):
-                long_loc = data_points.loc[
-                    (data_points["long"] > cell_box.long)
-                    & (data_points["long"] <= (cell_box.long + cell_box.width))
-                ]
-                lat_long_loc = long_loc.loc[
-                    (long_loc["lat"] > cell_box.lat)
-                    & (long_loc["lat"] <= (cell_box.lat + cell_box.height))
-                ]
+                bounds = cell_box.get_bounds()
+                long_min = bounds.get_long_min()
+                long_max = bounds.get_long_max()
+                lat_min = bounds.get_lat_min()
+                lat_max = bounds.get_lat_max()
 
-                cell_box.add_data_points(lat_long_loc)
+                # Filter data points by cellbox bounds
+                _ = data_points.loc[
+                    (data_points["long"] > long_min)
+                    & (data_points["long"] <= long_max)
+                    & (data_points["lat"] > lat_min)
+                    & (data_points["lat"] <= lat_max)
+                ]
 
     # Functions for outputting the Mesh
 

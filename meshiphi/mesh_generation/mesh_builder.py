@@ -19,6 +19,7 @@ Example:
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 import numpy as np
 from tqdm import tqdm
@@ -223,7 +224,7 @@ class MeshBuilder:
         return updated_meta_data_list
 
     def check_value_fill_type(self, data_source):
-        def is_float(element: any) -> bool:
+        def is_float(element: Any) -> bool:
             if element is None:
                 return False
             try:
@@ -245,7 +246,7 @@ class MeshBuilder:
         return value_fill_type
 
     def initialize_cellboxes(self, bounds, cell_width, cell_height):
-        cellboxes = []
+        cellboxes: list = []
         (bounds.get_lat_max() - bounds.get_lat_min()) / cell_height
 
         lat_range = np.arange(bounds.get_lat_min(), bounds.get_lat_max(), cell_height)

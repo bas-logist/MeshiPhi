@@ -7,6 +7,7 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Any, cast
 
 import geopandas as gpd
 import numpy as np
@@ -148,7 +149,7 @@ class EnvironmentMesh:
             if len(indices) > 1:
                 raise Exception("Point within more than one cellbox")
             indx = indices[0]
-            return self.agg_cellboxes[indx].id
+            return str(self.agg_cellboxes[indx].id)
         raise Exception("Point not within the mesh")
 
     def _split_loc(self, point):
@@ -1147,13 +1148,13 @@ class EnvironmentMesh:
                     "meshiphi_version": the version of MeshiPhi.\n
                 }\n
         """
-        output = {}
+        output: dict[str, Any] = {}
         output["config"] = {"mesh_info": self.config}
         output["cellboxes"] = self.cellboxes_to_json()
         output["neighbour_graph"] = self.neighbour_graph.get_graph()
-        output["meshiphi_version"] = meshiphi_version
+        output["meshiphi_version"] = str(meshiphi_version)
 
-        return json.loads(json.dumps(output, indent=4))
+        return cast("dict[str, Any]", json.loads(json.dumps(output, indent=4)))
 
     def to_shapely(self):
         msh_shapely = gpd.GeoDataFrame(pd.DataFrame(self.cellboxes_to_json())).set_index("id")
@@ -1197,7 +1198,6 @@ class EnvironmentMesh:
             build them, or the neighbour-graph which details how each of the
             cellboxes are connected together.\n
         """
-        geojson = ""
         mesh_json = self.to_json()
 
         if params_file is not None:
@@ -1234,10 +1234,10 @@ class EnvironmentMesh:
 
         mesh_df["geometry"] = mesh_df["geometry"].apply(wkt.loads)
         mesh_gdf = gpd.GeoDataFrame(mesh_df, crs="EPSG:4326", geometry="geometry")
-        geojson = json.loads(mesh_gdf.to_json())
+        geojson: dict[str, Any] = cast("dict[str, Any]", json.loads(mesh_gdf.to_json()))
 
         # Add MeshiPhi version to the GeoJSON properties
-        geojson["meshiphi_version"] = meshiphi_version
+        geojson["meshiphi_version"] = str(meshiphi_version)
 
         return geojson
 
@@ -1287,7 +1287,7 @@ class EnvironmentMesh:
             mesh_width = self.bounds.get_long_max() - self.bounds.get_long_min()
             pixel_height = mesh_height / ncols
             pixel_width = mesh_width / nlines
-            samples = []
+            samples: Any = np.array([])
             # has to move in this direction as we start rendering from the upper left pixel
             for lat in np.arange(
                 self.bounds.get_lat_max(), self.bounds.get_lat_min(), -1 * pixel_height
@@ -1327,7 +1327,7 @@ class EnvironmentMesh:
                     if isinstance(
                         value, collections.abc.Sequence
                     ):  # if it is a vector then take the mean
-                        value = np.mean(value)
+                        value = float(np.mean(value))
                         if value == float("inf"):  # repalce inf with nan
                             value = np.nan
                     # break to make sure we avoid getting multiple values (for lat and long on the bounds of multiple cellboxes)
@@ -1462,8 +1462,7 @@ class EnvironmentMesh:
         # create raster band and populate with sampled data of image_size (sampling_resolution)
         driver = gdal.GetDriverByName("GTiff")
         # reading the samples value
-        data = []
-        data = np.reshape(
+        data: Any = np.reshape(
             np.asarray([get_sample_value(sample) for sample in samples], dtype=np.float32),
             (nlines, ncols),
         )
@@ -1546,12 +1545,12 @@ class EnvironmentMesh:
             self.to_tif(format_params, path)
 
         elif format.upper() == "JSON":
-            with open(path, "w") as path:
-                json.dump(self.to_json(), path, indent=4)
+            with open(path, "w") as f:
+                json.dump(self.to_json(), f, indent=4)
 
         elif format.upper() == "GEOJSON":
-            with open(path, "w") as path:
-                json.dump(self.to_geojson(format_params), path, indent=4)
+            with open(path, "w") as f:
+                json.dump(self.to_geojson(format_params), f, indent=4)
 
         elif format.upper() == "PNG":
             self.to_png(format_params, path)
