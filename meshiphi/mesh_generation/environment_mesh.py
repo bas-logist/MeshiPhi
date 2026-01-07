@@ -209,9 +209,8 @@ class EnvironmentMesh:
         Returns:
             AggregatedCellBox: the cellbox with the given id
         """
-        for cellbox in self.agg_cellboxes:
-            if str(cellbox.get_id()) == str(cellbox_id):
-                return cellbox
+        cellbox_id = str(cellbox_id)
+        return next((cellbox for cellbox in self.agg_cellboxes if str(cellbox.id) == cellbox_id))
 
     # Merging meshes
     def merge_mesh(self, mesh2):
