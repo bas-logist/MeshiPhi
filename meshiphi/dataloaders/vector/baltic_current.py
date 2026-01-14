@@ -1,10 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import xarray as xr
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class BalticCurrentDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+
+class BalticCurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in current data from a copernicus baltic sea physics reanalysis NetCDF file.
         Renames coordinates to 'lat' and 'long', and renames variable to

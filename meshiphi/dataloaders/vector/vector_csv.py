@@ -1,10 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pandas as pd
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class VectorCSVDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+
+class VectorCSVDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a CSV file.
 

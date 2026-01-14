@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 from datetime import datetime
 from os.path import basename
+from typing import TYPE_CHECKING
 
 import xarray as xr
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class DuacsCurrentDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+
+class DuacsCurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a DUACS altimeter derived current NetCDF file.
         Renames coordinates to 'lat' and 'long', and renames variable to
@@ -27,7 +33,7 @@ class DuacsCurrentDataLoader(VectorDataLoader):
         # Reduce files to those within date range
         if self.files is None:
             raise ValueError("files parameter is required for DuacsCurrentDataLoader")
-        self.files = [
+        self.files: list[str] = [
             file
             for file in self.files
             if time_range[0]

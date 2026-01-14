@@ -1,14 +1,20 @@
+from __future__ import annotations
+
 from datetime import datetime
 from os.path import basename
+from typing import TYPE_CHECKING
 
 import numpy as np
 import xarray as xr
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class ERA5WaveDirectionLoader(VectorDataLoader):
-    def import_data(self, bounds):
+
+class ERA5WaveDirectionLoader(VectorDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in wave direction data from a ERA5 NetCDF file.
         Renames coordinates to 'lat' and 'long' and calculates unit vector
@@ -28,7 +34,7 @@ class ERA5WaveDirectionLoader(VectorDataLoader):
         # Reduce files to those within date range
         if self.files is None:
             raise ValueError("files parameter is required for ERA5WaveDirectionLoader")
-        self.files = [
+        self.files: list[str] = [
             file
             for file in self.files
             if time_range[0]

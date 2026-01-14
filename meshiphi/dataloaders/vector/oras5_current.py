@@ -1,11 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import xarray as xr
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+
 
 # TODO Read in 2 files, combine to one object
-class ORAS5CurrentDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+class ORAS5CurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a ORAS5 Depth NetCDF files.
         Renames coordinates to 'lat' and 'long', and renames variable to

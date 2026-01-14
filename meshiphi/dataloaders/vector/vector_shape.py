@@ -1,15 +1,22 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
+import xarray as xr  # noqa: TC002
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 logger = logging.getLogger(__name__)
 
 
-class VectorShapeDataLoader(VectorDataLoader):
-    def add_default_params(self, params):
+class VectorShapeDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for vector shape dataloaders
 
@@ -59,7 +66,7 @@ class VectorShapeDataLoader(VectorDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Generates data in the form of an abstract shape, such as circle,
         or gradient. This method acts like a factory in that it simply
@@ -88,7 +95,7 @@ class VectorShapeDataLoader(VectorDataLoader):
         # No need to trim data, as was defined by bounds
         return data.set_index(["lat", "long"]).to_xarray()
 
-    def gen_gradient(self, bounds):
+    def gen_gradient(self, bounds: Boundary) -> pd.DataFrame:
         """
         Generates a gradient within bounds of lat/long min/max.
         Gradient direction can be defined in the config, as well as
@@ -104,9 +111,10 @@ class VectorShapeDataLoader(VectorDataLoader):
 
         logger.info("\tCreating gradient of values")
         # Create 1D gradient
-        if self.vertical is None:
-            self.vertical = True  # Default to vertical gradient
-        gradient = np.linspace(0, 1, self.ny) if self.vertical else np.linspace(0, 1, self.nx)
+        vertical: bool = (
+            self.vertical if hasattr(self, "vertical") and self.vertical is not None else True
+        )
+        gradient = np.linspace(0, 1, self.ny) if vertical else np.linspace(0, 1, self.nx)
 
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data_u", "dummy_data_v"])
         logger.info("- Generating vector dataset")
@@ -114,9 +122,9 @@ class VectorShapeDataLoader(VectorDataLoader):
         for i in range(self.ny):
             for j in range(self.nx):
                 # Change dummy data depending on which axis to gradient
-                datum = gradient[i] if self.vertical else gradient[j]
+                datum = gradient[i] if vertical else gradient[j]
                 # Create a new row, adding datum value
-                if self.vertical:
+                if vertical:
                     row = pd.DataFrame(
                         data={
                             "lat": self.lat[i],
@@ -140,16 +148,22 @@ class VectorShapeDataLoader(VectorDataLoader):
                 dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Multiply by scaling factor if present
-        if self.multiplier_u is None:
-            self.multiplier_u = 1.0
-        if self.multiplier_v is None:
-            self.multiplier_v = 1.0
-        dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"] * self.multiplier_u
-        dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"] * self.multiplier_v
+        multiplier_u: float = (
+            self.multiplier_u
+            if hasattr(self, "multiplier_u") and self.multiplier_u is not None
+            else 1.0
+        )
+        multiplier_v: float = (
+            self.multiplier_v
+            if hasattr(self, "multiplier_v") and self.multiplier_v is not None
+            else 1.0
+        )
+        dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"] * multiplier_u
+        dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"] * multiplier_v
 
         return dummy_df
 
-    def gen_circle(self, bounds):
+    def gen_circle(self, bounds: Boundary) -> pd.DataFrame:
         """
         Generates a circle within bounds of lat/long min/max.
         Circle centre and radius can be defined in the config, as well as
@@ -166,10 +180,11 @@ class VectorShapeDataLoader(VectorDataLoader):
         # Set centre as centre of data_grid if none specified
         if self.radius is None:
             raise ValueError("radius parameter is required for vector_circle")
-        if self.centre is None:
-            self.centre = (None, None)
-        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
+        centre: tuple[float | None, float | None] = (
+            self.centre if hasattr(self, "centre") else (None, None)
+        )
+        c_y = self.lat[int(self.ny / 2)] if centre[0] is None else centre[0]
+        c_x = self.long[int(self.nx / 2)] if centre[1] is None else centre[1]
 
         # Create vectors for row and col indices
         y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
@@ -203,12 +218,22 @@ class VectorShapeDataLoader(VectorDataLoader):
         dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"].astype(int)
         dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"].astype(int)
         # Multiply by scaling factor if present
-        dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"] * self.multiplier_u
-        dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"] * self.multiplier_v
+        multiplier_u_circ: float = (
+            self.multiplier_u
+            if hasattr(self, "multiplier_u") and self.multiplier_u is not None
+            else 1.0
+        )
+        multiplier_v_circ: float = (
+            self.multiplier_v
+            if hasattr(self, "multiplier_v") and self.multiplier_v is not None
+            else 1.0
+        )
+        dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"] * multiplier_u_circ
+        dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"] * multiplier_v_circ
 
         return dummy_df
 
-    def gen_rectangle(self, bounds):
+    def gen_rectangle(self, bounds: Boundary) -> pd.DataFrame:
         """
         Generates a rectangle within bounds of lat/long min/max.
         Side lengths and centroid can be defined in the config, as well as
@@ -225,10 +250,11 @@ class VectorShapeDataLoader(VectorDataLoader):
         # Set centre as centre of data_grid if none specified
         if self.width is None or self.height is None:
             raise ValueError("width and height parameters are required for vector_rectangle")
-        if self.centre is None:
-            self.centre = (None, None)
-        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
+        centre_rect: tuple[float | None, float | None] = (
+            self.centre if hasattr(self, "centre") else (None, None)
+        )
+        c_y = self.lat[int(self.ny / 2)] if centre_rect[0] is None else centre_rect[0]
+        c_x = self.long[int(self.nx / 2)] if centre_rect[1] is None else centre_rect[1]
 
         # Create vectors for row and col indices
         y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
@@ -263,7 +289,17 @@ class VectorShapeDataLoader(VectorDataLoader):
         dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"].astype(int)
         dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"].astype(int)
         # Multiply by scaling factor if present
-        dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"] * self.multiplier_u
-        dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"] * self.multiplier_v
+        multiplier_u_rect: float = (
+            self.multiplier_u
+            if hasattr(self, "multiplier_u") and self.multiplier_u is not None
+            else 1.0
+        )
+        multiplier_v_rect: float = (
+            self.multiplier_v
+            if hasattr(self, "multiplier_v") and self.multiplier_v is not None
+            else 1.0
+        )
+        dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"] * multiplier_u_rect
+        dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"] * multiplier_v_rect
 
         return dummy_df

@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import logging
 from datetime import datetime
+from typing import TYPE_CHECKING, Any
 
 import xarray as xr
 
 from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class AMSRDataLoader(ScalarDataLoader):
-    def add_default_params(self, params):
+
+class AMSRDataLoader(ScalarDataLoader):  # type: ignore[misc]
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Translates 'hemisphere' parameter into values of in_proj and out_proj
         that pyProj can understand. Also defines x_col and y_col for AMSR data
@@ -38,7 +44,7 @@ class AMSRDataLoader(ScalarDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a AMSR NetCDF file, or folder of files.
         Drops unnecessary column 'polar_stereographic', and renames variable
@@ -53,7 +59,7 @@ class AMSRDataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'SIC'
         """
 
-        def retrieve_date(filename):
+        def retrieve_date(filename: str) -> str:
             """
             Get date from filename in format:
                 asi-AMSR2-s6250-<year><month><day>-v.5.4.nc
@@ -61,7 +67,7 @@ class AMSRDataLoader(ScalarDataLoader):
             date = filename.split("-")[-2]
             return f"{date[:4]}-{date[4:6]}-{date[6:]}"
 
-        def retrieve_data(filename, date):
+        def retrieve_data(filename: str, date: str) -> xr.Dataset:
             """
             Read in data as xr.Dataset, create time coordinate
             """
@@ -69,10 +75,10 @@ class AMSRDataLoader(ScalarDataLoader):
             # Add date to data
             return data.assign_coords(time=date)
 
-        data_array = []
+        data_array: list[xr.Dataset] = []
         if self.files is None:
             raise ValueError("files parameter is required for AMSRDataLoader")
-        relevant_files = []
+        relevant_files: list[str] = []
         # For each file found from config
         for file in self.files:
             # If date within boundary
@@ -100,7 +106,7 @@ class AMSRDataLoader(ScalarDataLoader):
         data = data.rename({"z": "SIC"})
 
         # Limit self.files to only those actually used
-        self.files = relevant_files
+        self.files: list[str] = relevant_files
 
         # TODO Limit data range before reprojection
 

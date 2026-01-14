@@ -1,15 +1,22 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
+import xarray as xr  # noqa: TC002
 
 from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 logger = logging.getLogger(__name__)
 
 
-class ShapeDataLoader(ScalarDataLoader):
-    def add_default_params(self, params):
+class ShapeDataLoader(ScalarDataLoader):  # type: ignore[misc]
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for abstract shape dataloaders, starting by
         including defaults for scalar dataloaders.
@@ -62,7 +69,7 @@ class ShapeDataLoader(ScalarDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Generates data in the form of an abstract shape, such as circle,
         checkerboard, or gradient. This method acts like a factory in that
@@ -94,7 +101,7 @@ class ShapeDataLoader(ScalarDataLoader):
         # No need to trim data, as was defined by bounds
         return data.set_index(["lat", "long"]).to_xarray()
 
-    def gen_circle(self, bounds):
+    def gen_circle(self, bounds: Boundary) -> pd.DataFrame:
         """
         Generates a circle within bounds of lat/long min/max.
         Circle centre and radius can be defined in the config, as well as
@@ -111,10 +118,11 @@ class ShapeDataLoader(ScalarDataLoader):
         # Set centre as centre of data_grid if none specified
         if self.radius is None:
             raise ValueError("radius parameter is required for circle")
-        if self.centre is None:
-            self.centre = (None, None)
-        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
+        centre: tuple[float | None, float | None] = (
+            self.centre if hasattr(self, "centre") else (None, None)
+        )
+        c_y = self.lat[int(self.ny / 2)] if centre[0] is None else centre[0]
+        c_x = self.long[int(self.nx / 2)] if centre[1] is None else centre[1]
 
         # Create vectors for row and col idx's
         y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
@@ -146,13 +154,14 @@ class ShapeDataLoader(ScalarDataLoader):
         # Change boolean values to int
         dummy_df["dummy_data"] = dummy_df["dummy_data"].astype(int)
         # Multiply by scaling factor if present
-        if self.multiplier is None:
-            self.multiplier = 1.0
-        dummy_df["dummy_data"] = dummy_df["dummy_data"] * self.multiplier
+        multiplier: float = (
+            self.multiplier if hasattr(self, "multiplier") and self.multiplier is not None else 1.0
+        )
+        dummy_df["dummy_data"] = dummy_df["dummy_data"] * multiplier
 
         return dummy_df
 
-    def gen_gradient(self, bounds):
+    def gen_gradient(self, bounds: Boundary) -> pd.DataFrame:
         """
         Generates a gradient within bounds of lat/long min/max.
         Gradient direction can be defined in the config, as well as
@@ -168,9 +177,10 @@ class ShapeDataLoader(ScalarDataLoader):
 
         logger.info("\tCreating gradient of values")
         # Create 1D gradient
-        if self.vertical is None:
-            self.vertical = True  # Default to vertical gradient
-        gradient = np.linspace(0, 1, self.ny) if self.vertical else np.linspace(0, 1, self.nx)
+        vertical: bool = (
+            self.vertical if hasattr(self, "vertical") and self.vertical is not None else True
+        )
+        gradient = np.linspace(0, 1, self.ny) if vertical else np.linspace(0, 1, self.nx)
 
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data"])
         logger.info("- Generating dataset")
@@ -178,7 +188,7 @@ class ShapeDataLoader(ScalarDataLoader):
         for i in range(self.ny):
             for j in range(self.nx):
                 # Change dummy data depending on which axis to gradient
-                datum = gradient[i] if self.vertical else gradient[j]
+                datum = gradient[i] if vertical else gradient[j]
                 # Create a new row, adding datum value
                 row = pd.DataFrame(
                     data={
@@ -192,11 +202,14 @@ class ShapeDataLoader(ScalarDataLoader):
                 dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Multiply by scaling factor if present
-        dummy_df["dummy_data"] = dummy_df["dummy_data"] * self.multiplier
+        multiplier_grad: float = (
+            self.multiplier if hasattr(self, "multiplier") and self.multiplier is not None else 1.0
+        )
+        dummy_df["dummy_data"] = dummy_df["dummy_data"] * multiplier_grad
 
         return dummy_df
 
-    def gen_checkerboard(self, bounds):
+    def gen_checkerboard(self, bounds: Boundary) -> pd.DataFrame:
         """
         Generates a checkerboard pattern within bounds of lat/long min/max
         Square size can be defined in the config, as well as resolution of
@@ -214,12 +227,13 @@ class ShapeDataLoader(ScalarDataLoader):
 
         logger.info("- Creating series of 0's and 1's for lat/long")
         # Create checkerboard pattern
-        if self.gridsize is None:
-            self.gridsize = (1, 1)
-        if isinstance(self.gridsize, int):
-            gridsize_tuple = (self.gridsize, self.gridsize)
+        gridsize: int | tuple[float, float] = (
+            self.gridsize if hasattr(self, "gridsize") and self.gridsize is not None else (1, 1)
+        )
+        if isinstance(gridsize, int):
+            gridsize_tuple: tuple[float, float] = (gridsize, gridsize)
         else:
-            gridsize_tuple = self.gridsize
+            gridsize_tuple = gridsize
         # Create horizontal stripes of 0's and 1's, stripe size defined by gridsize
         horizontal = np.floor((self.lat - bounds.get_lat_min()) / gridsize_tuple[1]) % 2
         # Create vertical stripes of 0's and 1's, stripe size defined by gridsize
@@ -245,7 +259,7 @@ class ShapeDataLoader(ScalarDataLoader):
 
         return dummy_df
 
-    def gen_rectangle(self, bounds):
+    def gen_rectangle(self, bounds: Boundary) -> pd.DataFrame:
         """
         Generates a rectangle within bounds of lat/long min/max.
         Side lengths and centroid can be defined in the config, as well as
@@ -262,10 +276,11 @@ class ShapeDataLoader(ScalarDataLoader):
         # Set centre as centre of data_grid if none specified
         if self.width is None or self.height is None:
             raise ValueError("width and height parameters are required for rectangle")
-        if self.centre is None:
-            self.centre = (None, None)
-        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
+        centre_rect: tuple[float | None, float | None] = (
+            self.centre if hasattr(self, "centre") else (None, None)
+        )
+        c_y = self.lat[int(self.ny / 2)] if centre_rect[0] is None else centre_rect[0]
+        c_x = self.long[int(self.nx / 2)] if centre_rect[1] is None else centre_rect[1]
 
         # Create vectors for row and col idx's
         y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
@@ -298,8 +313,9 @@ class ShapeDataLoader(ScalarDataLoader):
         # Change boolean values to int
         dummy_df["dummy_data"] = dummy_df["dummy_data"].astype(int)
         # Multiply by scaling factor if present
-        if self.multiplier is None:
-            self.multiplier = 1.0
-        dummy_df["dummy_data"] = dummy_df["dummy_data"] * self.multiplier
+        multiplier_rect: float = (
+            self.multiplier if hasattr(self, "multiplier") and self.multiplier is not None else 1.0
+        )
+        dummy_df["dummy_data"] = dummy_df["dummy_data"] * multiplier_rect
 
         return dummy_df

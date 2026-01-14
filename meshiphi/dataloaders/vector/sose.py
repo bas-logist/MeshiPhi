@@ -1,10 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import pandas as pd  # noqa: TC002
 import xarray as xr
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class SOSEDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+
+class SOSEDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a SOSE Currents NetCDF file.
         Renames coordinates to 'lat' and 'long', and renames variable to

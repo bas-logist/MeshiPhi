@@ -1,12 +1,20 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 import numpy as np
 import pandas as pd
+import xarray as xr  # noqa: TC002
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 from meshiphi.utils import gaussian_random_field
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class VectorGRFDataLoader(VectorDataLoader):
-    def add_default_params(self, params):
+
+class VectorGRFDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for abstract GRF dataloaders, starting by
         including defaults for scalar dataloaders.
@@ -48,7 +56,7 @@ class VectorGRFDataLoader(VectorDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Creates data in the form of a Gaussian Random Field
 
@@ -64,7 +72,12 @@ class VectorGRFDataLoader(VectorDataLoader):
 
         """
 
-        def grf_to_vector(magnitudes, directions, min_val, max_val):
+        def grf_to_vector(
+            magnitudes: np.ndarray[Any, Any],
+            directions: np.ndarray[Any, Any],
+            min_val: float,
+            max_val: float,
+        ) -> tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]:
             # Scale to max/min
             magnitudes = magnitudes * (max_val - min_val) + min_val
 

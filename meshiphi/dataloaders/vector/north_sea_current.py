@@ -1,10 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import xarray as xr
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class NorthSeaCurrentDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+
+class NorthSeaCurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a BSOSE Depth NetCDF file.
         Renames coordinates to 'lat', 'long', 'time', and renames variable to

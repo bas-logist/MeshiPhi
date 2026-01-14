@@ -1,12 +1,20 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
+
 import numpy as np
 import pandas as pd
+import xarray as xr  # noqa: TC002
 
 from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 from meshiphi.utils import gaussian_random_field
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class ScalarGRFDataLoader(ScalarDataLoader):
-    def add_default_params(self, params):
+
+class ScalarGRFDataLoader(ScalarDataLoader):  # type: ignore[misc]
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for abstract GRF dataloaders, starting by
         including defaults for scalar dataloaders.
@@ -60,7 +68,7 @@ class ScalarGRFDataLoader(ScalarDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Creates data in the form of a Gaussian Random Field
 
@@ -76,7 +84,7 @@ class ScalarGRFDataLoader(ScalarDataLoader):
 
         """
 
-        def grf_to_binary(grf, threshold):
+        def grf_to_binary(grf: np.ndarray[Any, Any], threshold: float) -> np.ndarray[Any, Any]:
             """
             Creates a mask out of a GRF if params specify a binary output
             """
@@ -84,9 +92,11 @@ class ScalarGRFDataLoader(ScalarDataLoader):
             grf[grf >= threshold] = 1.0
             grf[grf < threshold] = 0.0
             # Cast 0/1 to False/True
-            return grf is True
+            return grf.astype(bool)
 
-        def grf_to_scalar(grf, threshold, min_val, max_val):
+        def grf_to_scalar(
+            grf: np.ndarray[Any, Any], threshold: list[float], min_val: float, max_val: float
+        ) -> np.ndarray[Any, Any]:
             # Bound GRF to threshold limits
             grf[grf < threshold[0]] = threshold[0]
             grf[grf >= threshold[1]] = threshold[1]
@@ -94,7 +104,7 @@ class ScalarGRFDataLoader(ScalarDataLoader):
             grf = grf - np.min(grf)
             grf = grf / (np.max(grf) - np.min(grf))
             # Scale to max/min
-            return grf * (max_val - min_val) + min_val
+            return cast("np.ndarray[Any, Any]", grf * (max_val - min_val) + min_val)
 
         # Set seed for generation. If not specified, will be 'random'
         np.random.seed(self.seed)
@@ -119,11 +129,9 @@ class ScalarGRFDataLoader(ScalarDataLoader):
                 raise ValueError("threshold, min, and max parameters are required for scalar GRF")
             grf = grf_to_scalar(grf, self.threshold, self.min, self.max)
             # Scale with multiplier and offset
-            if self.multiplier is None:
-                self.multiplier = 1.0
-            if self.offset is None:
-                self.offset = 0.0
-            grf = self.multiplier * grf + self.offset
+            multiplier: float = self.multiplier if self.multiplier is not None else 1.0
+            offset: float = self.offset if self.offset is not None else 0.0
+            grf = multiplier * grf + offset
 
         # Set up domain of field
         lat_array = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.size)
