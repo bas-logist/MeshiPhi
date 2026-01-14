@@ -1,9 +1,8 @@
-from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
-from meshiphi.mesh_generation.boundary import Boundary
-
 import pandas as pd
 from shapely import Polygon
 
+from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
+from meshiphi.mesh_generation.boundary import Boundary
 
 # Mapping of month number to season per hemisphere
 northern_seasons = {
@@ -141,10 +140,7 @@ class ThicknessDataLoader(LutDataLoader):
 
         for region in regions:
             intersection = region.geometry & bounds_polygon
-            if (
-                intersection.geom_type in ["Polygon", "MultiPolygon"]
-                and intersection != Polygon()
-            ):
+            if intersection.geom_type in ["Polygon", "MultiPolygon"] and intersection != Polygon():
                 region_df = pd.concat(
                     [
                         pd.DataFrame(
@@ -161,6 +157,4 @@ class ThicknessDataLoader(LutDataLoader):
                 thickness_df = pd.concat([thickness_df, region_df])
 
         thickness_df = thickness_df.drop_duplicates()
-        thickness_df = thickness_df.set_index("time").sort_index()
-
-        return thickness_df
+        return thickness_df.set_index("time").sort_index()

@@ -1,14 +1,16 @@
-from meshiphi.dataloaders.dataloader_interface import DataLoaderInterface
-from abc import abstractmethod
-
-from pyproj import Transformer, CRS
+from __future__ import annotations
 
 import logging
+from abc import abstractmethod
+from typing import Any
+
 import numpy as np
-import xarray as xr
 import pandas as pd
+import xarray as xr
+from pyproj import CRS, Transformer
 from rasterio.enums import Resampling
 
+from meshiphi.dataloaders.dataloader_interface import DataLoaderInterface
 from meshiphi.mesh_generation.boundary import Boundary
 
 logger = logging.getLogger(__name__)
@@ -19,7 +21,40 @@ class VectorDataLoader(DataLoaderInterface):
     Abstract class for all vector Datasets.
     """
 
-    def __init__(self, bounds, params):
+    # Type hints for dynamically set attributes (set via setattr in __init__)
+    files: list[str] | None
+    data_name: str | None
+    dataloader_name: str
+    in_proj: str
+    out_proj: str
+    x_col: str
+    y_col: str
+    downsample_factors: list[int]
+    aggregate_type: str
+    min_dp: int
+    # Vector shape-specific attributes
+    # nx and ny always have defaults (101), so they're not optional
+    ny: int = 101
+    nx: int = 101
+    vertical: bool | None = None
+    multiplier_u: float | None = None
+    multiplier_v: float | None = None
+    radius: float | None = None
+    centre: tuple[float, float] | tuple[None, None] | None = None
+    width: float | None = None
+    height: float | None = None
+    # GRF-specific attributes
+    seed: int | None = None
+    size: int | None = None
+    alpha: float | None = None
+    min: float | None = None
+    max: float | None = None
+    vec_x: str | None = None
+    vec_y: str | None = None
+    # Reprojection attribute
+    fast_reprojection: bool = False
+
+    def __init__(self, bounds: Boundary, params: dict[str, Any]) -> None:
         """
         This is where large-scale operations are performed,
         such as importing data, downsampling, reprojecting, and renaming
@@ -50,7 +85,7 @@ class VectorDataLoader(DataLoaderInterface):
 
         self.data = self.import_data(bounds)
         # Read in and manipulate data to standard form
-        if "files" in params:
+        if "files" in params and self.files is not None:
             logger.info("\tFiles read:")
             for file in self.files:
                 logger.info(f"\t\t{file}")
@@ -94,10 +129,7 @@ class VectorDataLoader(DataLoaderInterface):
         else:
             # Cut dataset down to initial boundary
             logger.info(
-                "\tTrimming data to initial boundary: {min} to {max}".format(
-                    min=(bounds.get_lat_min(), bounds.get_long_min()),
-                    max=(bounds.get_lat_max(), bounds.get_long_max()),
-                )
+                f"\tTrimming data to initial boundary: {(bounds.get_lat_min(), bounds.get_long_min())} to {(bounds.get_lat_max(), bounds.get_long_max())}"
             )
 
             self.data = self.trim_datapoints(bounds)
@@ -121,7 +153,6 @@ class VectorDataLoader(DataLoaderInterface):
 
                 Downsampling and reprojecting happen in __init__() method
         """
-        pass
 
     def add_default_params(self, params):
         """
@@ -234,8 +265,9 @@ class VectorDataLoader(DataLoaderInterface):
         # Perform operation on appropriate datatype
         if isinstance(data, pd.core.frame.DataFrame):
             return add_mag_dir_to_df(data, names)
-        elif isinstance(data, xr.core.dataset.Dataset):
+        if isinstance(data, xr.core.dataset.Dataset):
             return add_mag_dir_to_xr(data, names)
+        raise TypeError(f"Unsupported data type: {type(data)}")
 
     def calculate_coverage(self, bounds, data=None):
         """
@@ -257,26 +289,22 @@ class VectorDataLoader(DataLoaderInterface):
         def calculate_coverage_from_df(bounds, data):
             data = data.dropna().reset_index()
             # If empty dataframe, 0% coverage
-            if data.empty:
-                return 0
-            # If no valid coordinates within data range, 0% coverage
-            elif data.lat.size == 0 or data.long.size == 0:
+            if data.empty or data.lat.size == 0 or data.long.size == 0:
                 return 0
             # Otherwise, calculate coverage, assuming rectangular region
             # in mercator projection
-            else:
-                # Create a polygon to calculate overlap region from
-                data_boundary = Boundary(
-                    [data.lat.min(), data.lat.max()], [data.long.min(), data.long.max()]
-                )
-                data_polygon = data_boundary.to_polygon()
-                bounds_polygon = bounds.to_polygon()
+            # Create a polygon to calculate overlap region from
+            data_boundary = Boundary(
+                [data.lat.min(), data.lat.max()], [data.long.min(), data.long.max()]
+            )
+            data_polygon = data_boundary.to_polygon()
+            bounds_polygon = bounds.to_polygon()
 
-                # Get fraction of bounds covered by data
-                overlap_area = data_polygon.intersection(bounds_polygon).area
-                total_area = bounds_polygon.area
+            # Get fraction of bounds covered by data
+            overlap_area = data_polygon.intersection(bounds_polygon).area
+            total_area = bounds_polygon.area
 
-                return overlap_area / total_area
+            return overlap_area / total_area
 
         def calculate_coverage_from_xr(bounds, data):
             # Remove all NaN columns/rows
@@ -288,20 +316,19 @@ class VectorDataLoader(DataLoaderInterface):
                 return 0
             # Otherwise, calculate coverage, assuming rectangular region
             # in mercator projection
-            else:
-                # Create a polygon to calculate overlap region from
-                data_boundary = Boundary(
-                    [data.lat.min().item(), data.lat.max().item()],
-                    [data.long.min().item(), data.long.max().item()],
-                )
-                data_polygon = data_boundary.to_polygon()
-                bounds_polygon = bounds.to_polygon()
+            # Create a polygon to calculate overlap region from
+            data_boundary = Boundary(
+                [data.lat.min().item(), data.lat.max().item()],
+                [data.long.min().item(), data.long.max().item()],
+            )
+            data_polygon = data_boundary.to_polygon()
+            bounds_polygon = bounds.to_polygon()
 
-                # Get fraction of bounds covered by data
-                overlap_area = data_polygon.intersection(bounds_polygon).area
-                total_area = bounds_polygon.area
+            # Get fraction of bounds covered by data
+            overlap_area = data_polygon.intersection(bounds_polygon).area
+            total_area = bounds_polygon.area
 
-                return overlap_area / total_area
+            return overlap_area / total_area
 
         # Use self.data if not no explicit dataset specified
         if data is None:
@@ -309,8 +336,9 @@ class VectorDataLoader(DataLoaderInterface):
         # Calculate data coverage fraction
         if isinstance(self.data, pd.core.frame.DataFrame):
             return calculate_coverage_from_df(bounds, data)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return calculate_coverage_from_xr(bounds, data)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def trim_datapoints(self, bounds, data=None):
         """
@@ -364,20 +392,12 @@ class VectorDataLoader(DataLoaderInterface):
                 lat_vals = data.lat.values
                 long_vals = data.long.values
 
-                lat_min_idx = np.searchsorted(
-                    lat_vals, bounds.get_lat_min(), side="right"
-                )
-                lat_max_idx = np.searchsorted(
-                    lat_vals, bounds.get_lat_max(), side="right"
-                )
+                lat_min_idx = np.searchsorted(lat_vals, bounds.get_lat_min(), side="right")
+                lat_max_idx = np.searchsorted(lat_vals, bounds.get_lat_max(), side="right")
 
                 if bounds.get_long_min() < bounds.get_long_max():
-                    long_min_idx = np.searchsorted(
-                        long_vals, bounds.get_long_min(), side="right"
-                    )
-                    long_max_idx = np.searchsorted(
-                        long_vals, bounds.get_long_max(), side="right"
-                    )
+                    long_min_idx = np.searchsorted(long_vals, bounds.get_long_min(), side="right")
+                    long_max_idx = np.searchsorted(long_vals, bounds.get_long_max(), side="right")
 
                     # Use integer-based indexing (faster than coordinate-based)
                     data = data.isel(
@@ -386,9 +406,7 @@ class VectorDataLoader(DataLoaderInterface):
                     )
                 else:
                     # Fallback to coordinate-based selection
-                    data = data.sel(
-                        lat=slice(bounds.get_lat_min(), bounds.get_lat_max())
-                    )
+                    data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
                     data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
                     data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
                     data = xr.concat([data_lhs, data_rhs], "long")
@@ -397,19 +415,15 @@ class VectorDataLoader(DataLoaderInterface):
                 # Fallback to standard coordinate-based selection if optimisation fails
                 data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
                 if bounds.get_long_min() < bounds.get_long_max():
-                    data = data.sel(
-                        long=slice(bounds.get_long_min(), bounds.get_long_max())
-                    )
+                    data = data.sel(long=slice(bounds.get_long_min(), bounds.get_long_max()))
                 else:
                     data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
                     data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
                     data = xr.concat([data_lhs, data_rhs], "long")
 
             # Select data region within temporal bounds if time exists as a coordinate
-            if "time" in data.coords.keys():
-                data = data.sel(
-                    time=slice(bounds.get_time_min(), bounds.get_time_max())
-                )
+            if "time" in data.coords:
+                data = data.sel(time=slice(bounds.get_time_min(), bounds.get_time_max()))
 
             # Trim off any data on the min boundary to be consistent with df
             if len(data.lat) > 0 and bounds.get_lat_min() in data.lat.values:
@@ -426,8 +440,9 @@ class VectorDataLoader(DataLoaderInterface):
 
         if isinstance(data, pd.core.frame.DataFrame):
             return trim_datapoints_from_df(data, bounds)
-        elif isinstance(data, xr.core.dataset.Dataset):
+        if isinstance(data, xr.core.dataset.Dataset):
             return trim_datapoints_from_xr(data, bounds)
+        raise TypeError(f"Unsupported data type: {type(data)}")
 
     def get_value(self, bounds, agg_type=None, skipna=True, data=None):
         """
@@ -495,9 +510,7 @@ class VectorDataLoader(DataLoaderInterface):
             elif agg_type == "STD":
                 values = [dps[name].std(skipna=skipna) for name in variable_names]
             elif agg_type == "MEDIAN":
-                raise ValueError(
-                    'Aggregation type "MEDIAN" is non-sensical for vector dataset!'
-                )
+                raise ValueError('Aggregation type "MEDIAN" is non-sensical for vector dataset!')
             else:
                 raise ValueError(f"Unknown aggregation type {agg_type}")
 
@@ -528,9 +541,7 @@ class VectorDataLoader(DataLoaderInterface):
                 f"\t{data_count} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'"
             )
             # If no data, return np.nan for each variable
-            if data_count == 0:
-                values = [np.nan for _ in variable_names]
-            elif np.isnan(dps._magnitude).all():
+            if data_count == 0 or np.isnan(dps._magnitude).all():
                 values = [np.nan for _ in variable_names]
             # If want count
             elif agg_type == "COUNT":
@@ -542,31 +553,21 @@ class VectorDataLoader(DataLoaderInterface):
                     values = [dps[name].count().item() for name in variable_names]
             elif agg_type == "MIN":
                 # Get 2D index of minimum magnitude point
-                index = np.unravel_index(
-                    dps._magnitude.argmin(skipna=skipna), dps._magnitude.shape
-                )
+                index = np.unravel_index(dps._magnitude.argmin(skipna=skipna), dps._magnitude.shape)
                 # Get cartesian vector from index
                 values = [dps[name][index].item() for name in variable_names]
             elif agg_type == "MAX":
                 # Get 2D index of minimum magnitude point
-                index = np.unravel_index(
-                    dps._magnitude.argmax(skipna=skipna), dps._magnitude.shape
-                )
+                index = np.unravel_index(dps._magnitude.argmax(skipna=skipna), dps._magnitude.shape)
                 # Get cartesian vector from index
                 values = [dps[name][index].item() for name in variable_names]
             # And the rest self explanatory
             elif agg_type == "MEAN":
-                values = [
-                    dps[name].mean(skipna=skipna).item() for name in variable_names
-                ]
+                values = [dps[name].mean(skipna=skipna).item() for name in variable_names]
             elif agg_type == "STD":
-                values = [
-                    dps[name].std(skipna=skipna).item() for name in variable_names
-                ]
+                values = [dps[name].std(skipna=skipna).item() for name in variable_names]
             elif agg_type == "MEDIAN":
-                raise ValueError(
-                    'Aggregation type "MEDIAN" is non-sensical for vector dataset!'
-                )
+                raise ValueError('Aggregation type "MEDIAN" is non-sensical for vector dataset!')
             else:
                 raise ValueError(f"Unknown aggregation type {agg_type}")
 
@@ -577,26 +578,17 @@ class VectorDataLoader(DataLoaderInterface):
             agg_type = self.aggregate_type
 
         # Limit data to boundary
-        if data is None:
-            dps = self.trim_datapoints(bounds, data=data)
-        else:
-            dps = data
+        dps = self.trim_datapoints(bounds, data=data) if data is None else data
         # Get list of values
         if isinstance(self.data, pd.core.frame.DataFrame):
-            values = get_value_from_df(
-                dps, self.data_name_list, bounds, agg_type, skipna
-            )
+            values = get_value_from_df(dps, self.data_name_list, bounds, agg_type, skipna)
         elif isinstance(self.data, xr.core.dataset.Dataset):
-            values = get_value_from_xr(
-                dps, self.data_name_list, bounds, agg_type, skipna
-            )
+            values = get_value_from_xr(dps, self.data_name_list, bounds, agg_type, skipna)
 
         # Put in dict to map variable to values
-        return {
-            self.data_name_list[i]: values[i] for i in range(len(self.data_name_list))
-        }
+        return {self.data_name_list[i]: values[i] for i in range(len(self.data_name_list))}
 
-    def get_hom_condition(self, bounds, splitting_conds, agg_type="MEAN", data=None):
+    def get_hom_condition(self, bounds, splitting_conds, _agg_type="MEAN", data=None):
         """
         Retrieves homogeneity condition of data within boundary.
 
@@ -653,18 +645,12 @@ class VectorDataLoader(DataLoaderInterface):
             num_over_threshold = (flow > sc["threshold"]).sum()
 
             num_non_nan = np.count_nonzero(~np.isnan(flow))
-            if num_non_nan > 0:
-                frac_over_threshold = num_over_threshold / num_non_nan
-            else:
-                frac_over_threshold = 0
+            frac_over_threshold = num_over_threshold / num_non_nan if num_non_nan > 0 else 0
 
             if frac_over_threshold <= sc["lower_bound"]:
                 hom_type = "CLR"
             elif frac_over_threshold >= sc["upper_bound"]:
-                if sc["split_lock"] is True:
-                    hom_type = "HOM"
-                else:
-                    hom_type = "CLR"
+                hom_type = "HOM" if sc["split_lock"] is True else "CLR"
             else:
                 hom_type = "HET"
 
@@ -674,9 +660,7 @@ class VectorDataLoader(DataLoaderInterface):
 
         return hom_type
 
-    def reproject(
-        self, in_proj="EPSG:4326", out_proj="EPSG:4326", x_col="lat", y_col="long"
-    ):
+    def reproject(self, in_proj="EPSG:4326", out_proj="EPSG:4326", x_col="lat", y_col="long"):
         """
         Reprojects data using pyProj.Transformer
         self.data can be pd.DataFrame or xr.Dataset
@@ -727,9 +711,9 @@ class VectorDataLoader(DataLoaderInterface):
                     ('time' if in original dataset), and data_name
             """
             # Do the reprojection
-            x, y = Transformer.from_crs(
-                CRS(in_proj), CRS(out_proj), always_xy=True
-            ).transform(data[x_col].to_numpy(), data[y_col].to_numpy())
+            x, y = Transformer.from_crs(CRS(in_proj), CRS(out_proj), always_xy=True).transform(
+                data[x_col].to_numpy(), data[y_col].to_numpy()
+            )
             # Replace columns with reprojected columns called 'lat'/'long'
             if x_col != "long":
                 data = data.drop(x_col, axis=1)
@@ -781,27 +765,24 @@ class VectorDataLoader(DataLoaderInterface):
                 # Rename coordinates
                 data = data.rename({x_col: "long", y_col: "lat"})
                 # Reorder coords in case they are wrong
-                data = data.sortby("lat", ascending=True)
-                data = data.sortby("long", ascending=True)
-                return data
+                return data.sortby("lat", ascending=True).sortby("long", ascending=True)
             # If want accurate results
-            else:
-                df = data.to_dataframe().reset_index().dropna()
-                return reproject_df(df, in_proj, out_proj, x_col, y_col)
+            df = data.to_dataframe().reset_index().dropna()
+            return reproject_df(df, in_proj, out_proj, x_col, y_col)
 
         # If no reprojection to do
         if in_proj == out_proj:
             logger.debug("\tself.reproject() called but don't need to")
             return self.data
-        else:
-            logger.info(f"\tReprojecting data from {in_proj} to {out_proj}")
+        logger.info(f"\tReprojecting data from {in_proj} to {out_proj}")
         # Choose appropriate method of reprojection based on data type
         if isinstance(self.data, pd.core.frame.DataFrame):
             return reproject_df(self.data, in_proj, out_proj, x_col, y_col)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return reproject_xr(
                 self.data, in_proj, out_proj, x_col, y_col, fast=self.fast_reprojection
             )
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def downsample(self, agg_type=None):
         """
@@ -866,7 +847,7 @@ class VectorDataLoader(DataLoaderInterface):
                 data = data.thin(long=ds[0])
             return data
 
-        def downsample_df(data, ds, agg_type):
+        def downsample_df(data, _ds, _agg_type):
             """
             Downsample pandas dataframe
             Not implemented as it just adds to processing time,
@@ -883,16 +864,16 @@ class VectorDataLoader(DataLoaderInterface):
             agg_type = self.aggregate_type
 
         # If no downsampling
-        if self.downsample_factors == (1, 1) or self.downsample_factors == [1, 1]:
+        if list(self.downsample_factors) == [1, 1]:
             logger.debug("\tself.downsample() called but don't have to")
             return self.data
-        else:
-            logger.info(f"\tDownsampling data by {self.downsample_factors}")
+        logger.info(f"\tDownsampling data by {self.downsample_factors}")
         # Otherwise, downsample appropriately
         if isinstance(self.data, pd.core.frame.DataFrame):
             return downsample_df(self.data, self.downsample_factors, agg_type)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return downsample_xr(self.data, self.downsample_factors, agg_type)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def get_data_col_name(self):
         """
@@ -912,9 +893,7 @@ class VectorDataLoader(DataLoaderInterface):
             # Store name of data column for future reference
             columns = data.columns
             # Filter out lat, long, time columns leaves us with data column name
-            filtered_cols = filter(
-                lambda col: col not in ["lat", "long", "time"], columns
-            )
+            filtered_cols = filter(lambda col: col not in ["lat", "long", "time"], columns)
             data_names = list(filtered_cols)
             # Turn into comma seperated string and return
             return ",".join(data_names)
@@ -932,8 +911,9 @@ class VectorDataLoader(DataLoaderInterface):
         # Choose method of extraction based on data type
         if isinstance(self.data, pd.core.frame.DataFrame):
             return get_data_names_from_df(self.data)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return get_data_names_from_xr(self.data)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def get_data_col_name_list(self):
         """
@@ -987,8 +967,9 @@ class VectorDataLoader(DataLoaderInterface):
         # Change data name depending on data type
         if isinstance(self.data, pd.core.frame.DataFrame):
             return set_names_df(self.data, name_dict)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return set_names_xr(self.data, name_dict)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def set_data_col_name_list(self, new_names):
         """
@@ -1005,9 +986,7 @@ class VectorDataLoader(DataLoaderInterface):
         """
         # Check validity of input
         if not isinstance(new_names, list):
-            raise TypeError(
-                f"'new_names' must be a list! Instead it is a {type(new_names)}"
-            )
+            raise TypeError(f"'new_names' must be a list! Instead it is a {type(new_names)}")
         if len(new_names) != 2:
             raise ValueError(
                 f"'new_names' must have a length of 2! Instead it has length {len(new_names)}"
@@ -1048,19 +1027,14 @@ class VectorDataLoader(DataLoaderInterface):
         Raises:
             ValueError: If agg_type is not 'MAX' or 'MEAN'
         """
-        if data is None:
-            dps = self.trim_datapoints(bounds, data=data)
-        else:
-            dps = data
+        dps = self.trim_datapoints(bounds, data=data) if data is None else data
         # Create a meshgrid of vectors from the data
         vector_field = self._create_vector_meshgrid(dps, self.data_name_list)
         # Get component values for each vector
         fx, fy = vector_field[:, :, 0], vector_field[:, :, 1]
         # If not enough datapoints to compute gradient
         if 1 in fx.shape or 1 in fy.shape:
-            logger.debug(
-                "\tUnable to compute gradient across cell for curl calculation"
-            )
+            logger.debug("\tUnable to compute gradient across cell for curl calculation")
             curl = np.nan
         else:
             # Compute partial derivatives
@@ -1074,18 +1048,14 @@ class VectorDataLoader(DataLoaderInterface):
             logger.debug("\tAll NaN cellbox encountered")
             return np.nan
         # If want to collapse to max mag value, return scalar
-        elif collapse:
+        if collapse:
             if agg_type == "MAX":
                 return max(np.nanmax(curl), np.nanmin(curl), key=abs)
-            elif agg_type == "MEAN":
+            if agg_type == "MEAN":
                 return np.nanmean(curl)
-            else:
-                raise ValueError(
-                    f"agg_type '{agg_type}' not understood! Requires 'MAX' or 'MEAN'"
-                )
+            raise ValueError(f"agg_type '{agg_type}' not understood! Requires 'MAX' or 'MEAN'")
         # Else return field
-        else:
-            return curl
+        return curl
 
     def calc_dmag(self, bounds, data=None, collapse=True, agg_type="MEAN"):
         """
@@ -1114,10 +1084,7 @@ class VectorDataLoader(DataLoaderInterface):
         Raises:
             ValueError: If agg_type is not 'MAX' or 'MEAN'
         """
-        if data is None:
-            dps = self.trim_datapoints(bounds, data=data)
-        else:
-            dps = data
+        dps = self.trim_datapoints(bounds, data=data) if data is None else data
 
         data_names = self.data_name_list
         each_vector = dps[data_names].to_numpy()
@@ -1130,22 +1097,18 @@ class VectorDataLoader(DataLoaderInterface):
             logger.debug("\tEmpty cellbox encountered")
             return np.nan
         # If d_mag is nan
-        elif np.isnan(d_mag).all():
+        if np.isnan(d_mag).all():
             logger.debug("\tAll NaN cellbox encountered")
             return np.nan
         # If want to collapse to max mag value, return scalar
-        elif collapse:
+        if collapse:
             if agg_type == "MAX":
                 return np.nanmax(d_mag)
-            elif agg_type == "MEAN":
+            if agg_type == "MEAN":
                 return np.nanmean(d_mag)
-            else:
-                raise ValueError(
-                    f"agg_type '{agg_type}' not understood! Requires 'MAX' or 'MEAN'"
-                )
+            raise ValueError(f"agg_type '{agg_type}' not understood! Requires 'MAX' or 'MEAN'")
         # Else return field
-        else:
-            return d_mag
+        return d_mag
 
     @staticmethod
     def _create_vector_meshgrid(data, data_name_list):
@@ -1172,9 +1135,7 @@ class VectorDataLoader(DataLoaderInterface):
             vector_x_field = data.pivot(index="lat", columns="long", values=x)
             vector_y_field = data.pivot(index="lat", columns="long", values=y)
             # Combine into field of vectors
-            vector_field = np.stack((vector_x_field, vector_y_field), axis=-1)
-            vector_field = np.swapaxes(vector_field, 0, 1)
-            return vector_field
+            return np.swapaxes(np.stack((vector_x_field, vector_y_field), axis=-1), 0, 1)
 
         def meshgrid_from_xr(data, data_name_list):
             # Extract out each variable and combine as tuple
@@ -1184,5 +1145,6 @@ class VectorDataLoader(DataLoaderInterface):
 
         if isinstance(data, pd.core.frame.DataFrame):
             return meshgrid_from_df(data, data_name_list)
-        elif isinstance(data, xr.core.dataset.Dataset):
+        if isinstance(data, xr.core.dataset.Dataset):
             return meshgrid_from_xr(data, data_name_list)
+        raise TypeError(f"Unsupported data type: {type(data)}")

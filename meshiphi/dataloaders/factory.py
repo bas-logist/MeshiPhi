@@ -1,48 +1,48 @@
+from __future__ import annotations
+
+import os
+from glob import glob
+
+from meshiphi.dataloaders.lut.density import DensityDataLoader
+from meshiphi.dataloaders.lut.lut_csv import LutCSV
+from meshiphi.dataloaders.lut.lut_geojson import LutGeoJSON
+from meshiphi.dataloaders.lut.lut_shapefile import LutShapefile
+from meshiphi.dataloaders.lut.scotland_ncmpa import ScotlandNCMPA
+from meshiphi.dataloaders.lut.thickness import ThicknessDataLoader
 from meshiphi.dataloaders.scalar.amsr import AMSRDataLoader
+from meshiphi.dataloaders.scalar.baltic_sea_ice import BalticSeaIceDataLoader
 from meshiphi.dataloaders.scalar.bsose_depth import BSOSEDepthDataLoader
 from meshiphi.dataloaders.scalar.bsose_sea_ice import BSOSESeaIceDataLoader
-from meshiphi.dataloaders.scalar.baltic_sea_ice import BalticSeaIceDataLoader
+from meshiphi.dataloaders.scalar.ecmwf_sig_wave_height import (
+    ECMWFSigWaveHeightDataLoader,
+)
+from meshiphi.dataloaders.scalar.era5_max_wave_height import ERA5MaxWaveHeightDataLoader
+from meshiphi.dataloaders.scalar.era5_mean_wave_direction import (
+    ERA5MeanWaveDirDataLoader,
+)
+from meshiphi.dataloaders.scalar.era5_sig_wave_height import ERA5SigWaveHeightDataLoader
+from meshiphi.dataloaders.scalar.era5_wave_period import ERA5WavePeriodDataLoader
+from meshiphi.dataloaders.scalar.era5_wind_dir import ERA5WindDirDataLoader
+from meshiphi.dataloaders.scalar.era5_wind_mag import ERA5WindMagDataLoader
 from meshiphi.dataloaders.scalar.gebco import GEBCODataLoader
 from meshiphi.dataloaders.scalar.icenet import IceNetDataLoader
 from meshiphi.dataloaders.scalar.modis import MODISDataLoader
 from meshiphi.dataloaders.scalar.scalar_csv import ScalarCSVDataLoader
 from meshiphi.dataloaders.scalar.scalar_grf import ScalarGRFDataLoader
 from meshiphi.dataloaders.scalar.shape import ShapeDataLoader
-from meshiphi.dataloaders.scalar.era5_sig_wave_height import ERA5SigWaveHeightDataLoader
-from meshiphi.dataloaders.scalar.era5_max_wave_height import ERA5MaxWaveHeightDataLoader
-from meshiphi.dataloaders.scalar.era5_wave_period import ERA5WavePeriodDataLoader
-from meshiphi.dataloaders.scalar.era5_mean_wave_direction import (
-    ERA5MeanWaveDirDataLoader,
-)
-from meshiphi.dataloaders.scalar.era5_wind_mag import ERA5WindMagDataLoader
-from meshiphi.dataloaders.scalar.era5_wind_dir import ERA5WindDirDataLoader
 from meshiphi.dataloaders.scalar.visual_iced import VisualIcedDataLoader
-from meshiphi.dataloaders.scalar.ecmwf_sig_wave_height import (
-    ECMWFSigWaveHeightDataLoader,
-)
-
 from meshiphi.dataloaders.vector.baltic_current import BalticCurrentDataLoader
+from meshiphi.dataloaders.vector.duacs_current import DuacsCurrentDataLoader
+from meshiphi.dataloaders.vector.era5_wave_direction_vector import (
+    ERA5WaveDirectionLoader,
+)
 from meshiphi.dataloaders.vector.era5_wind import ERA5WindDataLoader
 from meshiphi.dataloaders.vector.north_sea_current import NorthSeaCurrentDataLoader
 from meshiphi.dataloaders.vector.oras5_current import ORAS5CurrentDataLoader
 from meshiphi.dataloaders.vector.sose import SOSEDataLoader
 from meshiphi.dataloaders.vector.vector_csv import VectorCSVDataLoader
 from meshiphi.dataloaders.vector.vector_grf import VectorGRFDataLoader
-from meshiphi.dataloaders.vector.duacs_current import DuacsCurrentDataLoader
-from meshiphi.dataloaders.vector.era5_wave_direction_vector import (
-    ERA5WaveDirectionLoader,
-)
 from meshiphi.dataloaders.vector.vector_shape import VectorShapeDataLoader
-
-from meshiphi.dataloaders.lut.density import DensityDataLoader
-from meshiphi.dataloaders.lut.thickness import ThicknessDataLoader
-from meshiphi.dataloaders.lut.scotland_ncmpa import ScotlandNCMPA
-from meshiphi.dataloaders.lut.lut_csv import LutCSV
-from meshiphi.dataloaders.lut.lut_geojson import LutGeoJSON
-from meshiphi.dataloaders.lut.lut_shapefile import LutShapefile
-
-from glob import glob
-import os
 
 
 class DataLoaderFactory:
@@ -136,7 +136,7 @@ class DataLoaderFactory:
         if name in dataloader_requirements:
             # Set data loader and params required for it to work
             data_loader = dataloader_requirements[name][0]
-            required_params = dataloader_requirements[name][1]
+            required_params: list[str] = dataloader_requirements[name][1]
         else:
             raise ValueError(f"{name} not in known list of DataLoaders")
 
@@ -165,9 +165,7 @@ class DataLoaderFactory:
             params["files"] = [params["file"]]
             del params["file"]
         elif "folder" in params:
-            folder = os.path.join(
-                params["folder"], ""
-            )  # Adds trailing slash if non-existent
+            folder = os.path.join(params["folder"], "")  # Adds trailing slash if non-existent
             params["files"] = sorted(glob(folder + "*"))
             del params["folder"]
         return params

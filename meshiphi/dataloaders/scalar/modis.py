@@ -1,7 +1,8 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
 import logging
+
 import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +21,12 @@ class MODISDataLoader(ScalarDataLoader):
                 MODIS dataset within limits of bounds.
                 Dataset has coordinates 'lat', 'long', and variable 'SIC'
         """
-        logger.info(f"- Opening file {self.file}")
         # Open Dataset
+        if self.files is None:
+            raise ValueError("files parameter is required for MODISDataLoader")
+        logger.info(
+            f"- Opening file {self.files[0] if len(self.files) == 1 else f'{len(self.files)} files'}"
+        )
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -32,6 +37,4 @@ class MODISDataLoader(ScalarDataLoader):
         # Set areas obscured by cloud to NaN values
         data = data.where(data.cloud != 1, drop=True)
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

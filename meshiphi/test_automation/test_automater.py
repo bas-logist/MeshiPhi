@@ -1,20 +1,21 @@
-import tempfile
-import os
-import shutil
+from __future__ import annotations
+
 import json
 import logging
+import os
+import shutil
 import subprocess as sp
-import pandas as pd
+import tempfile
+
 import geopandas as gpd
+import matplotlib.pyplot as plt
+import pandas as pd
+from matplotlib.colors import to_rgba
+from matplotlib.patches import Patch
 from shapely import wkt
 
-
-import matplotlib.pyplot as plt
-from matplotlib.patches import Patch
-from matplotlib.colors import to_rgba
-
-from meshiphi.mesh_validation.mesh_comparator import MeshComparator
 from meshiphi import REGRESSION_TESTS_BY_FILE, UNIT_TESTS_BY_FILE
+from meshiphi.mesh_validation.mesh_comparator import MeshComparator
 
 logger = logging.getLogger(__name__)
 
@@ -60,14 +61,12 @@ class TestAutomater:
         self._double_separator = "=" * remaining_terminal_width
         self._single_separator = "-" * remaining_terminal_width
         # Initialise arrays with each test, organise by status
-        self.passes = []
-        self.fails = []
-        self.errors = []
+        self.passes: list[TestInfo] = []
+        self.fails: list[TestInfo] = []
+        self.errors: list[TestInfo] = []
 
         # Get files that are different between branches
-        diff_files = self.get_diff_filenames(
-            from_branch=from_branch, into_branch=into_branch
-        )
+        diff_files = self.get_diff_filenames(from_branch=from_branch, into_branch=into_branch)
 
         # Run relevant tests
         logger.info(self._double_separator)
@@ -159,9 +158,7 @@ class TestAutomater:
         # Get base directory for regression tests
         reg_test_dir = os.path.join(self.repo_dir, "tests", "regression_tests")
         logger.info("Attempting regression tests...")
-        self._run_tests(
-            diff_files, reg_test_dir, REGRESSION_TESTS_BY_FILE, save_to=save_to
-        )
+        self._run_tests(diff_files, reg_test_dir, REGRESSION_TESTS_BY_FILE, save_to=save_to)
 
         # Summarise mesh stats of regression tests
         if save_to:
@@ -232,9 +229,9 @@ class TestAutomater:
         errors = []
         # Get index of line in stdout that contains short summary info
         stdout_lines = stdout.split("\n")
-        summary_idx = [
-            idx for idx, s in enumerate(stdout_lines) if "short test summary info" in s
-        ][0]
+        summary_idx = next(
+            (idx for idx, s in enumerate(stdout_lines) if "short test summary info" in s), 0
+        )
         # Iterate through pytest summary output
         for line in stdout_lines[summary_idx:]:
             # Only read the lines with all necessary info
@@ -306,8 +303,8 @@ class TestAutomater:
             command += ["--merge-base", from_branch, into_branch]
 
         # Run git diff
-        git_diff = sp.run(command, stdout=sp.PIPE)
-        git_diff = git_diff.stdout.decode("utf-8")
+        git_diff_result = sp.run(command, stdout=sp.PIPE, check=False)
+        git_diff = git_diff_result.stdout.decode("utf-8")
         # Extract list of files that have been modified
         raw_filenames = git_diff.split("\n")
 
@@ -315,13 +312,11 @@ class TestAutomater:
         diff_files = []
         if from_branch:
             logger.info(
-                "Following files different between "
-                + f'"{from_branch}" and "{into_branch}"'
+                "Following files different between " + f'"{from_branch}" and "{into_branch}"'
             )
         else:
             logger.info(
-                "Following files different between "
-                + f'current branch and "{into_branch}"'
+                "Following files different between " + f'current branch and "{into_branch}"'
             )
 
         for filename in raw_filenames:
@@ -369,7 +364,7 @@ class TestAutomater:
             dict: Ground truth 'old' json mesh
             dict: Updated 'new' json mesh
         """
-        with open(test_output_file, "r") as fp:
+        with open(test_output_file) as fp:
             test_json = json.load(fp)
         old_json = test_json["old_mesh"]
         new_json = test_json["new_mesh"]
@@ -393,15 +388,13 @@ class TestAutomater:
 
         mc = MeshComparator()
 
-        mesh_comparison = {
+        return {
             "new_mesh": pd.DataFrame(new_json["cellboxes"]).set_index("geometry"),
             "bounds": mc.compare_cellbox_boundaries(old_json, new_json),
             "values": mc.compare_cellbox_values(old_json, new_json),
             "attributes": mc.compare_cellbox_attributes(old_json, new_json),
             "neighbour_graph": mc.compare_neighbour_graph_values(old_json, new_json),
         }
-
-        return mesh_comparison
 
     def save_tests(self, tmp_dir, output_folder, passes=False, fails=True, errors=True):
         """
@@ -437,9 +430,7 @@ class TestAutomater:
             # Skip over non-json files (i.e. plots if generated, pytest subdirectories)
             if extension != ".json":
                 continue
-            old_json, new_json = self.extract_test_meshes(
-                pytest_output_basename + ".json"
-            )
+            old_json, new_json = self.extract_test_meshes(pytest_output_basename + ".json")
             comparison = self.compare_meshes(old_json, new_json)
             # Remove full new mesh from comparison dict
             del comparison["new_mesh"]
@@ -460,7 +451,7 @@ class TestAutomater:
                 # Try / Except in case plotting not done
                 try:
                     shutil.copyfile(pytest_output_basename + ".svg", plot_filename)
-                except IOError as e:
+                except OSError as e:
                     logger.debug(e)
 
     def plot_test(self, test_output, save_to=None):
@@ -515,12 +506,10 @@ class TestAutomater:
             legend_entry = Patch(facecolor=to_rgba(c, a), edgecolor=c, label=label)
 
             # Set a column to have roughly the centrepoint of each cellbox
-            gdf["coords"] = gdf["geometry"].apply(
-                lambda x: x.representative_point().coords[:][0]
-            )
+            gdf["coords"] = gdf["geometry"].apply(lambda x: x.representative_point().coords[:][0])
             if ids:
                 # Print cellbox id within the cellbox
-                for idx, row in gdf.iterrows():
+                for _idx, row in gdf.iterrows():
                     # Scale cell ID label to fit nicely within cellbox
                     fontsize = 2 * row["dcx"] * (2 ** row["dcx"])
                     ax.annotate(
@@ -615,8 +604,7 @@ class TestAutomater:
                 num_diff_cbs = len(diff_df.index)
                 # Write to terminal
                 logger.info(
-                    f"\t{num_diff_cbs}/{num_new_cbs} are different in the "
-                    "newly generated mesh"
+                    f"\t{num_diff_cbs}/{num_new_cbs} are different in the newly generated mesh"
                 )
                 logger.debug(
                     "\tDifferent cellboxes have the following id's in the "
@@ -640,9 +628,9 @@ class TestAutomater:
         # Out of every test run
         all_tests = self.passes + self.fails + self.errors
         # Get list of unique files (i.e. unique test sets)
-        diff_test_files = set([ti.file for ti in all_tests])
+        diff_test_files = {ti.file for ti in all_tests}
         # Set up empty array to store status for calculating stats
-        status_by_file = {test: [] for test in diff_test_files}
+        status_by_file: dict[str, list[str]] = {test: [] for test in diff_test_files}
         # Append status to each unique test set
         for test in all_tests:
             status_by_file[test.file] += [test.status]
@@ -653,7 +641,7 @@ class TestAutomater:
 
 
 class TestInfo:
-    def __init__(self, file, test, reference, status):
+    def __init__(self, file: str, test: str, reference: str, status: str) -> None:
         self.file = file
         self.test = test
         self.reference = reference

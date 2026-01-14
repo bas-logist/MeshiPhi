@@ -1,8 +1,9 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
 import logging
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
 logger = logging.getLogger(__name__)
 
@@ -84,10 +85,8 @@ class VectorShapeDataLoader(VectorDataLoader):
         else:
             raise ValueError(f"Unknown vector shape type: {self.dataloader_name}")
 
-        data_xr = data.set_index(["lat", "long"]).to_xarray()
         # No need to trim data, as was defined by bounds
-
-        return data_xr
+        return data.set_index(["lat", "long"]).to_xarray()
 
     def gen_gradient(self, bounds):
         """
@@ -105,10 +104,9 @@ class VectorShapeDataLoader(VectorDataLoader):
 
         logger.info("\tCreating gradient of values")
         # Create 1D gradient
-        if self.vertical:
-            gradient = np.linspace(0, 1, self.ny)
-        else:
-            gradient = np.linspace(0, 1, self.nx)
+        if self.vertical is None:
+            self.vertical = True  # Default to vertical gradient
+        gradient = np.linspace(0, 1, self.ny) if self.vertical else np.linspace(0, 1, self.nx)
 
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data_u", "dummy_data_v"])
         logger.info("- Generating vector dataset")
@@ -139,12 +137,13 @@ class VectorShapeDataLoader(VectorDataLoader):
                         index=[0],
                     )
                 # Avoid concat with empty df
-                if dummy_df.empty:
-                    dummy_df = row
-                else:
-                    dummy_df = pd.concat([dummy_df, row], ignore_index=True)
+                dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Multiply by scaling factor if present
+        if self.multiplier_u is None:
+            self.multiplier_u = 1.0
+        if self.multiplier_v is None:
+            self.multiplier_v = 1.0
         dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"] * self.multiplier_u
         dummy_df["dummy_data_v"] = dummy_df["dummy_data_v"] * self.multiplier_v
 
@@ -165,11 +164,15 @@ class VectorShapeDataLoader(VectorDataLoader):
         self.long = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         # Set centre as centre of data_grid if none specified
-        c_y = self.lat[int(self.ny / 2)] if not self.centre[0] else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if not self.centre[1] else self.centre[1]
+        if self.radius is None:
+            raise ValueError("radius parameter is required for vector_circle")
+        if self.centre is None:
+            self.centre = (None, None)
+        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
+        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
 
         # Create vectors for row and col indices
-        y = np.vstack(np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny))
+        y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
         x = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         logger.info("\tCreating mask of circle")
@@ -194,10 +197,7 @@ class VectorShapeDataLoader(VectorDataLoader):
                     index=[0],
                 )
                 # Avoid concat with empty df
-                if dummy_df.empty:
-                    dummy_df = row
-                else:
-                    dummy_df = pd.concat([dummy_df, row], ignore_index=True)
+                dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Change boolean values to int
         dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"].astype(int)
@@ -223,11 +223,15 @@ class VectorShapeDataLoader(VectorDataLoader):
         self.long = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         # Set centre as centre of data_grid if none specified
-        c_y = self.lat[int(self.ny / 2)] if not self.centre[0] else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if not self.centre[1] else self.centre[1]
+        if self.width is None or self.height is None:
+            raise ValueError("width and height parameters are required for vector_rectangle")
+        if self.centre is None:
+            self.centre = (None, None)
+        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
+        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
 
         # Create vectors for row and col indices
-        y = np.vstack(np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny))
+        y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
         x = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         logger.info("\tCreating mask of a rectangle")
@@ -235,9 +239,7 @@ class VectorShapeDataLoader(VectorDataLoader):
         x_dist_from_centre = np.abs(x - c_x)
         y_dist_from_centre = np.abs(y - c_y)
         # Turn this into a mask of values within the rectangle
-        mask = np.logical_and(
-            x_dist_from_centre <= self.width, y_dist_from_centre <= self.height
-        )
+        mask = np.logical_and(x_dist_from_centre <= self.width, y_dist_from_centre <= self.height)
         # Set up empty dataframe to populate with dummy data
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data_u", "dummy_data_v"])
         logger.info("\tGenerating vector dataset")
@@ -255,10 +257,7 @@ class VectorShapeDataLoader(VectorDataLoader):
                     index=[0],
                 )
                 # Avoid concat with empty df
-                if dummy_df.empty:
-                    dummy_df = row
-                else:
-                    dummy_df = pd.concat([dummy_df, row], ignore_index=True)
+                dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Change boolean values to int
         dummy_df["dummy_data_u"] = dummy_df["dummy_data_u"].astype(int)

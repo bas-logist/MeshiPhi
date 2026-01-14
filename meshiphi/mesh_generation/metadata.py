@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+from typing import Any
+
+
 class Metadata:
     """
     A Metadata is a class that defines the datasource for a certain Cellbox and the assocated splitting conditions.
@@ -13,11 +18,11 @@ class Metadata:
 
     def __init__(
         self,
-        data_loader,
-        splitting_conditions=None,
-        value_fill_type="",
-        data_subset=None,
-    ):
+        data_loader: Any,  # DataLoaderInterface or concrete implementations
+        splitting_conditions: list[dict[str, Any]] | None = None,
+        value_fill_type: str = "",
+        data_subset: Any = None,
+    ) -> None:
         """
 
         Args:
@@ -39,56 +44,56 @@ class Metadata:
         else:
             self.data_subset = data_subset
 
-    def get_data_loader(self):
+    def get_data_loader(self) -> Any:
         """
         returns the data loader
         """
         return self.data_loader
 
-    def set_data_loader(self, data_loader):
+    def set_data_loader(self, data_loader: Any) -> None:
         """
         sets the data loader
         """
         self.data_loader = data_loader
 
-    def get_splitting_conditions(self):
+    def get_splitting_conditions(self) -> list[dict[str, Any]] | None:
         """
         returns a list of the splitting conditions
         """
 
         return self.splitting_conditions
 
-    def set_splitting_conditions(self, splitting_conditions):
+    def set_splitting_conditions(self, splitting_conditions: list[dict[str, Any]] | None) -> None:
         """
         sets the splitting conditions
         """
         self.splitting_conditions = splitting_conditions
 
-    def get_value_fill_type(self):
+    def get_value_fill_type(self) -> str:
         """
         returns thevalue fill type
         """
         return self.value_fill_type
 
-    def set_value_fill_type(self, value_fill_type):
+    def set_value_fill_type(self, value_fill_type: str) -> None:
         """
         sets the value fill type
         """
         self.value_fill_type = value_fill_type
 
-    def get_data_subset(self):
+    def get_data_subset(self) -> Any:
         """
         gets the data subset
         """
         return self.data_subset
 
-    def set_data_subset(self, data_subset):
+    def set_data_subset(self, data_subset: Any) -> None:
         """
         sets the data subset
         """
         self.data_subset = data_subset
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, Metadata):
             eq_check = []
 

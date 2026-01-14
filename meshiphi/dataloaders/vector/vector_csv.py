@@ -1,6 +1,6 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
 import pandas as pd
+
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
 
 class VectorCSVDataLoader(VectorDataLoader):
@@ -18,12 +18,12 @@ class VectorCSVDataLoader(VectorDataLoader):
                 and variable defined by column heading in csv file
         """
         # Read in data
+        if self.files is None:
+            raise ValueError("files parameter is required for VectorCSVDataLoader")
         df_list = []
         # NOTE: All csv files must have same columns for this to work
         for file in self.files:
             df_list += [pd.read_csv(file)]
         data = pd.concat(df_list)
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

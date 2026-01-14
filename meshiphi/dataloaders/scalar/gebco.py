@@ -1,6 +1,6 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
 import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 
 class GEBCODataLoader(ScalarDataLoader):
@@ -18,6 +18,8 @@ class GEBCODataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'elevation'
         """
         # Import data from files defined in config
+        if self.files is None:
+            raise ValueError("files parameter is required for GEBCODataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -29,6 +31,4 @@ class GEBCODataLoader(ScalarDataLoader):
         data = data["elevation"].to_dataset()
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

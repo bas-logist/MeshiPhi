@@ -1,6 +1,6 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
 import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 
 class BSOSEDepthDataLoader(ScalarDataLoader):
@@ -19,6 +19,8 @@ class BSOSEDepthDataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'elevation'
         """
         # Open Dataset
+        if self.files is None:
+            raise ValueError("files parameter is required for BSOSEDepthDataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -36,6 +38,4 @@ class BSOSEDepthDataLoader(ScalarDataLoader):
         # Limit to just elevation data
         data = data["elevation"].to_dataset()
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

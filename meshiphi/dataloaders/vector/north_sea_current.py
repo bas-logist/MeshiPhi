@@ -1,7 +1,6 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
-
 import xarray as xr
+
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
 
 class NorthSeaCurrentDataLoader(VectorDataLoader):
@@ -20,6 +19,8 @@ class NorthSeaCurrentDataLoader(VectorDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'uC', 'vC'
         """
         # Open Dataset
+        if self.files is None:
+            raise ValueError("files parameter is required for NorthSeaCurrentDataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -30,6 +31,4 @@ class NorthSeaCurrentDataLoader(VectorDataLoader):
         data = data[["uC", "vC"]]
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

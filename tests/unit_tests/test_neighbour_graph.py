@@ -2,13 +2,12 @@ import copy
 
 import pytest
 
+from meshiphi.mesh_generation.boundary import Boundary
+from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.direction import Direction
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
-from meshiphi.mesh_generation.cellbox import CellBox
-from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.utils import longitude_domain
 from tests.conftest import create_ng_from_dict
-
 
 # Define which direction each cardinal direction lies
 NORTHERN_DIRECTIONS = [Direction.north_east, Direction.north, Direction.north_west]
@@ -160,8 +159,8 @@ def test_remove_node_and_update_neighbours(ng_dict_3x3):
     # Create a new neighbour graph
     manually_removed_ng_dict = copy.deepcopy(ng_dict_3x3)
     # Remove the central node by popping it out of neighbour lists
-    for node, dir_map in manually_removed_ng_dict.items():
-        for direction, neighbours in dir_map.items():
+    for _node, dir_map in manually_removed_ng_dict.items():
+        for _direction, neighbours in dir_map.items():
             if node_to_remove in neighbours:
                 neighbours.pop(neighbours.index(node_to_remove))
     # Then remove the central node entirely
@@ -171,7 +170,7 @@ def test_remove_node_and_update_neighbours(ng_dict_3x3):
 
 
 def test_get_neighbours(neighbour_graph, ng_dict_3x3):
-    for cb_index in ng_dict_3x3.keys():
+    for cb_index in ng_dict_3x3:
         for direction in ALL_DIRECTIONS:
             ng_neighbours = neighbour_graph.get_neighbours(cb_index, direction)
             assert ng_neighbours == ng_dict_3x3[cb_index][direction]
@@ -310,7 +309,7 @@ def test_update_corner_neighbours(ng_dict_3x3):
 
 
 @pytest.mark.parametrize(
-    "direction,lat_offset,long_offset",
+    ("direction", "lat_offset", "long_offset"),
     [
         (Direction.north, 20, 0),
         (Direction.north_east, 20, 20),
@@ -365,7 +364,7 @@ def test_get_neighbour_case_bounds_non_touching():
 
 
 @pytest.mark.parametrize(
-    "direction,lat_offset,long_offset",
+    ("direction", "lat_offset", "long_offset"),
     [
         (Direction.north, 20, 0),
         (Direction.north_east, 20, 20),
@@ -427,7 +426,7 @@ def test_get_neighbour_case_non_touching():
 
 
 @pytest.mark.parametrize(
-    "direction,lat_offset,east_base",
+    ("direction", "lat_offset", "east_base"),
     [
         (Direction.north_east, 20, True),
         (Direction.east, 0, True),

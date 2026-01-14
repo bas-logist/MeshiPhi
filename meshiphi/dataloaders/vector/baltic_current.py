@@ -1,7 +1,6 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
-
 import xarray as xr
+
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
 
 class BalticCurrentDataLoader(VectorDataLoader):
@@ -20,6 +19,8 @@ class BalticCurrentDataLoader(VectorDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'uC', 'vC'
         """
         # Open Dataset
+        if self.files is None:
+            raise ValueError("files parameter is required for BalticCurrentDataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -29,14 +30,10 @@ class BalticCurrentDataLoader(VectorDataLoader):
         data = data.isel(depth=0)
         data = data.reset_coords(names="depth", drop=True)
         # Change column names
-        data = data.rename(
-            {"latitude": "lat", "longitude": "long", "uo": "uC", "vo": "vC"}
-        )
+        data = data.rename({"latitude": "lat", "longitude": "long", "uo": "uC", "vo": "vC"})
 
         # Trim to initial datapoints
         data = self.trim_datapoints(bounds, data=data)
 
         # Reduce along time dimension
-        data = data.mean(dim="time")
-
-        return data
+        return data.mean(dim="time")

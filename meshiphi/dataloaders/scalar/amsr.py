@@ -1,8 +1,9 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-from datetime import datetime
 import logging
+from datetime import datetime
 
 import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 
 class AMSRDataLoader(ScalarDataLoader):
@@ -58,8 +59,7 @@ class AMSRDataLoader(ScalarDataLoader):
                 asi-AMSR2-s6250-<year><month><day>-v.5.4.nc
             """
             date = filename.split("-")[-2]
-            date = f"{date[:4]}-{date[4:6]}-{date[6:]}"
-            return date
+            return f"{date[:4]}-{date[4:6]}-{date[6:]}"
 
         def retrieve_data(filename, date):
             """
@@ -67,10 +67,11 @@ class AMSRDataLoader(ScalarDataLoader):
             """
             data = xr.open_dataset(filename)
             # Add date to data
-            data = data.assign_coords(time=date)
-            return data
+            return data.assign_coords(time=date)
 
         data_array = []
+        if self.files is None:
+            raise ValueError("files parameter is required for AMSRDataLoader")
         relevant_files = []
         # For each file found from config
         for file in self.files:

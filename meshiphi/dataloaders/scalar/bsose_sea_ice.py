@@ -1,8 +1,8 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
 import logging
 
 import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 
 class BSOSESeaIceDataLoader(ScalarDataLoader):
@@ -26,6 +26,8 @@ class BSOSESeaIceDataLoader(ScalarDataLoader):
                 and value not 'fraction' or 'percentage'
         """
         # Open Dataset
+        if self.files is None:
+            raise ValueError("files parameter is required for BSOSESeaIceDataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -55,6 +57,6 @@ class BSOSESeaIceDataLoader(ScalarDataLoader):
                 )
         else:
             # Convert to percentage form by default (as expected by the vessel performance models)
-            data = data.assign(SIC=data["SIC"] * 100)
+            return data.assign(SIC=data["SIC"] * 100)
 
         return data

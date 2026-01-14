@@ -1,8 +1,8 @@
+import numpy as np
+import pandas as pd
+
 from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 from meshiphi.utils import gaussian_random_field
-
-import pandas as pd
-import numpy as np
 
 
 class ScalarGRFDataLoader(ScalarDataLoader):
@@ -84,8 +84,7 @@ class ScalarGRFDataLoader(ScalarDataLoader):
             grf[grf >= threshold] = 1.0
             grf[grf < threshold] = 0.0
             # Cast 0/1 to False/True
-            grf = grf is True
-            return grf
+            return grf is True
 
         def grf_to_scalar(grf, threshold, min_val, max_val):
             # Bound GRF to threshold limits
@@ -95,30 +94,40 @@ class ScalarGRFDataLoader(ScalarDataLoader):
             grf = grf - np.min(grf)
             grf = grf / (np.max(grf) - np.min(grf))
             # Scale to max/min
-            grf = grf * (max_val - min_val) + min_val
-
-            return grf
+            return grf * (max_val - min_val) + min_val
 
         # Set seed for generation. If not specified, will be 'random'
         np.random.seed(self.seed)
+
+        # Validate required attributes
+        if self.size is None:
+            raise ValueError("size parameter is required for ScalarGRFDataLoader")
+        if self.alpha is None:
+            raise ValueError("alpha parameter is required for ScalarGRFDataLoader")
 
         # Create a GRF
         grf = gaussian_random_field(self.size, self.alpha)
 
         # Set it to a binary mask if chosen in config
         if self.binary is True:
+            if self.threshold is None:
+                raise ValueError("threshold parameter is required for binary GRF")
             grf = grf_to_binary(grf, self.threshold)
         # Set it to scalar GRF field if chosen in config
         else:
+            if self.threshold is None or self.min is None or self.max is None:
+                raise ValueError("threshold, min, and max parameters are required for scalar GRF")
             grf = grf_to_scalar(grf, self.threshold, self.min, self.max)
             # Scale with multiplier and offset
+            if self.multiplier is None:
+                self.multiplier = 1.0
+            if self.offset is None:
+                self.offset = 0.0
             grf = self.multiplier * grf + self.offset
 
         # Set up domain of field
         lat_array = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.size)
-        long_array = np.linspace(
-            bounds.get_long_min(), bounds.get_long_max(), self.size
-        )
+        long_array = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.size)
         latv, longv = np.meshgrid(lat_array, long_array, indexing="ij")
 
         # Create an entry for each row in final dataframe
@@ -130,6 +139,4 @@ class ScalarGRFDataLoader(ScalarDataLoader):
         # Cast to dataframe
         data = pd.DataFrame(rows).set_index(["lat", "long"])
         # Set to xarray dataset
-        data = data.to_xarray()
-
-        return data
+        return data.to_xarray()

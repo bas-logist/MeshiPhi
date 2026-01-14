@@ -1,7 +1,8 @@
-import json
-import jsonschema
 import datetime
+import json
 import re
+
+import jsonschema
 
 from meshiphi.config_validation.mesh_schema import mesh_schema
 
@@ -23,7 +24,7 @@ def flexi_json_input(config):
     """
     if isinstance(config, str):
         # If str, assume filename
-        with open(config, "r") as fp:
+        with open(config) as fp:
             config_json = json.load(fp)
     elif isinstance(config, dict):
         # If dict, assume it's the config
@@ -63,9 +64,7 @@ def validate_mesh_config(config):
         """
         correctly_formatted = False
         # If relative time is parsed
-        if re.match(r"TODAY[+,-]\d+", time_str.replace(" ", "")):
-            correctly_formatted = True
-        elif time_str == "TODAY":
+        if re.match(r"TODAY[+,-]\d+", time_str.replace(" ", "")) or time_str == "TODAY":
             correctly_formatted = True
         # Otherwise check if date is parsed correctly
         else:

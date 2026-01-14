@@ -20,7 +20,7 @@ this includes and is not limited to: Ocean Currents, Sea Ice Concentration and B
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
 from shapely.geometry import Point
@@ -239,6 +239,8 @@ class CellBox:
                 will result in the CellBox being split.
         """
         hom_conditions = []
+        if self.data_source is None:
+            return False
         for current_data_source in self.data_source:
             data_loader = current_data_source.get_data_loader()
             data_subset = current_data_source.get_data_subset()
@@ -339,7 +341,7 @@ class CellBox:
         Returns:
             AggregatedCellbox: object contains the aggregated data within cellbox bounds.
         """
-        agg_dict = {}
+        agg_dict: dict[str, Any] = {}
         for source in self.get_data_source():
             loader = source.get_data_loader()
             data_subset = source.get_data_subset()
@@ -422,7 +424,9 @@ class CellBox:
         parent = self.parent
         # free up the memory space used by the parent cellboxes chain
         while isinstance(parent, CellBox):
-            for source in self.parent.get_data_source():
+            if parent.get_data_source() is None:
+                break
+            for source in parent.get_data_source():
                 loader = source.get_data_loader()
                 del loader
                 del source

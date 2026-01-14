@@ -2,14 +2,16 @@
 EnvironmentMesh class tests.
 """
 
-import pytest
 import json
 import os
 import tempfile
+
+import pytest
+
+from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
+from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
 from meshiphi.mesh_generation.mesh_builder import MeshBuilder
-from meshiphi.mesh_generation.boundary import Boundary
-from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 from tests.conftest import REGRESSION_TESTS_DIR
 
@@ -17,11 +19,9 @@ from tests.conftest import REGRESSION_TESTS_DIR
 @pytest.fixture
 def env_mesh_data():
     """Load environment mesh data from test file."""
-    json_file_path = (
-        REGRESSION_TESTS_DIR / "example_meshes/env_meshes/grf_reprojection.json"
-    )
+    json_file_path = REGRESSION_TESTS_DIR / "example_meshes/env_meshes/grf_reprojection.json"
 
-    with open(json_file_path, "r") as config_file:
+    with open(json_file_path) as config_file:
         json_file = json.load(config_file)
         config = json_file["config"]["mesh_info"]
         env_mesh = MeshBuilder(config).build_environmental_mesh()
@@ -38,9 +38,7 @@ def test_load_from_json(env_mesh_data):
 
     assert loaded.bounds.get_bounds() == original.bounds.get_bounds()
     assert len(loaded.agg_cellboxes) == len(original.agg_cellboxes)
-    assert len(loaded.neighbour_graph.get_graph()) == len(
-        original.neighbour_graph.get_graph()
-    )
+    assert len(loaded.neighbour_graph.get_graph()) == len(original.neighbour_graph.get_graph())
 
 
 def test_update_agg_cellbox(env_mesh_data):
@@ -80,9 +78,7 @@ def test_to_tif():
         tmp_path = tmp.name
 
     # Create format parameters for tif export
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".json", delete=False
-    ) as params_file:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as params_file:
         format_params = {
             "data_name": "test_value",
             "sampling_resolution": [10, 10],  # Small resolution for faster test

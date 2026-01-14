@@ -3,6 +3,7 @@ AggregatedCellBox class tests.
 """
 
 import pytest
+
 from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
 from meshiphi.mesh_generation.boundary import Boundary
 
@@ -29,15 +30,13 @@ def test_from_json():
     agg_cb_data = {k: agg_cb_json[k] for k in data_keys if k in agg_cb_json}
     agg_cb_id = agg_cb_json["id"]
 
-    agg_cb_initialised_normally = AggregatedCellBox(
-        agg_cb_boundary, agg_cb_data, agg_cb_id
-    )
+    agg_cb_initialised_normally = AggregatedCellBox(agg_cb_boundary, agg_cb_data, agg_cb_id)
 
     assert agg_cb_from_json == agg_cb_initialised_normally
 
 
 @pytest.mark.parametrize(
-    "attr,test_value,getter,setter",
+    ("attr", "test_value", "getter", "setter"),
     [
         ("boundary", Boundary([10, 20], [30, 40]), "get_bounds", "set_bounds"),
         ("id", "123", "get_id", "set_id"),
@@ -81,7 +80,7 @@ def test_to_json():
 
 
 @pytest.mark.parametrize(
-    "cellbox_fixture,lat,lon,expected",
+    ("cellbox_fixture", "lat", "lon", "expected"),
     [
         ("arbitrary_agg_cellbox", 50, 50, True),
         ("equatorial_agg_cellbox", 0, 50, True),

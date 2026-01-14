@@ -1,8 +1,13 @@
+from typing import TYPE_CHECKING, cast
+
 import cartopy.crs as ccrs
-import shapely
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+import shapely
+
+if TYPE_CHECKING:
+    from cartopy.mpl.geoaxes import GeoAxes
 
 
 class MeshPlotter:
@@ -21,15 +26,11 @@ class MeshPlotter:
 
         self.figscale = figscale
 
-        self.aspect_ratio = (self.long_max - self.long_min) / (
-            self.lat_max - self.lat_min
-        )
+        self.aspect_ratio = (self.long_max - self.long_min) / (self.lat_max - self.lat_min)
 
-        self.fig = plt.figure(
-            figsize=(self.figscale * self.aspect_ratio, self.figscale)
-        )
+        self.fig = plt.figure(figsize=(self.figscale * self.aspect_ratio, self.figscale))
 
-        self.plot = plt.axes(projection=ccrs.PlateCarree())
+        self.plot = cast("GeoAxes", plt.axes(projection=ccrs.PlateCarree()))
         self.plot.set_extent([self.long_min, self.long_max, self.lat_min, self.lat_max])
 
     def plot_bool(self, value_name, colour):

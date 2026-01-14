@@ -1,5 +1,7 @@
-from scipy.stats import qmc
+from __future__ import annotations
+
 import numpy as np
+from scipy.stats import qmc
 
 
 class Sampler:
@@ -36,7 +38,5 @@ class Sampler:
         # map samples to ranges
         for sample in samples:
             for i in range(len(ranges)):
-                mapped_samples.append(
-                    ranges[i][0] + sample[i] * (ranges[i][1] - ranges[i][0])
-                )
+                mapped_samples.append(ranges[i][0] + sample[i] * (ranges[i][1] - ranges[i][0]))
         return np.array(mapped_samples).reshape(len(samples), len(ranges))

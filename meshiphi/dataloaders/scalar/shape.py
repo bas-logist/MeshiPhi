@@ -1,8 +1,9 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
 import logging
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 logger = logging.getLogger(__name__)
 
@@ -90,10 +91,8 @@ class ShapeDataLoader(ScalarDataLoader):
         else:
             raise ValueError(f"Unknown abstract shape type: {self.dataloader_name}")
 
-        data_xr = data.set_index(["lat", "long"]).to_xarray()
         # No need to trim data, as was defined by bounds
-
-        return data_xr
+        return data.set_index(["lat", "long"]).to_xarray()
 
     def gen_circle(self, bounds):
         """
@@ -110,11 +109,15 @@ class ShapeDataLoader(ScalarDataLoader):
         self.long = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         # Set centre as centre of data_grid if none specified
-        c_y = self.lat[int(self.ny / 2)] if not self.centre[0] else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if not self.centre[1] else self.centre[1]
+        if self.radius is None:
+            raise ValueError("radius parameter is required for circle")
+        if self.centre is None:
+            self.centre = (None, None)
+        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
+        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
 
         # Create vectors for row and col idx's
-        y = np.vstack(np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny))
+        y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
         x = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         logger.info("\tCreating mask of circle")
@@ -138,14 +141,13 @@ class ShapeDataLoader(ScalarDataLoader):
                     index=[0],
                 )
                 # Avoid concat with empty df
-                if dummy_df.empty:
-                    dummy_df = row
-                else:
-                    dummy_df = pd.concat([dummy_df, row], ignore_index=True)
+                dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Change boolean values to int
         dummy_df["dummy_data"] = dummy_df["dummy_data"].astype(int)
         # Multiply by scaling factor if present
+        if self.multiplier is None:
+            self.multiplier = 1.0
         dummy_df["dummy_data"] = dummy_df["dummy_data"] * self.multiplier
 
         return dummy_df
@@ -166,10 +168,9 @@ class ShapeDataLoader(ScalarDataLoader):
 
         logger.info("\tCreating gradient of values")
         # Create 1D gradient
-        if self.vertical:
-            gradient = np.linspace(0, 1, self.ny)
-        else:
-            gradient = np.linspace(0, 1, self.nx)
+        if self.vertical is None:
+            self.vertical = True  # Default to vertical gradient
+        gradient = np.linspace(0, 1, self.ny) if self.vertical else np.linspace(0, 1, self.nx)
 
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data"])
         logger.info("- Generating dataset")
@@ -188,10 +189,7 @@ class ShapeDataLoader(ScalarDataLoader):
                     index=[0],
                 )
                 # Avoid concat with empty df
-                if dummy_df.empty:
-                    dummy_df = row
-                else:
-                    dummy_df = pd.concat([dummy_df, row], ignore_index=True)
+                dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Multiply by scaling factor if present
         dummy_df["dummy_data"] = dummy_df["dummy_data"] * self.multiplier
@@ -208,9 +206,7 @@ class ShapeDataLoader(ScalarDataLoader):
         """
         logger.info("\tSetting up boundary of dataset")
         # Generate rows
-        self.lat = np.linspace(
-            bounds.get_lat_min(), bounds.get_lat_max(), self.ny, endpoint=False
-        )
+        self.lat = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny, endpoint=False)
         # Generate cols
         self.long = np.linspace(
             bounds.get_long_min(), bounds.get_long_max(), self.nx, endpoint=False
@@ -218,10 +214,16 @@ class ShapeDataLoader(ScalarDataLoader):
 
         logger.info("- Creating series of 0's and 1's for lat/long")
         # Create checkerboard pattern
+        if self.gridsize is None:
+            self.gridsize = (1, 1)
+        if isinstance(self.gridsize, int):
+            gridsize_tuple = (self.gridsize, self.gridsize)
+        else:
+            gridsize_tuple = self.gridsize
         # Create horizontal stripes of 0's and 1's, stripe size defined by gridsize
-        horizontal = np.floor((self.lat - bounds.get_lat_min()) / self.gridsize[1]) % 2
+        horizontal = np.floor((self.lat - bounds.get_lat_min()) / gridsize_tuple[1]) % 2
         # Create vertical stripes of 0's and 1's, stripe size defined by gridsize
-        vertical = np.floor((self.long - bounds.get_long_min()) / self.gridsize[0]) % 2
+        vertical = np.floor((self.long - bounds.get_long_min()) / gridsize_tuple[0]) % 2
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data"])
         logger.info("- Generating dataset")
         # For each combination of lat/long
@@ -239,10 +241,7 @@ class ShapeDataLoader(ScalarDataLoader):
                     index=[0],
                 )
                 # Avoid concat with empty df
-                if dummy_df.empty:
-                    dummy_df = row
-                else:
-                    dummy_df = pd.concat([dummy_df, row], ignore_index=True)
+                dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         return dummy_df
 
@@ -261,11 +260,15 @@ class ShapeDataLoader(ScalarDataLoader):
         self.long = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         # Set centre as centre of data_grid if none specified
-        c_y = self.lat[int(self.ny / 2)] if not self.centre[0] else self.centre[0]
-        c_x = self.long[int(self.nx / 2)] if not self.centre[1] else self.centre[1]
+        if self.width is None or self.height is None:
+            raise ValueError("width and height parameters are required for rectangle")
+        if self.centre is None:
+            self.centre = (None, None)
+        c_y = self.lat[int(self.ny / 2)] if self.centre[0] is None else self.centre[0]
+        c_x = self.long[int(self.nx / 2)] if self.centre[1] is None else self.centre[1]
 
         # Create vectors for row and col idx's
-        y = np.vstack(np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny))
+        y = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.ny).reshape(-1, 1)
         x = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.nx)
 
         logger.info("\tCreating mask of a rectangle")
@@ -273,9 +276,7 @@ class ShapeDataLoader(ScalarDataLoader):
         x_dist_from_centre = np.abs(x - c_x)
         y_dist_from_centre = np.abs(y - c_y)
         # Turn this into a mask of values within the rectangle
-        mask = np.logical_and(
-            x_dist_from_centre <= self.width, y_dist_from_centre <= self.height
-        )
+        mask = np.logical_and(x_dist_from_centre <= self.width, y_dist_from_centre <= self.height)
         # Set up empty dataframe to populate with dummy data
         dummy_df = pd.DataFrame(columns=["lat", "long", "dummy_data"])
         logger.info("\tGenerating dataset")
@@ -292,14 +293,13 @@ class ShapeDataLoader(ScalarDataLoader):
                     index=[0],
                 )
                 # Avoid concat with empty df
-                if dummy_df.empty:
-                    dummy_df = row
-                else:
-                    dummy_df = pd.concat([dummy_df, row], ignore_index=True)
+                dummy_df = row if dummy_df.empty else pd.concat([dummy_df, row], ignore_index=True)
 
         # Change boolean values to int
         dummy_df["dummy_data"] = dummy_df["dummy_data"].astype(int)
         # Multiply by scaling factor if present
+        if self.multiplier is None:
+            self.multiplier = 1.0
         dummy_df["dummy_data"] = dummy_df["dummy_data"] * self.multiplier
 
         return dummy_df

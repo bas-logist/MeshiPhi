@@ -1,12 +1,11 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
 import logging
-
 from datetime import datetime, timedelta
 
 import xarray as xr
-from pandas import to_timedelta
 from numpy import datetime64
+from pandas import to_timedelta
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 
 class IceNetDataLoader(ScalarDataLoader):
@@ -38,6 +37,8 @@ class IceNetDataLoader(ScalarDataLoader):
         min_time = datetime.strptime(bounds.get_time_min(), "%Y-%m-%d")
         time_range = max_time - min_time
         # Retrieve list of dates from filenames
+        if self.files is None:
+            raise ValueError("files parameter is required for IceNetDataLoader")
         file_dates = {
             filename_to_datetime(file): file
             for file in self.files

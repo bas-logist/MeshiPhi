@@ -2,14 +2,15 @@
 Boundary class tests.
 """
 
+from datetime import datetime, timedelta
+
 import pytest
 import shapely
-from datetime import datetime, timedelta
 
 from meshiphi.mesh_generation.boundary import Boundary
 
 
-def test_load_from_json(arbitrary_boundary):
+def test_load_from_json(temporal_boundary):
     """Test loading boundary from JSON config"""
     boundary_config = {
         "region": {
@@ -22,11 +23,11 @@ def test_load_from_json(arbitrary_boundary):
         }
     }
     boundary = Boundary.from_json(boundary_config)
-    assert boundary == arbitrary_boundary
+    assert boundary == temporal_boundary
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,poly_string",
+    ("boundary_fixture", "poly_string"),
     [
         ("arbitrary_boundary", "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"),
         ("meridian_boundary", "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"),
@@ -44,7 +45,7 @@ def test_from_poly_string(boundary_fixture, poly_string, request):
 
 
 @pytest.mark.parametrize(
-    "date_string,day_offset", [("TODAY", 0), ("TODAY - 5", -5), ("TODAY + 5", 5)]
+    ("date_string", "day_offset"), [("TODAY", 0), ("TODAY - 5", -5), ("TODAY + 5", 5)]
 )
 def test_parse_datetime_relative(date_string, day_offset):
     """Test parsing relative datetime strings"""
@@ -65,12 +66,12 @@ def test_parse_datetime_absolute():
 )
 def test_parse_datetime_malformed(malformed_date):
     """Test that malformed dates raise ValueError"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Incorrect date format given"):
         Boundary.parse_datetime(malformed_date)
 
 
 @pytest.mark.parametrize(
-    "lat_range,long_range,time_range,description",
+    ("lat_range", "long_range", "time_range", "description"),
     [
         ([20, 10], [10, 20], ["2000-01-01", "2000-12-31"], "invalid_lat"),
         ([10, 20], [-190, 190], ["2000-01-01", "2000-12-31"], "invalid_long"),
@@ -81,12 +82,12 @@ def test_parse_datetime_malformed(malformed_date):
 )
 def test_validate_bounds(lat_range, long_range, time_range, description):
     """Test that invalid bounds raise ValueError"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Boundary:"):
         Boundary(lat_range, long_range, time_range)
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_bounds",
+    ("boundary_fixture", "expected_bounds"),
     [
         (
             "arbitrary_boundary",
@@ -125,7 +126,7 @@ def test_get_bounds(boundary_fixture, expected_bounds, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_cx",
+    ("boundary_fixture", "expected_cx"),
     [
         ("arbitrary_boundary", 35),
         ("meridian_boundary", 0),
@@ -140,7 +141,7 @@ def test_getcx(boundary_fixture, expected_cx, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_cy",
+    ("boundary_fixture", "expected_cy"),
     [
         ("arbitrary_boundary", 15),
         ("meridian_boundary", -45),
@@ -155,7 +156,7 @@ def test_getcy(boundary_fixture, expected_cy, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_height",
+    ("boundary_fixture", "expected_height"),
     [
         ("arbitrary_boundary", 10),
         ("meridian_boundary", 10),
@@ -170,7 +171,7 @@ def test_get_height(boundary_fixture, expected_height, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_width",
+    ("boundary_fixture", "expected_width"),
     [
         ("arbitrary_boundary", 10),
         ("meridian_boundary", 20),
@@ -190,7 +191,7 @@ def test_get_time_range(temporal_boundary):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_dcx",
+    ("boundary_fixture", "expected_dcx"),
     [
         ("arbitrary_boundary", 5),
         ("meridian_boundary", 10),
@@ -205,7 +206,7 @@ def test_getdcx(boundary_fixture, expected_dcx, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_dcy",
+    ("boundary_fixture", "expected_dcy"),
     [
         ("arbitrary_boundary", 5),
         ("meridian_boundary", 5),
@@ -220,7 +221,7 @@ def test_getdcy(boundary_fixture, expected_dcy, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_min",
+    ("boundary_fixture", "expected_min"),
     [
         ("arbitrary_boundary", 10),
         ("meridian_boundary", -50),
@@ -235,7 +236,7 @@ def test_get_lat_min(boundary_fixture, expected_min, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_max",
+    ("boundary_fixture", "expected_max"),
     [
         ("arbitrary_boundary", 20),
         ("meridian_boundary", -40),
@@ -250,7 +251,7 @@ def test_get_lat_max(boundary_fixture, expected_max, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_min",
+    ("boundary_fixture", "expected_min"),
     [
         ("arbitrary_boundary", 30),
         ("meridian_boundary", -10),
@@ -265,7 +266,7 @@ def test_get_long_min(boundary_fixture, expected_min, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_max",
+    ("boundary_fixture", "expected_max"),
     [
         ("arbitrary_boundary", 40),
         ("meridian_boundary", 10),
@@ -290,7 +291,7 @@ def test_get_time_max(temporal_boundary):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_size",
+    ("boundary_fixture", "expected_size"),
     [
         ("arbitrary_boundary", 1092308.5466932291),
         ("meridian_boundary", 1354908.6430361348),
@@ -305,7 +306,7 @@ def test_calc_size(boundary_fixture, expected_size, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,poly_wkt",
+    ("boundary_fixture", "poly_wkt"),
     [
         ("arbitrary_boundary", "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"),
         ("meridian_boundary", "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"),
@@ -324,7 +325,7 @@ def test_to_polygon(boundary_fixture, poly_wkt, request):
 
 
 @pytest.mark.parametrize(
-    "boundary_fixture,expected_poly_string",
+    ("boundary_fixture", "expected_poly_string"),
     [
         ("arbitrary_boundary", "POLYGON ((30 10, 30 20, 40 20, 40 10, 30 10))"),
         ("meridian_boundary", "POLYGON ((-10 -50, -10 -40, 10 -40, 10 -50, -10 -50))"),

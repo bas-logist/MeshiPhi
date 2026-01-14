@@ -1,12 +1,10 @@
-import numpy as np
-
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
-
-import xarray as xr
-
 from datetime import datetime
 from os.path import basename
+
+import numpy as np
+import xarray as xr
+
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
 
 class ERA5WaveDirectionLoader(VectorDataLoader):
@@ -25,10 +23,11 @@ class ERA5WaveDirectionLoader(VectorDataLoader):
                 Dataset has coordinates 'lat', 'long', and variables 'uW', 'vW'
         """
         time_range = [
-            datetime.strptime(time_str, "%Y-%m-%d")
-            for time_str in bounds.get_time_range()
+            datetime.strptime(time_str, "%Y-%m-%d") for time_str in bounds.get_time_range()
         ]
         # Reduce files to those within date range
+        if self.files is None:
+            raise ValueError("files parameter is required for ERA5WaveDirectionLoader")
         self.files = [
             file
             for file in self.files
@@ -58,15 +57,8 @@ class ERA5WaveDirectionLoader(VectorDataLoader):
         # Limit to just uW and vW
         data = data[["uW", "vW"]]
 
-        # Set min time to start of month to ensure we include data as we only have a
-        # monthly cadence. Assuming time is in str format
-        time_min = datetime.strptime(bounds.get_time_min(), "%Y-%m-%d")
-        time_min = datetime.strftime(time_min, "%Y-%m-01")
-
         # Reverse order of lat as array goes from max to min
         data = data.reindex(lat=data.lat[::-1])
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

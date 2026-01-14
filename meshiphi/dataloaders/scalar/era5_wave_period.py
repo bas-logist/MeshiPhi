@@ -1,9 +1,9 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+from datetime import datetime
+from os.path import basename
 
 import xarray as xr
 
-from datetime import datetime
-from os.path import basename
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 
 class ERA5WavePeriodDataLoader(ScalarDataLoader):
@@ -21,10 +21,11 @@ class ERA5WavePeriodDataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'mwp'
         """
         time_range = [
-            datetime.strptime(time_str, "%Y-%m-%d")
-            for time_str in bounds.get_time_range()
+            datetime.strptime(time_str, "%Y-%m-%d") for time_str in bounds.get_time_range()
         ]
         # Reduce files to those within date range
+        if self.files is None:
+            raise ValueError("files parameter is required for ERA5WavePeriodDataLoader")
         self.files = [
             file
             for file in self.files
@@ -48,6 +49,4 @@ class ERA5WavePeriodDataLoader(ScalarDataLoader):
         # Reverse order of lat as array goes from max to min
         data = data.reindex(lat=data.lat[::-1])
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

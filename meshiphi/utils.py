@@ -5,11 +5,16 @@ Miscellaneous utility functions that may be of use throughout MeshiPhi
 import logging
 import time
 import tracemalloc
-import numpy as np
+from calendar import monthrange
 from datetime import datetime, timedelta
 from functools import wraps
-from calendar import monthrange
-from scipy.fftpack import fftshift
+
+import numpy as np
+
+try:
+    from scipy.fft import fftshift
+except ImportError:
+    from scipy.fftpack import fftshift
 
 logger = logging.getLogger(__name__)
 
@@ -21,14 +26,13 @@ def longitude_domain(long):
     # Allow input type to be list or ndarray
     if isinstance(long, list):
         return [longitude_domain(x) for x in long]
-    elif isinstance(long, np.ndarray):
+    if isinstance(long, np.ndarray):
         return np.array([longitude_domain(x) for x in long])
     # Return same format as input at antimeridian
-    elif long in [-180, 180]:
+    if long in [-180, 180]:
         return long
     # Otherwise convert it to be within domain
-    else:
-        return (long + 180) % 360 - 180
+    return (long + 180) % 360 - 180
 
 
 def longitude_distance(long_a, long_b):
@@ -41,8 +45,7 @@ def longitude_distance(long_a, long_b):
 
     if long_dist > 180:
         return 360 - long_dist
-    else:
-        return long_dist
+    return long_dist
 
 
 def frac_of_month(year, month, start_date=None, end_date=None):
@@ -101,10 +104,7 @@ def convert_decimal_days(decimal_days, mins=False):
             new_time = f"{minutes} minutes"
     else:
         hours = round(hours, 2)
-        if days:
-            new_time = f"{round(days)} days {hours} hours"
-        else:
-            new_time = f"{hours} hours"
+        new_time = f"{round(days)} days {hours} hours" if days else f"{hours} hours"
 
     return new_time
 
@@ -141,9 +141,7 @@ def round_to_sigfig(x, sigfig=5):
     # np.array.astype(int) to enable np.around to work later
     dec_pl = (
         sigfig
-        - np.floor(
-            np.log10(np.abs(x), where=loggable_idxs, out=np.zeros_like(x))
-        ).astype(int)
+        - np.floor(np.log10(np.abs(x), where=loggable_idxs, out=np.zeros_like(x))).astype(int)
         - 1
     )
     # Round to sig figs
@@ -152,11 +150,10 @@ def round_to_sigfig(x, sigfig=5):
     if orig_type in [int, float]:
         return rounded.item()
     # Return as python list
-    elif orig_type is list:
+    if orig_type is list:
         return rounded.tolist()
     # Otherwise, return np.array
-    else:
-        return rounded
+    return rounded
 
 
 def divergence(flow):
@@ -172,8 +169,7 @@ def curl(flow):
     Fx, Fy = flow[:, :, 0], flow[:, :, 1]
     dFx_dy = np.gradient(Fx, axis=1)
     dFy_dx = np.gradient(Fy, axis=0)
-    curl = dFy_dx - dFx_dy
-    return curl
+    return dFy_dx - dFx_dy
 
 
 # GRF functions
@@ -195,8 +191,7 @@ def fftind(size):
     # Create array
     k_ind = np.mgrid[:size, :size] - int((size + 1) / 2)
     # Fourier shift
-    k_ind = fftshift(k_ind)
-    return k_ind
+    return fftshift(k_ind)
 
 
 def gaussian_random_field(size, alpha):
@@ -226,18 +221,14 @@ def gaussian_random_field(size, alpha):
 
     # Draws a complex gaussian random noise with normal
     # (circular) distribution
-    noise = np.random.normal(size=(size, size)) + 1j * np.random.normal(
-        size=(size, size)
-    )
+    noise = np.random.normal(size=(size, size)) + 1j * np.random.normal(size=(size, size))
 
     # To real space
     grf = np.fft.ifft2(noise * amplitude).real
 
     # Normalise the GRF:
     grf = grf - np.min(grf)
-    grf = grf / (np.max(grf) - np.min(grf))
-
-    return grf
+    return grf / (np.max(grf) - np.min(grf))
 
 
 def memory_trace(func):
@@ -249,7 +240,7 @@ def memory_trace(func):
         top_stats = snapshot.statistics("traceback")
 
         stat = top_stats[0]
-        logging.info("{} memory blocks: {.1f} KiB".format(stat.count, stat.size / 1024))
+        logging.info(f"{stat.count} memory blocks: {stat.size / 1024:.1f} KiB")
         logging.info("\n".join(stat.traceback.format()))
         return res
 
@@ -262,9 +253,7 @@ def timed_call(func):
         start = time.perf_counter()
         res = func(*args, **kwargs)
         end = time.perf_counter()
-        logger.info(
-            "Timed call to {} took {:02f} seconds".format(func.__name__, end - start)
-        )
+        logger.info(f"Timed call to {func.__name__} took {end - start:02f} seconds")
         return res
 
     return wrapper

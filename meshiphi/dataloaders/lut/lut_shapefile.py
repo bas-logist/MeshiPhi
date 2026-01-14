@@ -1,10 +1,14 @@
-from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
-from meshiphi.mesh_generation.boundary import Boundary
+from __future__ import annotations
+
+from typing import Any
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 from shapely.ops import unary_union
-import numpy as np
+
+from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
+from meshiphi.mesh_generation.boundary import Boundary
 
 
 class LutShapefile(LutDataLoader):
@@ -47,6 +51,8 @@ class LutShapefile(LutDataLoader):
                 data_name ('dummy_data' by default)
         """
         # Read in all files specified and extract geometry of shapes
+        if self.files is None:
+            raise ValueError("files parameter is required for LutShapefile")
         gdf_list = [gpd.read_file(file) for file in self.files]
         shape_df = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
         # Give shapes a value defined in config
@@ -59,6 +65,7 @@ class LutShapefile(LutDataLoader):
         defined_polygon = unary_union(shape_df.geometry)
         undefined_polygon = world_polygon - defined_polygon
         # Set remainder to have value np.nan (or opposing bool value)
+        alt_val: Any
         if self.value is True:
             alt_val = False
         elif self.value is False:
@@ -67,6 +74,4 @@ class LutShapefile(LutDataLoader):
             alt_val = np.nan
         shape_df.loc[len(shape_df.index)] = [undefined_polygon, alt_val]
         # Limit to boundary
-        shape_df = self.trim_datapoints(bounds, data=shape_df)
-
-        return shape_df
+        return self.trim_datapoints(bounds, data=shape_df)

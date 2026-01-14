@@ -1,10 +1,9 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
+from datetime import datetime
+from os.path import basename
 
 import xarray as xr
 
-from datetime import datetime
-from os.path import basename
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
 
 class DuacsCurrentDataLoader(VectorDataLoader):
@@ -23,10 +22,11 @@ class DuacsCurrentDataLoader(VectorDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'uC', 'vC'
         """
         time_range = [
-            datetime.strptime(time_str, "%Y-%m-%d")
-            for time_str in bounds.get_time_range()
+            datetime.strptime(time_str, "%Y-%m-%d") for time_str in bounds.get_time_range()
         ]
         # Reduce files to those within date range
+        if self.files is None:
+            raise ValueError("files parameter is required for DuacsCurrentDataLoader")
         self.files = [
             file
             for file in self.files
@@ -41,15 +41,11 @@ class DuacsCurrentDataLoader(VectorDataLoader):
         else:
             data = xr.open_mfdataset(self.files).compute()
         # Change column names
-        data = data.rename(
-            {"latitude": "lat", "longitude": "long", "ugos": "uC", "vgos": "vC"}
-        )
+        data = data.rename({"latitude": "lat", "longitude": "long", "ugos": "uC", "vgos": "vC"})
 
         # Drop unnecessary variable, if present
-        if "crs" in data.keys():
+        if "crs" in data:
             data = data.drop_vars("crs")
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

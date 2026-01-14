@@ -183,7 +183,7 @@ strict_equality = true
 show_error_codes = true
 follow_imports = "normal"
 
-# Ignore missing imports for third-party libraries without type stubs
+# Ignore missing imports and untyped libraries for third-party libraries without type stubs
 [[tool.mypy.overrides]]
 module = [
     "osgeo.*",
@@ -196,18 +196,16 @@ module = [
     "matplotlib.*",
     "pandas.*",
     "numpy.*",
+    "sklearn.*",
+    "scipy.*",
+    "jsonschema",
+    "jsonschema.*",
+    "tqdm",
+    "tqdm.*",
 ]
 ignore_missing_imports = true
 
-# Allow dynamic attributes for classes that use setattr (set via params dict)
+# Disable disallow_untyped_calls for the config validation module which uses jsonschema
 [[tool.mypy.overrides]]
-module = "meshiphi.dataloaders.lut.abstract_lut"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "meshiphi.dataloaders.scalar.abstract_scalar"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "meshiphi.dataloaders.vector.abstract_vector"
-ignore_errors = true
+module = "meshiphi.config_validation.*"
+disallow_untyped_calls = false

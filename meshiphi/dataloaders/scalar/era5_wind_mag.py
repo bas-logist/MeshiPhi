@@ -1,10 +1,10 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
-import xarray as xr
-import numpy as np
-
 from datetime import datetime
 from os.path import basename
+
+import numpy as np
+import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 
 class ERA5WindMagDataLoader(ScalarDataLoader):
@@ -22,10 +22,11 @@ class ERA5WindMagDataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'wind_mag'
         """
         time_range = [
-            datetime.strptime(time_str, "%Y-%m-%d")
-            for time_str in bounds.get_time_range()
+            datetime.strptime(time_str, "%Y-%m-%d") for time_str in bounds.get_time_range()
         ]
         # Reduce files to those within date range
+        if self.files is None:
+            raise ValueError("files parameter is required for ERA5WindMagDataLoader")
         self.files = [
             file
             for file in self.files
@@ -53,6 +54,4 @@ class ERA5WindMagDataLoader(ScalarDataLoader):
         # Reverse order of lat as array goes from max to min
         data = data.reindex(lat=data.lat[::-1])
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

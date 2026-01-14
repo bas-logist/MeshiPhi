@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import logging
-import numpy as np
-import xarray as xr
-import pandas as pd
-from meshiphi.dataloaders.dataloader_interface import DataLoaderInterface
 from abc import abstractmethod
-from pyproj import Transformer, CRS
+from typing import Any, overload
+
+import numpy as np
+import pandas as pd
+import xarray as xr
+from pyproj import CRS, Transformer
 from rasterio.enums import Resampling
+
+from meshiphi.dataloaders.dataloader_interface import DataLoaderInterface
 from meshiphi.mesh_generation.boundary import Boundary
 
 logger = logging.getLogger(__name__)
@@ -16,7 +21,40 @@ class ScalarDataLoader(DataLoaderInterface):
     Abstract class for all scalar Datasets.
     """
 
-    def __init__(self, bounds, params):
+    # Type hints for dynamically set attributes (set via setattr in __init__)
+    files: list[str] | None
+    data_name: str | None
+    dataloader_name: str
+    in_proj: str
+    out_proj: str
+    x_col: str
+    y_col: str
+    downsample_factors: list[int]
+    aggregate_type: str
+    min_dp: int
+    fast_reprojection: bool
+    # Shape-specific attributes (set by shape dataloaders)
+    # nx and ny always have defaults (101), so they're not optional
+    ny: int = 101
+    nx: int = 101
+    vertical: bool | None = None
+    multiplier: float | None = None
+    radius: float | None = None
+    centre: tuple[float, float] | tuple[None, None] | None = None
+    width: float | None = None
+    height: float | None = None
+    gridsize: int | tuple[int, int] | None = None
+    # GRF-specific attributes
+    seed: int | None = None
+    size: int | None = None
+    alpha: float | None = None
+    binary: bool | None = None
+    threshold: float | None = None
+    min: float | None = None
+    max: float | None = None
+    offset: float | None = None
+
+    def __init__(self, bounds: Boundary, params: dict[str, Any]) -> None:
         """
         This is where large-scale operations are performed,
         such as importing data, downsampling, reprojecting, and renaming
@@ -50,7 +88,7 @@ class ScalarDataLoader(DataLoaderInterface):
 
         # Read in and manipulate data to standard form
         self.data = self.import_data(bounds)
-        if "files" in params:
+        if "files" in params and self.files is not None:
             logger.info("\tFiles read:")
             for file in self.files:
                 logger.info(f"\t\t{file}")
@@ -88,10 +126,7 @@ class ScalarDataLoader(DataLoaderInterface):
         else:
             # Cut dataset down to initial boundary
             logger.info(
-                "\tTrimming data to initial boundary: {min} to {max}".format(
-                    min=(bounds.get_lat_min(), bounds.get_long_min()),
-                    max=(bounds.get_lat_max(), bounds.get_long_max()),
-                )
+                f"\tTrimming data to initial boundary: {(bounds.get_lat_min(), bounds.get_long_min())} to {(bounds.get_lat_max(), bounds.get_long_max())}"
             )
 
             self.data = self.trim_datapoints(bounds)
@@ -115,7 +150,6 @@ class ScalarDataLoader(DataLoaderInterface):
 
                 Downsampling and reprojecting happen in __init__() method
         """
-        pass
 
     def add_default_params(self, params):
         """
@@ -184,26 +218,22 @@ class ScalarDataLoader(DataLoaderInterface):
         def calculate_coverage_from_df(bounds, data):
             data = data.dropna().reset_index()
             # If empty dataframe, 0% coverage
-            if data.empty:
-                return 0
-            # If no valid coordinates within data range, 0% coverage
-            elif data.lat.size == 0 or data.long.size == 0:
+            if data.empty or data.lat.size == 0 or data.long.size == 0:
                 return 0
             # Otherwise, calculate coverage, assuming rectangular region
             # in mercator projection
-            else:
-                # Create a polygon to calculate overlap region from
-                data_boundary = Boundary(
-                    [data.lat.min(), data.lat.max()], [data.long.min(), data.long.max()]
-                )
-                data_polygon = data_boundary.to_polygon()
-                bounds_polygon = bounds.to_polygon()
+            # Create a polygon to calculate overlap region from
+            data_boundary = Boundary(
+                [data.lat.min(), data.lat.max()], [data.long.min(), data.long.max()]
+            )
+            data_polygon = data_boundary.to_polygon()
+            bounds_polygon = bounds.to_polygon()
 
-                # Get fraction of bounds covered by data
-                overlap_area = data_polygon.intersection(bounds_polygon).area
-                total_area = bounds_polygon.area
+            # Get fraction of bounds covered by data
+            overlap_area = data_polygon.intersection(bounds_polygon).area
+            total_area = bounds_polygon.area
 
-                return overlap_area / total_area
+            return overlap_area / total_area
 
         def calculate_coverage_from_xr(bounds, data):
             # Remove all NaN columns/rows
@@ -214,20 +244,19 @@ class ScalarDataLoader(DataLoaderInterface):
                 return 0
             # Otherwise, calculate coverage, assuming rectangular region
             # in mercator projection
-            else:
-                # Create a polygon to calculate overlap region from
-                data_boundary = Boundary(
-                    [data.lat.min().item(), data.lat.max().item()],
-                    [data.long.min().item(), data.long.max().item()],
-                )
-                data_polygon = data_boundary.to_polygon()
-                bounds_polygon = bounds.to_polygon()
+            # Create a polygon to calculate overlap region from
+            data_boundary = Boundary(
+                [data.lat.min().item(), data.lat.max().item()],
+                [data.long.min().item(), data.long.max().item()],
+            )
+            data_polygon = data_boundary.to_polygon()
+            bounds_polygon = bounds.to_polygon()
 
-                # Get fraction of bounds covered by data
-                overlap_area = data_polygon.intersection(bounds_polygon).area
-                total_area = bounds_polygon.area
+            # Get fraction of bounds covered by data
+            overlap_area = data_polygon.intersection(bounds_polygon).area
+            total_area = bounds_polygon.area
 
-                return overlap_area / total_area
+            return overlap_area / total_area
 
         # Use self.data if not no explicit dataset specified
         if data is None:
@@ -235,8 +264,9 @@ class ScalarDataLoader(DataLoaderInterface):
         # Calculate data coverage fraction
         if isinstance(self.data, pd.core.frame.DataFrame):
             return calculate_coverage_from_df(bounds, data)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return calculate_coverage_from_xr(bounds, data)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def trim_datapoints(self, bounds, data=None):
         """
@@ -308,21 +338,19 @@ class ScalarDataLoader(DataLoaderInterface):
                             )
                             time_min = pd.to_datetime(bounds.get_time_min())
                             time_max = pd.to_datetime(bounds.get_time_max())
-                            time_mask = (time_series >= time_min) & (
-                                time_series <= time_max
-                            )
+                            time_mask = (time_series >= time_min) & (time_series <= time_max)
                             return spatially_filtered.iloc[time_mask.values]
                         except Exception:
                             # If conversion fails, fall back to original comparison
-                            time_mask = (
-                                spatially_filtered["time"] >= bounds.get_time_min()
-                            ) & (spatially_filtered["time"] <= bounds.get_time_max())
+                            time_mask = (spatially_filtered["time"] >= bounds.get_time_min()) & (
+                                spatially_filtered["time"] <= bounds.get_time_max()
+                            )
                             return spatially_filtered.loc[time_mask]
                     else:
                         # Already datetime, use direct comparison
-                        time_mask = (
-                            spatially_filtered["time"] >= bounds.get_time_min()
-                        ) & (spatially_filtered["time"] <= bounds.get_time_max())
+                        time_mask = (spatially_filtered["time"] >= bounds.get_time_min()) & (
+                            spatially_filtered["time"] <= bounds.get_time_max()
+                        )
                         return spatially_filtered.loc[time_mask]
                 else:
                     return data.iloc[spatial_mask]
@@ -378,20 +406,12 @@ class ScalarDataLoader(DataLoaderInterface):
                 lat_vals = data.lat.values
                 long_vals = data.long.values
 
-                lat_min_idx = np.searchsorted(
-                    lat_vals, bounds.get_lat_min(), side="right"
-                )
-                lat_max_idx = np.searchsorted(
-                    lat_vals, bounds.get_lat_max(), side="right"
-                )
+                lat_min_idx = np.searchsorted(lat_vals, bounds.get_lat_min(), side="right")
+                lat_max_idx = np.searchsorted(lat_vals, bounds.get_lat_max(), side="right")
 
                 if bounds.get_long_min() < bounds.get_long_max():
-                    long_min_idx = np.searchsorted(
-                        long_vals, bounds.get_long_min(), side="right"
-                    )
-                    long_max_idx = np.searchsorted(
-                        long_vals, bounds.get_long_max(), side="right"
-                    )
+                    long_min_idx = np.searchsorted(long_vals, bounds.get_long_min(), side="right")
+                    long_max_idx = np.searchsorted(long_vals, bounds.get_long_max(), side="right")
 
                     # Use integer-based indexing
                     data = data.isel(
@@ -400,9 +420,7 @@ class ScalarDataLoader(DataLoaderInterface):
                     )
                 else:
                     # Fallback to coordinate-based selection
-                    data = data.sel(
-                        lat=slice(bounds.get_lat_min(), bounds.get_lat_max())
-                    )
+                    data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
                     data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
                     data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
                     data = xr.concat([data_lhs, data_rhs], "long")
@@ -411,19 +429,15 @@ class ScalarDataLoader(DataLoaderInterface):
                 # Fallback to standard coordinate-based selection if optimisation fails
                 data = data.sel(lat=slice(bounds.get_lat_min(), bounds.get_lat_max()))
                 if bounds.get_long_min() < bounds.get_long_max():
-                    data = data.sel(
-                        long=slice(bounds.get_long_min(), bounds.get_long_max())
-                    )
+                    data = data.sel(long=slice(bounds.get_long_min(), bounds.get_long_max()))
                 else:
                     data_lhs = data.sel(long=slice(-180, bounds.get_long_max()))
                     data_rhs = data.sel(long=slice(bounds.get_long_min(), 180))
                     data = xr.concat([data_lhs, data_rhs], "long")
 
             # Select data region within temporal bounds if time exists as a coordinate
-            if "time" in data.coords.keys():
-                data = data.sel(
-                    time=slice(bounds.get_time_min(), bounds.get_time_max())
-                )
+            if "time" in data.coords:
+                data = data.sel(time=slice(bounds.get_time_min(), bounds.get_time_max()))
 
             # Trim off any data on the min boundary to be consistent with df
             if len(data.lat) > 0 and bounds.get_lat_min() in data.lat.values:
@@ -440,8 +454,17 @@ class ScalarDataLoader(DataLoaderInterface):
 
         if isinstance(data, pd.core.frame.DataFrame):
             return trim_datapoints_from_df(data, bounds)
-        elif isinstance(data, xr.core.dataset.Dataset):
+        if isinstance(data, xr.core.dataset.Dataset):
             return trim_datapoints_from_xr(data, bounds)
+        raise TypeError(f"Unsupported data type: {type(data)}")
+
+    @overload
+    def get_value(self, bounds: Boundary, agg_type: str) -> dict[str, float]: ...
+
+    @overload
+    def get_value(
+        self, bounds: Boundary, data: Any = None, agg_type: str | None = None, skipna: bool = True
+    ) -> dict[str, float]: ...
 
     def get_value(self, bounds, data=None, agg_type=None, skipna=True):
         """
@@ -493,24 +516,21 @@ class ScalarDataLoader(DataLoaderInterface):
             if agg_type == "COUNT":
                 return len(dps)
             # If no data
-            elif len(dps) == 0:
-                return np.nan
-            elif np.isnan(dps).all():
+            if len(dps) == 0 or np.isnan(dps).all():
                 return np.nan
             # Return float of aggregated value
-            elif agg_type == "MIN":
+            if agg_type == "MIN":
                 return dps.min(skipna=skipna)
-            elif agg_type == "MAX":
+            if agg_type == "MAX":
                 return dps.max(skipna=skipna)
-            elif agg_type == "MEAN":
+            if agg_type == "MEAN":
                 return dps.mean(skipna=skipna)
-            elif agg_type == "MEDIAN":
+            if agg_type == "MEDIAN":
                 return dps.median(skipna=skipna)
-            elif agg_type == "STD":
+            if agg_type == "STD":
                 return dps.std(skipna=skipna)
             # If aggregation_type not available
-            else:
-                raise ValueError(f"Unknown aggregation type {agg_type}")
+            raise ValueError(f"Unknown aggregation type {agg_type}")
 
         def get_value_from_xr(dps, bounds, agg_type, skipna):
             """
@@ -539,45 +559,35 @@ class ScalarDataLoader(DataLoaderInterface):
             if agg_type == "COUNT":
                 return dps.size
             # If no data
-            elif dps.size == 0:
-                return np.nan
-            # If all NaN, avoid calculations
-            elif np.isnan(dps).all():
+            if dps.size == 0 or np.isnan(dps).all():
                 return np.nan
             # Return float of aggregated value
-            elif agg_type == "MIN":
+            if agg_type == "MIN":
                 if skipna:
                     return np.nanmin(dps)
-                else:
-                    return np.min(dps)
-            elif agg_type == "MAX":
+                return np.min(dps)
+            if agg_type == "MAX":
                 if skipna:
                     return np.nanmax(dps)
-                else:
-                    return np.max(dps)
-            elif agg_type == "MEAN":
+                return np.max(dps)
+            if agg_type == "MEAN":
                 if skipna:
                     return np.nanmean(dps)
-                else:
-                    return np.mean(dps)
-            elif agg_type == "MEDIAN":
+                return np.mean(dps)
+            if agg_type == "MEDIAN":
                 if skipna:
                     return np.nanmedian(dps)
-                else:
-                    return np.median(dps)
-            elif agg_type == "STD":
+                return np.median(dps)
+            if agg_type == "STD":
                 if skipna:
                     return np.nanstd(dps)
-                else:
-                    return np.std(dps)
-            elif agg_type == "RMSE":
+                return np.std(dps)
+            if agg_type == "RMSE":
                 if skipna:
                     return np.sqrt(np.nanmean((dps - np.nanmean(dps)) ** 2))
-                else:
-                    return np.sqrt(np.mean((dps - np.mean(dps)) ** 2))
+                return np.sqrt(np.mean((dps - np.mean(dps)) ** 2))
             # If aggregation_type not available
-            else:
-                raise ValueError(f"Unknown aggregation type {agg_type}")
+            raise ValueError(f"Unknown aggregation type {agg_type}")
 
         # Set to params if no specific aggregate type specified
         if agg_type is None:
@@ -665,10 +675,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 if frac_over_threshold <= splitting_conds["lower_bound"]:
                     hom_type = "CLR"
                 elif frac_over_threshold >= splitting_conds["upper_bound"]:
-                    if splitting_conds["split_lock"] is True:
-                        hom_type = "HOM"
-                    else:
-                        hom_type = "CLR"
+                    hom_type = "HOM" if splitting_conds["split_lock"] is True else "CLR"
                 else:
                     hom_type = "HET"
 
@@ -700,14 +707,9 @@ class ScalarDataLoader(DataLoaderInterface):
                 )
             else:
                 # Determine fraction of datapoints over threshold value
-                num_over_threshold = np.count_nonzero(
-                    dps > splitting_conds["threshold"]
-                )
+                num_over_threshold = np.count_nonzero(dps > splitting_conds["threshold"])
                 num_non_nan = np.count_nonzero(~np.isnan(dps))
-                if num_non_nan > 0:
-                    frac_over_threshold = num_over_threshold / num_non_nan
-                else:
-                    frac_over_threshold = 0
+                frac_over_threshold = num_over_threshold / num_non_nan if num_non_nan > 0 else 0
                 # Return homogeneity condition
                 if frac_over_threshold <= splitting_conds["lower_bound"]:
                     hom_type = "CLR"
@@ -731,22 +733,16 @@ class ScalarDataLoader(DataLoaderInterface):
         # Set default values for splitting_conds if not provided
         if "split_lock" not in splitting_conds:
             splitting_conds["split_lock"] = False
-        if data is None:
-            dps = self.trim_datapoints(bounds)[self.data_name]
-        else:
-            dps = data[self.data_name]
+        dps = self.trim_datapoints(bounds)[self.data_name] if data is None else data[self.data_name]
 
         # Retrieve datapoints to analyse
         if isinstance(dps, pd.core.series.Series):
             return get_hom_condition_from_df(dps, splitting_conds)
-        elif isinstance(dps, xr.core.dataarray.DataArray):
+        if isinstance(dps, xr.core.dataarray.DataArray):
             return get_hom_condition_from_xr(dps, splitting_conds)
-        else:
-            raise TypeError(f"Unknown type {type(dps)}")
+        raise TypeError(f"Unknown type {type(dps)}")
 
-    def reproject(
-        self, in_proj="EPSG:4326", out_proj="EPSG:4326", x_col="lat", y_col="long"
-    ):
+    def reproject(self, in_proj="EPSG:4326", out_proj="EPSG:4326", x_col="lat", y_col="long"):
         """
         Reprojects data using pyProj.Transformer
         self.data can be pd.DataFrame or xr.Dataset
@@ -797,9 +793,9 @@ class ScalarDataLoader(DataLoaderInterface):
                     ('time' if in original dataset), and data_name
             """
             # Do the reprojection
-            x, y = Transformer.from_crs(
-                CRS(in_proj), CRS(out_proj), always_xy=True
-            ).transform(data[x_col].to_numpy(), data[y_col].to_numpy())
+            x, y = Transformer.from_crs(CRS(in_proj), CRS(out_proj), always_xy=True).transform(
+                data[x_col].to_numpy(), data[y_col].to_numpy()
+            )
             # Replace columns with reprojected columns called 'lat'/'long'
             if x_col != "long":
                 data = data.drop(x_col, axis=1)
@@ -851,27 +847,24 @@ class ScalarDataLoader(DataLoaderInterface):
                 # Rename coordinates
                 data = data.rename({x_col: "long", y_col: "lat"})
                 # Reorder coords in case they are wrong
-                data = data.sortby("lat", ascending=True)
-                data = data.sortby("long", ascending=True)
-                return data
+                return data.sortby("lat", ascending=True).sortby("long", ascending=True)
             # If want accurate results
-            else:
-                df = data.to_dataframe().reset_index().dropna()
-                return reproject_df(df, in_proj, out_proj, x_col, y_col)
+            df = data.to_dataframe().reset_index().dropna()
+            return reproject_df(df, in_proj, out_proj, x_col, y_col)
 
         # If no reprojection to do
         if in_proj == out_proj:
             logger.debug("\tself.reproject() called but don't need to")
             return self.data
-        else:
-            logger.info(f"\tReprojecting data from {in_proj} to {out_proj}")
+        logger.info(f"\tReprojecting data from {in_proj} to {out_proj}")
         # Choose appropriate method of reprojection based on data type
         if isinstance(self.data, pd.core.frame.DataFrame):
             return reproject_df(self.data, in_proj, out_proj, x_col, y_col)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return reproject_xr(
                 self.data, in_proj, out_proj, x_col, y_col, fast=self.fast_reprojection
             )
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def downsample(self, agg_type=None):
         """
@@ -936,7 +929,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 data = data.thin(long=ds[0])
             return data
 
-        def downsample_df(data, ds, agg_type):
+        def downsample_df(data, _ds, _agg_type):
             """
             Downsample pandas dataframe
             Not implemented as it just adds to processing time,
@@ -953,16 +946,16 @@ class ScalarDataLoader(DataLoaderInterface):
             agg_type = self.aggregate_type
 
         # If no downsampling
-        if self.downsample_factors == (1, 1) or self.downsample_factors == [1, 1]:
+        if list(self.downsample_factors) == [1, 1]:
             logger.debug("\tself.downsample() called but don't have to")
             return self.data
-        else:
-            logger.info(f"\tDownsampling data by {self.downsample_factors}")
+        logger.info(f"\tDownsampling data by {self.downsample_factors}")
         # Otherwise, downsample appropriately
         if isinstance(self.data, pd.core.frame.DataFrame):
             return downsample_df(self.data, self.downsample_factors, agg_type)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return downsample_xr(self.data, self.downsample_factors, agg_type)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def get_data_col_name(self):
         """
@@ -994,9 +987,7 @@ class ScalarDataLoader(DataLoaderInterface):
             # Store name of data column for future reference
             columns = data.columns
             # Filter out lat, long, time columns leaves us with data column name
-            filtered_cols = filter(
-                lambda col: col not in ["lat", "long", "time"], columns
-            )
+            filtered_cols = filter(lambda col: col not in ["lat", "long", "time"], columns)
             name = list(filtered_cols)
             if len(name) != 1:
                 raise ValueError(
@@ -1030,8 +1021,9 @@ class ScalarDataLoader(DataLoaderInterface):
         # Choose method of extraction based on data type
         if isinstance(self.data, pd.core.frame.DataFrame):
             return get_data_name_from_df(self.data)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return get_data_name_from_xr(self.data)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
 
     def set_data_col_name(self, new_name):
         """
@@ -1089,5 +1081,6 @@ class ScalarDataLoader(DataLoaderInterface):
         # Change data name depending on data type
         if isinstance(self.data, pd.core.frame.DataFrame):
             return set_name_df(self.data, old_name, new_name)
-        elif isinstance(self.data, xr.core.dataset.Dataset):
+        if isinstance(self.data, xr.core.dataset.Dataset):
             return set_name_xr(self.data, old_name, new_name)
+        raise TypeError(f"Unsupported data type: {type(self.data)}")
