@@ -10,7 +10,7 @@ import tracemalloc
 from calendar import monthrange
 from datetime import datetime, timedelta
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar, overload
+from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar, cast, overload
 
 import numpy as np
 import numpy.typing as npt
@@ -173,7 +173,7 @@ def round_to_sigfig(
 
     # Cast as array if not initially, so that later processes all act as expected
     if orig_type in [int, float, np.float64]:
-        x = [x]
+        x = [x]  # type: ignore[list-item]
     x = np.array(x)
     # Create a mask disabling any values of inf or zero being passed to log10
     loggable_idxs = ([x != 0] & np.isfinite(x))[0]
@@ -193,12 +193,12 @@ def round_to_sigfig(
     rounded = np.array([np.around(x[i], decimals=dec_pl[i]) for i in range(len(x))])
     # Return as single value if input that way
     if orig_type in [int, float]:
-        return rounded.item()
+        return cast("int | float", rounded.item())
     # Return as python list
     if orig_type is list:
-        return rounded.tolist()
+        return cast("list[float]", rounded.tolist())
     # Otherwise, return np.array
-    return rounded
+    return cast("npt.NDArray[np.floating[Any]]", rounded)
 
 
 def divergence(flow: npt.NDArray[np.floating[Any]]) -> npt.NDArray[np.floating[Any]]:
@@ -206,7 +206,7 @@ def divergence(flow: npt.NDArray[np.floating[Any]]) -> npt.NDArray[np.floating[A
     Fx, Fy = flow[:, :, 0], flow[:, :, 1]
     dFx_dx = np.gradient(Fx, axis=0)
     dFy_dy = np.gradient(Fy, axis=1)
-    return dFx_dx + dFy_dy
+    return cast("npt.NDArray[np.floating[Any]]", dFx_dx + dFy_dy)
 
 
 def curl(flow: npt.NDArray[np.floating[Any]]) -> npt.NDArray[np.floating[Any]]:
@@ -214,7 +214,7 @@ def curl(flow: npt.NDArray[np.floating[Any]]) -> npt.NDArray[np.floating[Any]]:
     Fx, Fy = flow[:, :, 0], flow[:, :, 1]
     dFx_dy = np.gradient(Fx, axis=1)
     dFy_dx = np.gradient(Fy, axis=0)
-    return dFy_dx - dFx_dy
+    return cast("npt.NDArray[np.floating[Any]]", dFy_dx - dFx_dy)
 
 
 # GRF functions
@@ -236,7 +236,7 @@ def fftind(size: int) -> npt.NDArray[np.int_]:
     # Create array
     k_ind = np.mgrid[:size, :size] - int((size + 1) / 2)
     # Fourier shift
-    return fftshift(k_ind)
+    return cast("npt.NDArray[np.int_]", fftshift(k_ind))
 
 
 def gaussian_random_field(size: int, alpha: float) -> npt.NDArray[np.floating[Any]]:

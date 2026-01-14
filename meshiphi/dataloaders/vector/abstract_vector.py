@@ -645,7 +645,7 @@ class VectorDataLoader(DataLoaderInterface):
         if isinstance(self.data, pd.core.frame.DataFrame):
             num_dp = len(self.trim_datapoints(bounds))
         elif isinstance(self.data, xr.core.dataset.Dataset):
-            num_dp = min(self.trim_datapoints(bounds).count().values())
+            num_dp = min(self.trim_datapoints(bounds).count().values())  # type: ignore[assignment]
 
         # Set default homogeneity
         hom_type = "CLR"
@@ -813,7 +813,7 @@ class VectorDataLoader(DataLoaderInterface):
                 return data.sortby("lat", ascending=True).sortby("long", ascending=True)
             # If want accurate results
             df = data.to_dataframe().reset_index().dropna()
-            return reproject_df(df, in_proj, out_proj, x_col, y_col)
+            return reproject_df(df, in_proj, out_proj, x_col, y_col)  # type: ignore[no-any-return]
 
         # If no reprojection to do
         if in_proj == out_proj:
@@ -868,24 +868,24 @@ class VectorDataLoader(DataLoaderInterface):
             """
             if agg_type == "MIN":
                 # Returns min of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").min()
-                data = data.coarsen(long=ds[0], boundary="pad").min()
+                data = data.coarsen(lat=ds[1], boundary="pad").min()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").min()  # type: ignore[attr-defined]
             elif agg_type == "MAX":
                 # Returns max of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").max()
-                data = data.coarsen(long=ds[0], boundary="pad").max()
+                data = data.coarsen(lat=ds[1], boundary="pad").max()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").max()  # type: ignore[attr-defined]
             elif agg_type == "MEAN":
                 # Returns mean of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").mean()
-                data = data.coarsen(long=ds[0], boundary="pad").mean()
+                data = data.coarsen(lat=ds[1], boundary="pad").mean()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").mean()  # type: ignore[attr-defined]
             elif agg_type == "MEDIAN":
                 # Returns median of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").median()
-                data = data.coarsen(long=ds[0], boundary="pad").median()
+                data = data.coarsen(lat=ds[1], boundary="pad").median()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").median()  # type: ignore[attr-defined]
             elif agg_type == "STD":
                 # Returns std_dev of range
-                data = data.coarsen(lat=ds[1], boundary="pad").std()
-                data = data.coarsen(long=ds[0], boundary="pad").std()
+                data = data.coarsen(lat=ds[1], boundary="pad").std()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").std()  # type: ignore[attr-defined]
             elif agg_type == "COUNT":
                 # Returns every first element in bin
                 data = data.thin(lat=ds[1])
@@ -950,7 +950,7 @@ class VectorDataLoader(DataLoaderInterface):
             # Extract data variables from xr.Dataset
             data_names = list(data.keys())
             # Turn into comma seperated string and return
-            return ",".join(data_names)
+            return ",".join(data_names)  # type: ignore[arg-type]
 
         logger.debug(f"\tRetrieving data name from {type(self.data)}")
         # Choose method of extraction based on data type

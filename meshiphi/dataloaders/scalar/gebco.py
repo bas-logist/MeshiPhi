@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class GEBCODataLoader(ScalarDataLoader):  # type: ignore[misc]
+class GEBCODataLoader(ScalarDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from GEBCO NetCDF files. Renames coordinates to

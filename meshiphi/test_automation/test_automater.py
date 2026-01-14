@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess as sp
 import tempfile
+from typing import Any
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -23,13 +24,13 @@ logger = logging.getLogger(__name__)
 class TestAutomater:
     def __init__(
         self,
-        from_branch=None,
-        into_branch="main",
-        regression=True,
-        unit=True,
-        save=False,
-        plot=False,
-    ):
+        from_branch: str | None = None,
+        into_branch: str = "main",
+        regression: bool = True,
+        unit: bool = True,
+        save: bool = False,
+        plot: bool = False,
+    ) -> None:
         """
         Runs through test suite only taking into account relevant tests for the
         modified files
@@ -98,7 +99,13 @@ class TestAutomater:
         # Finally, remove temp folder
         shutil.rmtree(temp_dir)
 
-    def _run_tests(self, diff_files, test_dir, test_dict, save_to=None):
+    def _run_tests(
+        self,
+        diff_files: list[str],
+        test_dir: str,
+        test_dict: dict[str, list[str]],
+        save_to: str | None = None,
+    ) -> None:
         """
         Runs relevant regression or unit tests within 'test_dir'
 
@@ -147,7 +154,9 @@ class TestAutomater:
         # Change back to repo base directory
         os.chdir(self.repo_dir)
 
-    def run_regression_tests(self, diff_files, save_to=None, plot=False):
+    def run_regression_tests(
+        self, diff_files: list[str], save_to: str | None = None, plot: bool = False
+    ) -> None:
         """
         Runs relevant regression tests for files within 'diff_files'
 
@@ -179,7 +188,7 @@ class TestAutomater:
                 self.summarise_reg_tests(test_output_path)
                 logger.info(self._single_separator)
 
-    def run_unit_tests(self, diff_files, save_to=None):
+    def run_unit_tests(self, diff_files: list[str], save_to: str | None = None) -> None:
         """
         Runs relevant unit tests for files within 'diff_files'
 
@@ -192,7 +201,7 @@ class TestAutomater:
         logger.info("Attempting unit tests...")
         self._run_tests(diff_files, unit_test_dir, UNIT_TESTS_BY_FILE, save_to=save_to)
 
-    def _setup_output_folder(self):
+    def _setup_output_folder(self) -> str:
         """
         Creates a 'pytest_meshiphi' folder at the user's current working directory
 
@@ -213,7 +222,9 @@ class TestAutomater:
         return output_folder
 
     @staticmethod
-    def parse_pytest_stdout(stdout):
+    def parse_pytest_stdout(
+        stdout: str,
+    ) -> tuple[list[TestInfo], list[TestInfo], list[TestInfo]]:
         """
         Turns stdout of Pytest into TestInfo objects
 
@@ -237,8 +248,8 @@ class TestAutomater:
             # Only read the lines with all necessary info
             if "::" in line:
                 # Split into pertinent parts
-                split_line = line.replace("::", " ").replace("[", " ").replace("]", " ")
-                split_line = split_line.split()
+                split_line_str = line.replace("::", " ").replace("[", " ").replace("]", " ")
+                split_line: list[str] = split_line_str.split()
                 status = split_line[0]
                 test_file = split_line[1]
                 test_method = os.path.basename(split_line[2])
@@ -260,7 +271,7 @@ class TestAutomater:
         return passes, fails, errors
 
     @staticmethod
-    def get_base_dir():
+    def get_base_dir() -> str:
         """
         Get base folder for repo.
         """
@@ -272,7 +283,9 @@ class TestAutomater:
         return os.path.abspath(repo_path)
 
     @staticmethod
-    def get_diff_filenames(from_branch=None, into_branch=None):
+    def get_diff_filenames(
+        from_branch: str | None = None, into_branch: str | None = None
+    ) -> list[str]:
         """
         Gets a list of files that have changed between 'from_branch' and 'into_branch'
 
@@ -326,7 +339,7 @@ class TestAutomater:
 
         return diff_files
 
-    def get_relevant_tests(self, diff_file, test_dict):
+    def get_relevant_tests(self, diff_file: str, test_dict: dict[str, list[str]]) -> list[str]:
         """
         Determines the relevant tests to run from filename
 
@@ -351,7 +364,7 @@ class TestAutomater:
         return relevant_tests
 
     @staticmethod
-    def extract_test_meshes(test_output_file):
+    def extract_test_meshes(test_output_file: str) -> tuple[dict[str, Any], dict[str, Any]]:
         """
         Reads test output file and extracts out two meshes;
         the old 'ground truth' mesh, and the newly generated mesh
@@ -371,7 +384,9 @@ class TestAutomater:
 
         return old_json, new_json
 
-    def compare_meshes(self, old_json, new_json):
+    def compare_meshes(
+        self, old_json: dict[str, Any], new_json: dict[str, Any]
+    ) -> dict[str, pd.DataFrame]:
         """
         Runs mesh comparator on old and new mesh stored within
         test_output_file
@@ -396,7 +411,14 @@ class TestAutomater:
             "neighbour_graph": mc.compare_neighbour_graph_values(old_json, new_json),
         }
 
-    def save_tests(self, tmp_dir, output_folder, passes=False, fails=True, errors=True):
+    def save_tests(
+        self,
+        tmp_dir: str,
+        output_folder: str,
+        passes: bool = False,
+        fails: bool = True,
+        errors: bool = True,
+    ) -> None:
         """
         Saves copy of newly generated test meshes to 'pytest_meshiphi' folder
         in current working directory. Meshes will be saved as
@@ -454,7 +476,7 @@ class TestAutomater:
                 except OSError as e:
                     logger.debug(e)
 
-    def plot_test(self, test_output, save_to=None):
+    def plot_test(self, test_output: str, save_to: str | None = None) -> None:
         """
         Creates a plot of the differences between the newly generated mesh and
         the ground truth mesh. The mesh displayed will be the new mesh, with
@@ -465,7 +487,14 @@ class TestAutomater:
         './pytest_meshiphi/<test_name>.svg'
         """
 
-        def add_df_to_ax(df, ax, c="black", ids=False, label=None, a=0.2):
+        def add_df_to_ax(
+            df: gpd.GeoDataFrame,
+            ax: Any,
+            c: str = "black",
+            ids: bool = False,
+            label: str | None = None,
+            a: float = 0.2,
+        ) -> tuple[Any, Patch | None]:
             """
             Converts dataframe output from the MeshComparator into a plotable
             feature
@@ -577,7 +606,7 @@ class TestAutomater:
             plt.show()
         plt.close()
 
-    def summarise_reg_tests(self, test_output):
+    def summarise_reg_tests(self, test_output: str) -> None:
         """
         Write out a summary of the difference in cellboxes in the terminal
 
@@ -585,7 +614,7 @@ class TestAutomater:
             test_output (str): Filename of saved test mesh
         """
 
-        def print_summary(comparison, summary_key):
+        def print_summary(comparison: dict[str, pd.DataFrame], summary_key: str) -> None:
             """
             Prints out a summary of the number of different values
             in the old mesh compared to the new mesh
@@ -620,7 +649,7 @@ class TestAutomater:
         print_summary(mesh_comparison, "attributes")
         print_summary(mesh_comparison, "neighbour_graph")
 
-    def summarise_test_stats(self):
+    def summarise_test_stats(self) -> None:
         """
         Summarise statistics about the tests and print to terminal
         Example: 10 / 12 tests passed for test_boundary.py
@@ -647,5 +676,5 @@ class TestInfo:
         self.reference = reference
         self.status = status
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.status} - {self.file} > {self.test} > {self.reference}"

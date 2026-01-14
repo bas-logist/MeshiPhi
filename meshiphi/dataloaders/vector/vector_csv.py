@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class VectorCSVDataLoader(VectorDataLoader):  # type: ignore[misc]
+class VectorCSVDataLoader(VectorDataLoader):
     def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a CSV file.

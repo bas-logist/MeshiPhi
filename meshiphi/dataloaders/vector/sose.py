@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class SOSEDataLoader(VectorDataLoader):  # type: ignore[misc]
+class SOSEDataLoader(VectorDataLoader):
     def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a SOSE Currents NetCDF file.

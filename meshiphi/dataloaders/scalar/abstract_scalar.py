@@ -462,7 +462,7 @@ class ScalarDataLoader(DataLoaderInterface):
             return trim_datapoints_from_xr(data, bounds)
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    def get_value(
+    def get_value(  # type: ignore[override]
         self,
         bounds: Boundary,
         data: xr.Dataset | pd.DataFrame | None = None,
@@ -557,7 +557,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 np.float64: Aggregated value
             """
             # Extract values to be worked on by numpy functions
-            dps = dps.values
+            dps = dps.values  # type: ignore[assignment]
             logger.debug(
                 f"\t{len(dps)} datapoints found for attribute '{self.data_name}' within bounds '{bounds}'"
             )
@@ -878,7 +878,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 return data.sortby("lat", ascending=True).sortby("long", ascending=True)
             # If want accurate results
             df = data.to_dataframe().reset_index().dropna()
-            return reproject_df(df, in_proj, out_proj, x_col, y_col)
+            return reproject_df(df, in_proj, out_proj, x_col, y_col)  # type: ignore[no-any-return]
 
         # If no reprojection to do
         if in_proj == out_proj:
@@ -933,24 +933,24 @@ class ScalarDataLoader(DataLoaderInterface):
             """
             if agg_type == "MIN":
                 # Returns min of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").min()
-                data = data.coarsen(long=ds[0], boundary="pad").min()
+                data = data.coarsen(lat=ds[1], boundary="pad").min()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").min()  # type: ignore[attr-defined]
             elif agg_type == "MAX":
                 # Returns max of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").max()
-                data = data.coarsen(long=ds[0], boundary="pad").max()
+                data = data.coarsen(lat=ds[1], boundary="pad").max()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").max()  # type: ignore[attr-defined]
             elif agg_type == "MEAN":
                 # Returns mean of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").mean()
-                data = data.coarsen(long=ds[0], boundary="pad").mean()
+                data = data.coarsen(lat=ds[1], boundary="pad").mean()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").mean()  # type: ignore[attr-defined]
             elif agg_type == "MEDIAN":
                 # Returns median of bin
-                data = data.coarsen(lat=ds[1], boundary="pad").median()
-                data = data.coarsen(long=ds[0], boundary="pad").median()
+                data = data.coarsen(lat=ds[1], boundary="pad").median()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").median()  # type: ignore[attr-defined]
             elif agg_type == "STD":
                 # Returns std_dev of range
-                data = data.coarsen(lat=ds[1], boundary="pad").std()
-                data = data.coarsen(long=ds[0], boundary="pad").std()
+                data = data.coarsen(lat=ds[1], boundary="pad").std()  # type: ignore[attr-defined]
+                data = data.coarsen(long=ds[0], boundary="pad").std()  # type: ignore[attr-defined]
             elif agg_type == "COUNT":
                 # Returns every first element in bin
                 data = data.thin(lat=ds[1])
@@ -1041,7 +1041,7 @@ class ScalarDataLoader(DataLoaderInterface):
             if len(name) != 1:
                 raise ValueError(
                     f"More than 1 data column detected, cannot retrieve data \
-                    name! Found columns: {','.join(name)}"
+                    name! Found columns: {','.join(name)}"  # type: ignore[arg-type]
                 )
             return str(name[0])
 

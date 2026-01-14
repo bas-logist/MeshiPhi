@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class BalticCurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+class BalticCurrentDataLoader(VectorDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in current data from a copernicus baltic sea physics reanalysis NetCDF file.

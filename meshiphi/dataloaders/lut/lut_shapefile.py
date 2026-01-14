@@ -11,7 +11,7 @@ from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
 from meshiphi.mesh_generation.boundary import Boundary
 
 
-class LutShapefile(LutDataLoader):  # type: ignore[misc]
+class LutShapefile(LutDataLoader):
     def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for LUT dataloader. Only unique addition over

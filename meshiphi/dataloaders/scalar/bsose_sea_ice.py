@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class BSOSESeaIceDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class BSOSESeaIceDataLoader(ScalarDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a BSOSE Sea Ice NetCDF file.

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class NorthSeaCurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+class NorthSeaCurrentDataLoader(VectorDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a BSOSE Depth NetCDF file.

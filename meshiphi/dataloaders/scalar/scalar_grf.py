@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class ScalarGRFDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class ScalarGRFDataLoader(ScalarDataLoader):
     def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for abstract GRF dataloaders, starting by
@@ -127,7 +127,7 @@ class ScalarGRFDataLoader(ScalarDataLoader):  # type: ignore[misc]
         else:
             if self.threshold is None or self.min is None or self.max is None:
                 raise ValueError("threshold, min, and max parameters are required for scalar GRF")
-            grf = grf_to_scalar(grf, self.threshold, self.min, self.max)
+            grf = grf_to_scalar(grf, self.threshold, self.min, self.max)  # type: ignore[arg-type]
             # Scale with multiplier and offset
             multiplier: float = self.multiplier if self.multiplier is not None else 1.0
             offset: float = self.offset if self.offset is not None else 0.0
@@ -147,4 +147,4 @@ class ScalarGRFDataLoader(ScalarDataLoader):  # type: ignore[misc]
         # Cast to dataframe
         data = pd.DataFrame(rows).set_index(["lat", "long"])
         # Set to xarray dataset
-        return data.to_xarray()
+        return data.to_xarray()  # type: ignore[no-any-return]

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MODISDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class MODISDataLoader(ScalarDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a MODIS NetCDF file.

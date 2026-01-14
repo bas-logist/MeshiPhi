@@ -1,6 +1,13 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 import pandas as pd
 
 from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class FullMeshValidator:
@@ -13,7 +20,7 @@ class FullMeshValidator:
     MeshValidator object only compares a sample of the source data to the mesh data.
     """
 
-    def __init__(self, mesh, source_data):
+    def __init__(self, mesh: dict[str, Any], source_data: pd.DataFrame) -> None:
         """
         Args:
             mesh: json file containing mesh data
@@ -30,7 +37,7 @@ class FullMeshValidator:
 
         # Validate that the source data is within the require bounds
 
-    def validate_vector(self, sd_name, md_name):
+    def validate_vector(self, sd_name: list[str], md_name: list[str]) -> dict[str, Any]:
         """
         Validate the mesh by comparing the vector field in the mesh to the source data
         Args:
@@ -80,7 +87,7 @@ class FullMeshValidator:
             "root_mean_squared_d_vector_mag": rms_d_vector_mag,
         }
 
-    def validate_scalar(self, sd_name, md_name):
+    def validate_scalar(self, sd_name: str, md_name: str) -> dict[str, Any]:
         """
         Validate the mesh by comparing the scalar field in the mesh to the source data
         Args:
@@ -116,7 +123,7 @@ class FullMeshValidator:
             "root_mean_squared_err": rmse,
         }
 
-    def slice_data(self, bounds):
+    def slice_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         return a slice of the source data within the bounds
         Args:

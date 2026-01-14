@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a ECMWF GRIB2 file, or folder of files.

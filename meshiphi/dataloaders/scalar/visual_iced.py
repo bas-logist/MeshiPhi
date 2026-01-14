@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class VisualIcedDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class VisualIcedDataLoader(ScalarDataLoader):
     def import_data(self, _bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from Visual_Ice NetCDF files. Renames coordinates to
@@ -87,4 +87,4 @@ class VisualIcedDataLoader(ScalarDataLoader):  # type: ignore[misc]
 
         # convert back to xarray
         vi_dataframe = vi_dataframe.set_index(["x", "y"])
-        return vi_dataframe.to_xarray()
+        return vi_dataframe.to_xarray()  # type: ignore[no-any-return]

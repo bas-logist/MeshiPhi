@@ -210,11 +210,13 @@ class CellBox:
             current_data_source = data_source[index]
             data_loader = current_data_source.get_data_loader()
             data_subset = current_data_source.get_data_subset()
-            for splitting_cond in current_data_source.get_splitting_conditions():
-                hom_cond = data_loader.get_hom_condition(
-                    self.bounds, splitting_cond, data=data_subset
-                )
-                hom_conditions.append(hom_cond)
+            splitting_conditions = current_data_source.get_splitting_conditions()
+            if splitting_conditions is not None:
+                for splitting_cond in splitting_conditions:
+                    hom_cond = data_loader.get_hom_condition(
+                        self.bounds, splitting_cond, data=data_subset
+                    )
+                    hom_conditions.append(hom_cond)
         if "HOM" in hom_conditions:
             return False
         if "MIN" in hom_conditions:
@@ -242,16 +244,19 @@ class CellBox:
                 will result in the CellBox being split.
         """
         hom_conditions: list[str] = []
-        if self.data_source is None:
+        data_source = self.data_source
+        if data_source is None:
             return False
-        for current_data_source in self.data_source:
+        for current_data_source in data_source:
             data_loader = current_data_source.get_data_loader()
             data_subset = current_data_source.get_data_subset()
-            for splitting_cond in current_data_source.get_splitting_conditions():
-                hom_cond = data_loader.get_hom_condition(
-                    self.bounds, splitting_cond, data=data_subset
-                )
-                hom_conditions.append(hom_cond)
+            splitting_conditions = current_data_source.get_splitting_conditions()
+            if splitting_conditions is not None:
+                for splitting_cond in splitting_conditions:
+                    hom_cond = data_loader.get_hom_condition(
+                        self.bounds, splitting_cond, data=data_subset
+                    )
+                    hom_conditions.append(hom_cond)
 
         if "HOM" in hom_conditions:
             return False

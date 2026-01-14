@@ -220,7 +220,7 @@ def meshiphi_test_cli() -> None:
     """
 
     @setup_logging
-    def get_test_automater_args():
+    def get_test_automater_args() -> argparse.Namespace:
         ap = argparse.ArgumentParser()
         # Add one or two arguments as branches
         # If one, compare current branch to specified one

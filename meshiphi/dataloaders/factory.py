@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import os
 from glob import glob
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 from meshiphi.dataloaders.lut.density import DensityDataLoader
 from meshiphi.dataloaders.lut.lut_csv import LutCSV
@@ -52,7 +56,7 @@ class DataLoaderFactory:
     """
 
     @staticmethod
-    def get_dataloader(name, bounds, params, min_dp=5):
+    def get_dataloader(name: str, bounds: Boundary, params: dict[str, Any], min_dp: int = 5) -> Any:
         """
         Creates appropriate dataloader object based on name
 
@@ -79,7 +83,7 @@ class DataLoaderFactory:
         # Cast name to lowercase to make case insensitive
         name = name.lower()
         # Translate 'file' or 'folder' into 'files' key
-        params = DataLoaderFactory.translate_file_input(params)
+        DataLoaderFactory.translate_file_input(params)
 
         # Add loader name to params
         params["dataloader_name"] = name
@@ -152,7 +156,7 @@ class DataLoaderFactory:
         return data_loader(bounds, params)
 
     @staticmethod
-    def translate_file_input(params):
+    def translate_file_input(params: dict[str, Any]) -> None:
         """
         Allows flexible file specification in params. Translates 'file' or
         'folder' into 'files'
@@ -168,4 +172,3 @@ class DataLoaderFactory:
             folder = os.path.join(params["folder"], "")  # Adds trailing slash if non-existent
             params["files"] = sorted(glob(folder + "*"))
             del params["folder"]
-        return params

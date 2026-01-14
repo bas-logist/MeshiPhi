@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class AMSRDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class AMSRDataLoader(ScalarDataLoader):
     def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Translates 'hemisphere' parameter into values of in_proj and out_proj

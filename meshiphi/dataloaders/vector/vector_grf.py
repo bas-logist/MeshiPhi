@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class VectorGRFDataLoader(VectorDataLoader):  # type: ignore[misc]
+class VectorGRFDataLoader(VectorDataLoader):
     def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for abstract GRF dataloaders, starting by
@@ -102,7 +102,7 @@ class VectorGRFDataLoader(VectorDataLoader):  # type: ignore[misc]
         directions = gaussian_random_field(self.size, self.alpha)
         directions = np.radians(360 * directions)
 
-        vec_x, vec_y = grf_to_vector(magnitudes, directions, self.min, self.max)
+        vec_x, vec_y = grf_to_vector(magnitudes, directions, self.min, self.max)  # type: ignore[arg-type]
 
         # Set up domain of field
         lat_array = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.size)
@@ -123,4 +123,4 @@ class VectorGRFDataLoader(VectorDataLoader):  # type: ignore[misc]
         # Cast to dataframe
         data = pd.DataFrame(rows).set_index(["lat", "long"])
         # Set to xarray dataset
-        return data.to_xarray()
+        return data.to_xarray()  # type: ignore[no-any-return]

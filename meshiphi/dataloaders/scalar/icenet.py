@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class IceNetDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class IceNetDataLoader(ScalarDataLoader):
     def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a IceNet 2 NetCDF file.

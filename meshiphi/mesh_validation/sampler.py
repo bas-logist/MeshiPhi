@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from scipy.stats import qmc
 
@@ -14,11 +16,11 @@ class Sampler:
 
     """
 
-    def __init__(self, d, n):
+    def __init__(self, d: int, n: int) -> None:
         self.dimensions = d
         self.number_of_samples = n
 
-    def generate_samples(self, ranges):
+    def generate_samples(self, ranges: list[list[float]]) -> np.ndarray[Any, Any]:
         """
 
         generates samples within the provided ranges array, the length of the ranges should equal to self.dimensions

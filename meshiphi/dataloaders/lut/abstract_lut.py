@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class LutDataLoader(DataLoaderInterface):  # type: ignore[misc]
+class LutDataLoader(DataLoaderInterface):
     """
     Abstract class for all LookUp Table Datasets.
     """
@@ -228,7 +228,7 @@ class LutDataLoader(DataLoaderInterface):  # type: ignore[misc]
             data = self.data
         # Limit time to boundary
         if "time" in data.index.names:
-            data = data.loc[bounds.get_time_min() : bounds.get_time_max()]
+            data = data.loc[bounds.get_time_min() : bounds.get_time_max()]  # type: ignore[misc]
 
         # Find intersection of each polygon to the boundary
         bounds_polygon = bounds.to_polygon()

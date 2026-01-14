@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 # TODO Read in 2 files, combine to one object
-class ORAS5CurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+class ORAS5CurrentDataLoader(VectorDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a ORAS5 Depth NetCDF files.

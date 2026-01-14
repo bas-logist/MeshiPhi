@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class ERA5WindDataLoader(VectorDataLoader):  # type: ignore[misc]
+class ERA5WindDataLoader(VectorDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in wind data from a ERA5 NetCDF file.

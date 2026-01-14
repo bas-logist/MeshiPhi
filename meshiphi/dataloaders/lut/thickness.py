@@ -39,7 +39,7 @@ southern_seasons: dict[int, str] = {
 }
 
 
-class ThicknessDataLoader(LutDataLoader):  # type: ignore[misc]
+class ThicknessDataLoader(LutDataLoader):
     class Region:
         """
         Data storage object with region boundary as polygon, seasonal

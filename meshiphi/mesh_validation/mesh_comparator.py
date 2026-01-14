@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 import pandas as pd
 
 from meshiphi.utils import round_to_sigfig
@@ -7,7 +11,9 @@ class MeshComparator:
     SIG_FIG_TOLERANCE = 4
 
     @staticmethod
-    def _return_as(df, return_type):
+    def _return_as(
+        df: pd.DataFrame, return_type: str | None
+    ) -> pd.DataFrame | pd.Series[Any] | None:
         """
         Allows for flexibility in how to return differences to user. Sets a
         return type for each method.
@@ -32,7 +38,9 @@ class MeshComparator:
             return df
         return None
 
-    def compare_cellbox_boundaries(self, mesh1, mesh2, return_type=None):
+    def compare_cellbox_boundaries(
+        self, mesh1: dict[str, Any], mesh2: dict[str, Any], return_type: str | None = None
+    ) -> pd.DataFrame | pd.Series[Any] | None:
         """
         Compare the boundaries of the cellboxes in the two meshes
 
@@ -68,7 +76,9 @@ class MeshComparator:
 
         return self._return_as(mismatched_df, return_type)
 
-    def compare_cellbox_values(self, mesh1, mesh2, return_type=None):
+    def compare_cellbox_values(
+        self, mesh1: dict[str, Any], mesh2: dict[str, Any], return_type: str | None = None
+    ) -> pd.DataFrame | pd.Series[Any] | None:
         """
         Compare the values of the cellboxes in the two meshes in cellboxes
         that both meshes have in common
@@ -125,7 +135,9 @@ class MeshComparator:
 
         return self._return_as(diff_df, return_type)
 
-    def compare_cellbox_attributes(self, mesh1, mesh2, return_type=None):
+    def compare_cellbox_attributes(
+        self, mesh1: dict[str, Any], mesh2: dict[str, Any], return_type: str | None = None
+    ) -> pd.DataFrame | pd.Series[Any] | None:
         """
         Compare the attributes of the cellboxes in the two meshes if the meshes
         have cellboxes in common
@@ -169,7 +181,9 @@ class MeshComparator:
             mismatched_df = pd.DataFrame()
         return self._return_as(mismatched_df, return_type)
 
-    def compare_neighbour_graph_values(self, mesh1, mesh2, return_type=None):
+    def compare_neighbour_graph_values(
+        self, mesh1: dict[str, Any], mesh2: dict[str, Any], return_type: str | None = None
+    ) -> pd.DataFrame | pd.Series[Any] | None:
         """
         Compare the values of the neighbour graph in the two meshes
 

@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class DensityDataLoader(LutDataLoader):  # type: ignore[misc]
+class DensityDataLoader(LutDataLoader):
     def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Creates a simulated dataset of sea ice density based on

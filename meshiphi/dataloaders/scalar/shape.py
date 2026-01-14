@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ShapeDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class ShapeDataLoader(ScalarDataLoader):
     def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for abstract shape dataloaders, starting by
@@ -99,7 +99,7 @@ class ShapeDataLoader(ScalarDataLoader):  # type: ignore[misc]
             raise ValueError(f"Unknown abstract shape type: {self.dataloader_name}")
 
         # No need to trim data, as was defined by bounds
-        return data.set_index(["lat", "long"]).to_xarray()
+        return data.set_index(["lat", "long"]).to_xarray()  # type: ignore[no-any-return]
 
     def gen_circle(self, bounds: Boundary) -> pd.DataFrame:
         """
@@ -119,7 +119,7 @@ class ShapeDataLoader(ScalarDataLoader):  # type: ignore[misc]
         if self.radius is None:
             raise ValueError("radius parameter is required for circle")
         centre: tuple[float | None, float | None] = (
-            self.centre if hasattr(self, "centre") else (None, None)
+            self.centre if hasattr(self, "centre") else (None, None)  # type: ignore[assignment]
         )
         c_y = self.lat[int(self.ny / 2)] if centre[0] is None else centre[0]
         c_x = self.long[int(self.nx / 2)] if centre[1] is None else centre[1]
@@ -277,7 +277,7 @@ class ShapeDataLoader(ScalarDataLoader):  # type: ignore[misc]
         if self.width is None or self.height is None:
             raise ValueError("width and height parameters are required for rectangle")
         centre_rect: tuple[float | None, float | None] = (
-            self.centre if hasattr(self, "centre") else (None, None)
+            self.centre if hasattr(self, "centre") else (None, None)  # type: ignore[assignment]
         )
         c_y = self.lat[int(self.ny / 2)] if centre_rect[0] is None else centre_rect[0]
         c_x = self.long[int(self.nx / 2)] if centre_rect[1] is None else centre_rect[1]

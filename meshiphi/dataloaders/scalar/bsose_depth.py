@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class BSOSEDepthDataLoader(ScalarDataLoader):  # type: ignore[misc]
+class BSOSEDepthDataLoader(ScalarDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a BSOSE Depth NetCDF file.

@@ -9,7 +9,7 @@ from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
 from meshiphi.mesh_generation.boundary import Boundary
 
 
-class LutCSV(LutDataLoader):  # type: ignore[misc]
+class LutCSV(LutDataLoader):
     def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Import a list of .csv files, assign regions a value specified in

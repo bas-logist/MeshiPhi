@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
 
 
-class DuacsCurrentDataLoader(VectorDataLoader):  # type: ignore[misc]
+class DuacsCurrentDataLoader(VectorDataLoader):
     def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a DUACS altimeter derived current NetCDF file.

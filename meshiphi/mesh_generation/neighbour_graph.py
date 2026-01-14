@@ -88,7 +88,7 @@ class NeighbourGraph:
         """
         self.neighbour_graph[index][direction] = neighbours
 
-    def add_neighbour(self, index: str, direction: str, neighbour_indx: Any) -> None:
+    def add_neighbour(self, index: Any, direction: str, neighbour_indx: Any) -> None:
         """
         adds a neighbour in a certain direction
 
@@ -112,13 +112,13 @@ class NeighbourGraph:
 
         self.neighbour_graph.pop(cellbox_index)
 
-    def get_neighbours(self, cellbox_indx: str, direction: str) -> list[Any]:
+    def get_neighbours(self, cellbox_indx: Any, direction: str) -> list[Any]:
         """
         returns neighbour in a certain direction
         """
         return cast("list[Any]", self.neighbour_graph[cellbox_indx][direction])
 
-    def add_node(self, index: str, neighbour_map: dict[str, list[Any]]) -> None:
+    def add_node(self, index: Any, neighbour_map: dict[Any, list[Any]]) -> None:
         """
         method that adds a node to the neighbour_graph at a given index
         Args:
@@ -137,7 +137,7 @@ class NeighbourGraph:
 
     def update_neighbours(
         self,
-        cellbox_indx: str,
+        cellbox_indx: Any,
         new_neighbours_indx: list[Any],
         direction: int,
         cellboxes: list[Any],
@@ -254,44 +254,44 @@ class NeighbourGraph:
         lat_b = bounds_b.get_lat_min()
 
         if (long_a + bounds_a.get_width()) == long_b and (lat_a + bounds_a.get_height()) == lat_b:
-            return cast("int", Direction.north_east)
+            return Direction.north_east
 
         if (
             (long_a + bounds_a.get_width() == long_b)
             and (lat_b < (lat_a + bounds_a.get_height()))
             and ((lat_b + bounds_b.get_height()) > lat_a)
         ):
-            return cast("int", Direction.east)
+            return Direction.east
 
         if (long_a + bounds_a.get_width()) == long_b and (lat_a == lat_b + bounds_b.get_height()):
-            return cast("int", Direction.south_east)
+            return Direction.south_east
 
         if (
             ((lat_b + bounds_b.get_height()) == lat_a)
             and ((long_b + bounds_b.get_width()) > long_a)
             and (long_b < (long_a + bounds_a.get_width()))
         ):
-            return cast("int", Direction.south)
+            return Direction.south
 
         if long_a == (long_b + bounds_b.get_width()) and lat_a == (lat_b + bounds_b.get_height()):
-            return cast("int", Direction.south_west)
+            return Direction.south_west
 
         if (
             (long_b + bounds_b.get_width() == long_a)
             and (lat_b < (lat_a + bounds_a.get_height()))
             and ((lat_b + bounds_b.get_height()) > lat_a)
         ):
-            return cast("int", Direction.west)
+            return Direction.west
 
         if long_a == (long_b + bounds_b.get_width()) and (lat_a + bounds_a.get_height() == lat_b):
-            return cast("int", Direction.north_west)
+            return Direction.north_west
 
         if (
             (lat_b == (lat_a + bounds_a.get_height()))
             and ((long_b + bounds_b.get_width()) > long_a)
             and (long_b < (long_a + bounds_a.get_width()))
         ):
-            return cast("int", Direction.north)
+            return Direction.north
 
         return 0  # Cells are not neighbours.
 
@@ -348,50 +348,50 @@ class NeighbourGraph:
         if (long_a + cellbox_a.get_bounds().get_width()) == long_b and (
             lat_a + cellbox_a.get_bounds().get_height()
         ) == lat_b:
-            return cast("int", Direction.north_east)
+            return Direction.north_east
 
         if (
             (long_a + cellbox_a.get_bounds().get_width() == long_b)
             and (lat_b < (lat_a + cellbox_a.get_bounds().get_height()))
             and ((lat_b + cellbox_b.get_bounds().get_height()) > lat_a)
         ):
-            return cast("int", Direction.east)
+            return Direction.east
 
         if (long_a + cellbox_a.get_bounds().get_width()) == long_b and (
             lat_a == lat_b + cellbox_b.get_bounds().get_height()
         ):
-            return cast("int", Direction.south_east)
+            return Direction.south_east
 
         if (
             ((lat_b + cellbox_b.get_bounds().get_height()) == lat_a)
             and ((long_b + cellbox_b.get_bounds().get_width()) > long_a)
             and (long_b < (long_a + cellbox_a.get_bounds().get_width()))
         ):
-            return cast("int", Direction.south)
+            return Direction.south
 
         if long_a == (long_b + cellbox_b.get_bounds().get_width()) and lat_a == (
             lat_b + cellbox_b.get_bounds().get_height()
         ):
-            return cast("int", Direction.south_west)
+            return Direction.south_west
 
         if (
             (long_b + cellbox_b.get_bounds().get_width() == long_a)
             and (lat_b < (lat_a + cellbox_a.get_bounds().get_height()))
             and ((lat_b + cellbox_b.get_bounds().get_height()) > lat_a)
         ):
-            return cast("int", Direction.west)
+            return Direction.west
 
         if long_a == (long_b + cellbox_b.get_bounds().get_width()) and (
             lat_a + cellbox_a.get_bounds().get_height() == lat_b
         ):
-            return cast("int", Direction.north_west)
+            return Direction.north_west
 
         if (
             (lat_b == (lat_a + cellbox_a.get_bounds().get_height()))
             and ((long_b + cellbox_b.get_bounds().get_width()) > long_a)
             and (long_b < (long_a + cellbox_a.get_bounds().get_width()))
         ):
-            return cast("int", Direction.north)
+            return Direction.north
         return 0  # Cells are not neighbours.
 
     def get_global_mesh_neighbour_case(self, cellbox_a: Any, cellbox_b: Any) -> int:
@@ -424,43 +424,43 @@ class NeighbourGraph:
         if (long_a + cellbox_a.get_bounds().get_width()) == abs(long_b) and (
             lat_a + cellbox_a.get_bounds().get_height()
         ) == lat_b:
-            return cast("int", Direction.north_east)
+            return Direction.north_east
         if (
             (long_a + cellbox_a.get_bounds().get_width() == abs(long_b))
             and (lat_b < (lat_a + cellbox_a.get_bounds().get_height()))
             and ((lat_b + cellbox_b.get_bounds().get_height()) > lat_a)
         ):
-            return cast("int", Direction.east)
+            return Direction.east
         if (long_a + cellbox_a.get_bounds().get_width()) == abs(long_b) and (
             lat_a == lat_b + cellbox_b.get_bounds().get_height()
         ):
-            return cast("int", Direction.south_east)
+            return Direction.south_east
         if (
             ((lat_b + cellbox_b.get_bounds().get_height()) == lat_a)
             and ((long_b + cellbox_b.get_bounds().get_width()) > long_a)
             and (long_b < (long_a + cellbox_a.get_bounds().get_width()))
         ):
-            return cast("int", Direction.south)
+            return Direction.south
         if abs(long_a) == (long_b + cellbox_b.get_bounds().get_width()) and lat_a == (
             lat_b + cellbox_b.get_bounds().get_height()
         ):
-            return cast("int", Direction.south_west)
+            return Direction.south_west
         if (
             (long_b + cellbox_b.get_bounds().get_width() == abs(long_a))
             and (lat_b < (lat_a + cellbox_a.get_bounds().get_height()))
             and ((lat_b + cellbox_b.get_bounds().get_height()) > lat_a)
         ):
-            return cast("int", Direction.west)
+            return Direction.west
         if abs(long_a) == (long_b + cellbox_b.get_bounds().get_width()) and (
             lat_a + cellbox_a.get_bounds().get_height() == lat_b
         ):
-            return cast("int", Direction.north_west)
+            return Direction.north_west
         if (
             (lat_b == (lat_a + cellbox_a.get_bounds().get_height()))
             and ((long_b + cellbox_b.get_bounds().get_width()) > long_a)
             and (long_b < (long_a + cellbox_a.get_bounds().get_width()))
         ):
-            return cast("int", Direction.north)
+            return Direction.north
         return 0  # Cells are not neighbours.
 
     def remove_neighbour(self, index: str, direction: str, neighbour_index: Any) -> None:
