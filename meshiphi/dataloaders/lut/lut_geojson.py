@@ -11,8 +11,8 @@ from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
 from meshiphi.mesh_generation.boundary import Boundary
 
 
-class LutGeoJSON(LutDataLoader):
-    def add_default_params(self, params):
+class LutGeoJSON(LutDataLoader):  # type: ignore[misc]
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for LUT dataloader. Only unique addition over
         the regular abstracted add_default_params is the data_name
@@ -36,7 +36,7 @@ class LutGeoJSON(LutDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Import a list of GeoJSON files, assign regions a value specified in
         config params, regions outside this are numpy nan values.

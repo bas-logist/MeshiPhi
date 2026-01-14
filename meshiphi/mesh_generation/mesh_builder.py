@@ -19,7 +19,7 @@ Example:
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from tqdm import tqdm
@@ -45,7 +45,7 @@ class MeshBuilder:
 
     """
 
-    def __init__(self, config: dict) -> None:
+    def __init__(self, config: dict[str, Any]) -> None:
         """
 
         Constructs a Mesh from a given config file.\n
@@ -141,7 +141,7 @@ class MeshBuilder:
         self.mesh = Mesh(bounds, cellboxes, self.neighbour_graph, max_split_depth)
         self.mesh.set_config(config)
 
-    def initialize_meta_data(self, bounds, min_datapoints):
+    def initialize_meta_data(self, bounds: Boundary, min_datapoints: int) -> list[Metadata]:
         """
         Creates a metadata object which holds information about the data sources
         within a cellbox.
@@ -187,7 +187,9 @@ class MeshBuilder:
 
         return meta_data_list
 
-    def initialize_meta_data_subsets(self, bounds, meta_data_list):
+    def initialize_meta_data_subsets(
+        self, bounds: Boundary, meta_data_list: list[Metadata]
+    ) -> list[Metadata]:
         """
         Updates cellbox metadata objects to include data subsets which contain
         datapoints from only within the cellbox boundaries (as opposed to the
@@ -223,7 +225,7 @@ class MeshBuilder:
 
         return updated_meta_data_list
 
-    def check_value_fill_type(self, data_source):
+    def check_value_fill_type(self, data_source: dict[str, Any]) -> str | float:
         def is_float(element: Any) -> bool:
             if element is None:
                 return False
@@ -245,8 +247,10 @@ class MeshBuilder:
                 )
         return value_fill_type
 
-    def initialize_cellboxes(self, bounds, cell_width, cell_height):
-        cellboxes: list = []
+    def initialize_cellboxes(
+        self, bounds: Boundary, cell_width: float, cell_height: float
+    ) -> list[CellBox]:
+        cellboxes: list[CellBox] = []
         (bounds.get_lat_max() - bounds.get_lat_min()) / cell_height
 
         lat_range = np.arange(bounds.get_lat_min(), bounds.get_lat_max(), cell_height)
@@ -275,7 +279,14 @@ class MeshBuilder:
                 cellboxes.append(cellbox)
         return cellboxes
 
-    def add_dataloader(self, Dataloader, params, bounds=None, name="myDataLoader", min_dp=5):
+    def add_dataloader(
+        self,
+        Dataloader: Any,
+        params: dict[str, Any],
+        bounds: Boundary | None = None,
+        name: str = "myDataLoader",
+        min_dp: int = 5,
+    ) -> MeshBuilder:
         """
         Adds a dataloader to a pre-existing mesh by adding to the metadata
 
@@ -316,7 +327,9 @@ class MeshBuilder:
                 # Add new meta data to list of data sources per cellbox
                 cellbox.set_data_source([*cellbox.get_data_source(), meta_data_obj])
 
-    def validate_bounds(self, bounds, cell_width, cell_height):
+        return self
+
+    def validate_bounds(self, bounds: Boundary, cell_width: float, cell_height: float) -> None:
         if (bounds.get_long_max() - bounds.get_long_min()) % 360 % cell_width != 0:
             raise ValueError(
                 f"The defined longitude region <{bounds.get_long_min()} :{bounds.get_long_max()}> "
@@ -329,7 +342,9 @@ class MeshBuilder:
                 f"is not divisable by the initial cell height <{cell_height}>"
             )
 
-    def check_global_mesh(self, bounds, cellboxes, grid_width):
+    def check_global_mesh(
+        self, bounds: Boundary, cellboxes: list[CellBox], grid_width: int
+    ) -> bool:
         """
          Checks if the mesh is a global one and connects the cellboxes at the minimum longtitude and max longtitude accordingly
 
@@ -386,7 +401,7 @@ class MeshBuilder:
 
         return is_global_mesh
 
-    def to_json(self):
+    def to_json(self) -> dict[str, Any]:
         """
         Returns this Mesh converted to a JSON object.
 
@@ -399,12 +414,13 @@ class MeshBuilder:
                     "neighbour_graph": a graph representing the adjacency of CellBoxes within the Mesh
                 }
         """
-        output = {}
+        output: dict[str, Any] = {}
         output["config"] = {"mesh_info": self.config}
         output["cellboxes"] = self.mesh.get_cellboxes()
         output["neighbour_graph"] = self.neighbour_graph.get_graph()
+        return output
 
-    def split_and_replace(self, cellbox):
+    def split_and_replace(self, cellbox: CellBox) -> list[CellBox]:
         """
         Replaces a cellbox given by parameter 'cellbox' in this grid with
         4 smaller cellboxes representing the four corners of the given cellbox.
@@ -539,15 +555,17 @@ class MeshBuilder:
         # set the original splitted cellbox to None
         cellboxes[cellbox_indx] = None
 
+        return cast("list[CellBox]", split_cellboxes)
+
     ############################## methods to fill the neighbour maps of the splitted cells ########################
 
     def fill_se_map(
         self,
-        south_east_indx,
-        south_neighbour_indx,
-        east_neighbour_indx,
-        se_neighbour_map,
-    ):
+        south_east_indx: str,
+        south_neighbour_indx: list[Any],
+        east_neighbour_indx: list[Any],
+        se_neighbour_map: dict[int, list[Any]],
+    ) -> None:
         """
         method that fills the South east neighbours
         """
@@ -577,11 +595,11 @@ class MeshBuilder:
 
     def fill_ne_map(
         self,
-        north_east_indx,
-        north_neighbour_indx,
-        east_neighbour_indx,
-        ne_neighbour_map,
-    ):
+        north_east_indx: str,
+        north_neighbour_indx: list[Any],
+        east_neighbour_indx: list[Any],
+        ne_neighbour_map: dict[int, list[Any]],
+    ) -> None:
         """
         method that fills the North east neighbours
         """
@@ -611,11 +629,11 @@ class MeshBuilder:
 
     def fill_nw_map(
         self,
-        north_west_indx,
-        north_neighbour_indx,
-        west_neighbour_indx,
-        nw_neighbour_map,
-    ):
+        north_west_indx: str,
+        north_neighbour_indx: list[Any],
+        west_neighbour_indx: list[Any],
+        nw_neighbour_map: dict[int, list[Any]],
+    ) -> None:
         """
         method that fills the North west neighbours
         """
@@ -645,11 +663,11 @@ class MeshBuilder:
 
     def fill_sw_neighbour_map(
         self,
-        south_west_indx,
-        south_neighbour_indx,
-        west_neighbour_indx,
-        sw_neighbour_map,
-    ):
+        south_west_indx: str,
+        south_neighbour_indx: list[Any],
+        west_neighbour_indx: list[Any],
+        sw_neighbour_map: dict[int, list[Any]],
+    ) -> None:
         """
         method that fills the South west neighbours
         """
@@ -677,7 +695,7 @@ class MeshBuilder:
             ):
                 sw_neighbour_map[-3].append(indx)
 
-    def split_to_depth(self, split_depth):
+    def split_to_depth(self, split_depth: int) -> None:
         """
         splits all cellboxes in this grid until a maximum split depth
         is reached, or all cellboxes are homogeneous.
@@ -767,7 +785,7 @@ class MeshBuilder:
             self.get_config(),
         )
 
-    def get_config(self) -> dict:
+    def get_config(self) -> dict[str, Any]:
         """
         returns the config
         """

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from meshiphi.mesh_generation.boundary import Boundary
@@ -15,7 +15,7 @@ class DataLoaderInterface(metaclass=ABCMeta):
     """
 
     @classmethod
-    def __subclasshook__(cls, subclass):
+    def __subclasshook__(cls, subclass: type) -> bool:
         return (
             hasattr(subclass, "get_value")
             and callable(subclass.get_value)
@@ -30,7 +30,7 @@ class DataLoaderInterface(metaclass=ABCMeta):
         raise NotImplementedError
 
     @abstractmethod
-    def get_hom_condition(self, bounds: Boundary, splitting_conds: dict) -> str:
+    def get_hom_condition(self, bounds: Boundary, splitting_conds: dict[str, Any]) -> str:
         """Reads values within boundary to determine if data is
         homogeneous or heterogeneous. Return as str"""
         raise NotImplementedError

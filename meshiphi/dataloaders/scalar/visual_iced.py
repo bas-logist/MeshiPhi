@@ -1,14 +1,20 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import xarray as xr
 
 from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+
 logger = logging.getLogger(__name__)
 
 
-class VisualIcedDataLoader(ScalarDataLoader):
-    def import_data(self, _bounds):
+class VisualIcedDataLoader(ScalarDataLoader):  # type: ignore[misc]
+    def import_data(self, _bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from Visual_Ice NetCDF files. Renames coordinates to
         'lat' and 'long'.
@@ -33,14 +39,14 @@ class VisualIcedDataLoader(ScalarDataLoader):
                 visual_ice = self.import_from_nc(visual_ice)
             else:
                 logger.error("File type not supported")
-                return None
+                raise ValueError("File type not supported")
         else:
             logger.error("Multiple tiff files not supported. Only single tiff file supported")
             raise ValueError("Multiple tiff files not supported. Only single tiff file supported")
 
         return visual_ice
 
-    def import_from_nc(self, xarray_dataset):
+    def import_from_nc(self, xarray_dataset: xr.Dataset) -> xr.Dataset:
         """
         applys transformations need to import a netcdf file
 
@@ -59,7 +65,7 @@ class VisualIcedDataLoader(ScalarDataLoader):
         # convert SIC to percentage
         return xarray_dataset.assign(SIC=lambda x: x.SIC * 100)
 
-    def import_from_tiff(self, xarray_dataset):
+    def import_from_tiff(self, xarray_dataset: xr.Dataset) -> xr.Dataset:
         """
         applys transformations need to import a tiff file
 

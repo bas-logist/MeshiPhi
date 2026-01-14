@@ -46,7 +46,7 @@ class CellBox:
 
     """
 
-    def __init__(self, bounds, id):
+    def __init__(self, bounds: Boundary, id: Any) -> None:
         """
 
         Args:
@@ -55,14 +55,14 @@ class CellBox:
         """
         # Box information relative to bottom left
         self.bounds = bounds
-        self.parent = None
+        self.parent: CellBox | None = None
         self.minimum_datapoints = 10
         self.split_depth = 0
-        self.data_source = None
+        self.data_source: list[Metadata] | None = None
         self.id = id
 
     ######## setters and getters ########
-    def set_minimum_datapoints(self, minimum_datapoints):
+    def set_minimum_datapoints(self, minimum_datapoints: int) -> None:
         """
         set the minimum number of data contained within CellBox boundaries
         """
@@ -70,7 +70,7 @@ class CellBox:
             raise ValueError("CellBox: minimum number of data contained can not be negative")
         self.minimum_datapoints = minimum_datapoints
 
-    def set_data_source(self, data_source):
+    def set_data_source(self, data_source: list[Metadata]) -> None:
         """
         a method that sets the data source of the cellbox ( which includes the data loaders,
           splitting conditions and aggregation type)
@@ -81,7 +81,7 @@ class CellBox:
         """
         self.data_source = data_source
 
-    def set_parent(self, parent):
+    def set_parent(self, parent: CellBox) -> None:
         """
         set the parent CellBox, which is the bigger CellBox that conains this CellBox
         Args:
@@ -89,7 +89,7 @@ class CellBox:
         """
         self.parent = parent
 
-    def set_split_depth(self, split_depth):
+    def set_split_depth(self, split_depth: int) -> None:
         """
         set the split depth of a CellBox, which represents is the number of times the CellBox
         has been split to reach it's current size.
@@ -98,31 +98,31 @@ class CellBox:
             raise ValueError("CellBox: split depth can not be negative")
         self.split_depth = split_depth
 
-    def set_id(self, id):
+    def set_id(self, id: Any) -> None:
         """
         method ssts cellbox id
         """
         self.id = id
 
-    def set_bounds(self, bounds):
+    def set_bounds(self, bounds: Boundary) -> None:
         """
         Set the boundary of this cellbox
         """
         self.bounds = bounds
 
-    def get_id(self):
+    def get_id(self) -> Any:
         """
         method returns cellbox cell id
         """
         return self.id
 
-    def get_minimum_datapoints(self):
+    def get_minimum_datapoints(self) -> int:
         """
         get the minimum number of data contained within CellBox boundaries
         """
         return self.minimum_datapoints
 
-    def get_data_source(self):
+    def get_data_source(self) -> list[Metadata] | None:
         """
         a method that gets the data source of the cellbox
           (the data loaders, splitting conditions and aggregation type)
@@ -132,19 +132,19 @@ class CellBox:
         """
         return self.data_source
 
-    def get_parent(self):
+    def get_parent(self) -> CellBox | None:
         """
         get the parent CellBox, which is the bigger CellBox that conains this CellBox
         """
         return self.parent
 
-    def get_bounds(self):
+    def get_bounds(self) -> Boundary:
         """
         get the spatial and temporal bounds (lat range, long range and time range) of this cellbox
         """
         return self.bounds
 
-    def get_split_depth(self):
+    def get_split_depth(self) -> int:
         """
         get the split depth of a CellBox, which represents is the number of times the CellBox
           has been split to reach it's current size.
@@ -177,7 +177,7 @@ class CellBox:
     ######################################################
     # methods used for splitting a cellbox
 
-    def should_split(self, stop_index):
+    def should_split(self, stop_index: int) -> bool:
         """
         determines if a cellbox should be split based on the homogeneity
         condition of each data type contained within. The homogeneity condition
@@ -200,11 +200,14 @@ class CellBox:
              bool: True if the splitting_conditions of this CellBox
                 will result in the CellBox being split.
         """
-        hom_conditions = []
+        hom_conditions: list[str] = []
 
         current_data_source = None
+        data_source = self.get_data_source()
+        if data_source is None:
+            return False
         for index in range(stop_index):
-            current_data_source = self.get_data_source()[index]
+            current_data_source = data_source[index]
             data_loader = current_data_source.get_data_loader()
             data_subset = current_data_source.get_data_subset()
             for splitting_cond in current_data_source.get_splitting_conditions():
@@ -218,7 +221,7 @@ class CellBox:
             return False
         return hom_conditions.count("CLR") != len(hom_conditions)
 
-    def should_split_breadth_first(self):
+    def should_split_breadth_first(self) -> bool:
         """
         determines if a cellbox should be split based on the homogeneity
         condition of each data type contained within. The homogeneity condition
@@ -238,7 +241,7 @@ class CellBox:
             should_split (bool): True if the splitting_conditions of this CellBox
                 will result in the CellBox being split.
         """
-        hom_conditions = []
+        hom_conditions: list[str] = []
         if self.data_source is None:
             return False
         for current_data_source in self.data_source:
@@ -256,7 +259,7 @@ class CellBox:
             return False
         return hom_conditions.count("CLR") != len(hom_conditions)
 
-    def split(self, start_id):
+    def split(self, start_id: int) -> list[CellBox]:
         """
         splits the current cellbox into 4 corners, returns as a list of cellbox objects.
 
@@ -270,11 +273,14 @@ class CellBox:
         split_boxes = self.create_splitted_cell_boxes(start_id)
 
         # set CellBox split_depth, data_source and parent
+        data_source = self.get_data_source()
+        if data_source is None:
+            return split_boxes
         for split_box in split_boxes:
             split_box.set_split_depth(self.get_split_depth() + 1)
             # Create metadata with data subset
             split_box_data_sources = []
-            for source in self.get_data_source():
+            for source in data_source:
                 # Extract data for each new cellbox
                 data_subset = source.data_loader.trim_datapoints(
                     split_box.bounds, data=source.data_subset
@@ -291,7 +297,7 @@ class CellBox:
             split_box.set_parent(self)
         return split_boxes
 
-    def create_splitted_cell_boxes(self, index):
+    def create_splitted_cell_boxes(self, index: int) -> list[CellBox]:
         """
         method that creates 4 splitted cellbox
         """
@@ -333,7 +339,7 @@ class CellBox:
 
         return [north_west, north_east, south_west, south_east]
 
-    def aggregate(self):
+    def aggregate(self) -> AggregatedCellBox:
         """
         aggregates CellBox data using the associated data_sources' aggregate type (ex. MEAN, MAX)
         and returns AggregatedCellBox object
@@ -342,7 +348,10 @@ class CellBox:
             AggregatedCellbox: object contains the aggregated data within cellbox bounds.
         """
         agg_dict: dict[str, Any] = {}
-        for source in self.get_data_source():
+        data_source = self.get_data_source()
+        if data_source is None:
+            raise ValueError("Cannot aggregate cellbox with no data source")
+        for source in data_source:
             loader = source.get_data_loader()
             data_subset = source.get_data_subset()
 
@@ -359,7 +368,10 @@ class CellBox:
                     # if the agg_value empty and get_value_fill_type is parent, then use the parent bounds
                     while parent is not None and np.isnan(agg_value[data_name]):
                         # Search through parent metadata to find match
-                        for parent_source in parent.get_data_source():
+                        parent_data_source_list = parent.get_data_source()
+                        if parent_data_source_list is None:
+                            break
+                        for parent_source in parent_data_source_list:
                             if parent_source.get_data_loader() == source.get_data_loader():
                                 break
                         # If no match found
@@ -386,7 +398,9 @@ class CellBox:
         self.deallocate_cellbox()
         return agg_cellbox
 
-    def check_vector_data(self, source, loader, agg_value, data_name):
+    def check_vector_data(
+        self, source: Metadata, loader: Any, agg_value: dict[str, Any], data_name: str
+    ) -> dict[str, Any]:
         """
         method that checks if the vector data is None and calls the parent get value
         """
@@ -398,7 +412,10 @@ class CellBox:
                     # if the agg_value empty and get_value_fill_type is parent, then use the parent bounds
                     while parent is not None and np.isnan(agg_value[name]):
                         # Search through parent metadata to find match
-                        for parent_source in parent.get_data_source():
+                        parent_data_source = parent.get_data_source()
+                        if parent_data_source is None:
+                            break
+                        for parent_source in parent_data_source:
                             if parent_source.get_data_loader() == source.get_data_loader():
                                 break
                         # If no match found
@@ -413,20 +430,24 @@ class CellBox:
                     agg_value[data_name] = source.get_value_fill_type()
         return agg_value
 
-    def deallocate_cellbox(self):
+    def deallocate_cellbox(self) -> None:
         """
         Method to free up the memory space allocated by the cellbox
         """
-        for source in self.get_data_source():
+        data_source = self.get_data_source()
+        if data_source is None:
+            return
+        for source in data_source:
             loader = source.get_data_loader()
             del loader
             del source
         parent = self.parent
         # free up the memory space used by the parent cellboxes chain
         while isinstance(parent, CellBox):
-            if parent.get_data_source() is None:
+            parent_data_source = parent.get_data_source()
+            if parent_data_source is None:
                 break
-            for source in parent.get_data_source():
+            for source in parent_data_source:
                 loader = source.get_data_loader()
                 del loader
                 del source

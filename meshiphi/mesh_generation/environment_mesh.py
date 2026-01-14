@@ -34,7 +34,7 @@ class EnvironmentMesh:
     """
 
     @classmethod
-    def load_from_json(cls, mesh_json: dict) -> EnvironmentMesh:
+    def load_from_json(cls, mesh_json: dict[str, Any]) -> EnvironmentMesh:
         """
         Constructs an Env.Mesh from a given env-mesh json file to be used by other modules (ex.Vessel Performance Modeller).
 
@@ -100,9 +100,9 @@ class EnvironmentMesh:
     def __init__(
         self,
         bounds: Boundary,
-        agg_cellboxes: list,
+        agg_cellboxes: list[AggregatedCellBox],
         neighbour_graph: NeighbourGraph,
-        config: dict,
+        config: dict[str, Any],
     ) -> None:
         """
         Args:
@@ -152,7 +152,7 @@ class EnvironmentMesh:
             return str(self.agg_cellboxes[indx].id)
         raise Exception("Point not within the mesh")
 
-    def _split_loc(self, point):
+    def _split_loc(self, point: tuple[float, float]) -> bool:
         """
         Given a point determine if agg_cellboxes should be split or if at maximum split depth
 
@@ -185,7 +185,7 @@ class EnvironmentMesh:
         self.split_and_replace(agg_cellbox_wp.id)
         return True
 
-    def split_points(self, points):
+    def split_points(self, points: list[tuple[float, float]]) -> None:
         """
         Splitting the mesh to maximum split depth around a series of point locations
 
@@ -199,7 +199,7 @@ class EnvironmentMesh:
                 while splitting_waypoint:
                     splitting_waypoint = self._split_loc(point)
 
-    def get_cellbox(self, cellbox_id):
+    def get_cellbox(self, cellbox_id: str | int) -> AggregatedCellBox:
         """
         returns the cellbox with the given id
 
@@ -214,7 +214,7 @@ class EnvironmentMesh:
         raise ValueError(f"Cellbox with id {cellbox_id} not found")
 
     # Merging meshes
-    def merge_mesh(self, mesh2):
+    def merge_mesh(self, mesh2: EnvironmentMesh) -> None:
         """
         merges the given mesh with this mesh. The given mesh is not modified.
 
@@ -266,7 +266,7 @@ class EnvironmentMesh:
         west_int_cellboxes = mesh2.get_left_edge_cellboxes()
         self.tie_western_cellbox_ng(west_ext_cellboxes, west_int_cellboxes)
 
-    def validate_merge_compatibility(self, mesh2):
+    def validate_merge_compatibility(self, mesh2: EnvironmentMesh) -> bool:
         """
         checks if the given mesh is compatible with merging with this mesh
 
@@ -298,9 +298,13 @@ class EnvironmentMesh:
             return False
 
         long_diff = l_bounds.get_long_min() - s_bounds.get_long_min()
-        return long_diff % l_cell_width == 0
+        return cast("bool", long_diff % l_cell_width == 0)
 
-    def tie_northern_cellbox_ng(self, north_ext_cellboxes, north_int_cellboxes):
+    def tie_northern_cellbox_ng(
+        self,
+        north_ext_cellboxes: list[AggregatedCellBox],
+        north_int_cellboxes: list[AggregatedCellBox],
+    ) -> None:
         """
         Joins the neighbour graphs of sets of cellboxes on the northen edge of a boundary between two meshes.
 
@@ -367,7 +371,11 @@ class EnvironmentMesh:
             for neighbour in north_east_neighbours:
                 self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(neighbour)
 
-    def tie_southern_cellbox_ng(self, south_ext_cellboxes, south_int_cellboxes):
+    def tie_southern_cellbox_ng(
+        self,
+        south_ext_cellboxes: list[AggregatedCellBox],
+        south_int_cellboxes: list[AggregatedCellBox],
+    ) -> None:
         """
         Joins the neighbour graphs of sets of cellboxes on the southern edge of a boundary between two meshes.
 
@@ -434,7 +442,11 @@ class EnvironmentMesh:
             for neighbour in south_east_neighbours:
                 self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(neighbour)
 
-    def tie_eastern_cellbox_ng(self, east_ext_cellboxes, east_int_cellboxes):
+    def tie_eastern_cellbox_ng(
+        self,
+        east_ext_cellboxes: list[AggregatedCellBox],
+        east_int_cellboxes: list[AggregatedCellBox],
+    ) -> None:
         """
         Joins the neighbour graphs of sets of cellboxes on the eastern edge of a boundary between two meshes.
 
@@ -501,7 +513,11 @@ class EnvironmentMesh:
             for neighbour in north_east_neighbours:
                 self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(neighbour)
 
-    def tie_western_cellbox_ng(self, west_ext_cellboxes, west_int_cellboxes):
+    def tie_western_cellbox_ng(
+        self,
+        west_ext_cellboxes: list[AggregatedCellBox],
+        west_int_cellboxes: list[AggregatedCellBox],
+    ) -> None:
         """
         Joins the neighbour graphs of sets of cellboxes on the western edge of a boundary between two meshes.
 
@@ -568,7 +584,7 @@ class EnvironmentMesh:
             for neighbour in north_west_neighbours:
                 self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(neighbour)
 
-    def get_cellboxes_within_bounds(self, bounds):
+    def get_cellboxes_within_bounds(self, bounds: Boundary) -> list[AggregatedCellBox]:
         """
         returns the cellboxes within the given bounds.
         Only cellboxes that are completely within the given bounds are returned.
@@ -593,7 +609,7 @@ class EnvironmentMesh:
 
         return cells_within_bounds
 
-    def get_cellboxes_north_of_bounds(self, bounds):
+    def get_cellboxes_north_of_bounds(self, bounds: Boundary) -> list[AggregatedCellBox]:
         """
         returns all cellboxes that are directly north of the given bounds.
         Only cellboxes which are touching the north edge of the boundary,
@@ -617,7 +633,7 @@ class EnvironmentMesh:
 
         return north_cellboxes
 
-    def get_cellboxes_south_of_bounds(self, bounds):
+    def get_cellboxes_south_of_bounds(self, bounds: Boundary) -> list[AggregatedCellBox]:
         south_cellboxes = []
 
         for cellbox in self.agg_cellboxes:
@@ -630,7 +646,7 @@ class EnvironmentMesh:
 
         return south_cellboxes
 
-    def get_cellboxes_east_of_bounds(self, bounds):
+    def get_cellboxes_east_of_bounds(self, bounds: Boundary) -> list[AggregatedCellBox]:
         east_cellboxes = []
 
         for cellbox in self.agg_cellboxes:
@@ -643,7 +659,7 @@ class EnvironmentMesh:
 
         return east_cellboxes
 
-    def get_cellboxes_west_of_bounds(self, bounds):
+    def get_cellboxes_west_of_bounds(self, bounds: Boundary) -> list[AggregatedCellBox]:
         west_cellboxes = []
 
         for cellbox in self.agg_cellboxes:
@@ -656,7 +672,7 @@ class EnvironmentMesh:
 
         return west_cellboxes
 
-    def get_top_edge_cellboxes(self):
+    def get_top_edge_cellboxes(self) -> list[AggregatedCellBox]:
         top_cellboxes = []
         mesh_bounds = self.bounds
 
@@ -668,7 +684,7 @@ class EnvironmentMesh:
 
         return top_cellboxes
 
-    def get_bottom_edge_cellboxes(self):
+    def get_bottom_edge_cellboxes(self) -> list[AggregatedCellBox]:
         bottom_cellboxes = []
         mesh_bounds = self.bounds
 
@@ -680,7 +696,7 @@ class EnvironmentMesh:
 
         return bottom_cellboxes
 
-    def get_right_edge_cellboxes(self):
+    def get_right_edge_cellboxes(self) -> list[AggregatedCellBox]:
         right_cellboxes = []
         mesh_bounds = self.bounds
 
@@ -692,7 +708,7 @@ class EnvironmentMesh:
 
         return right_cellboxes
 
-    def get_left_edge_cellboxes(self):
+    def get_left_edge_cellboxes(self) -> list[AggregatedCellBox]:
         left_cellboxes = []
         mesh_bounds = self.bounds
 
@@ -704,7 +720,7 @@ class EnvironmentMesh:
 
         return left_cellboxes
 
-    def remove_cellboxes_within_bounds(self, bounds):
+    def remove_cellboxes_within_bounds(self, bounds: Boundary) -> None:
         """
         removes the cellboxes within the given bounds.
         Only cellboxes that are completely within the given bounds are removed.
@@ -716,7 +732,7 @@ class EnvironmentMesh:
         for cellbox in cells_within_bounds:
             self.remove_cellbox(cellbox)
 
-    def get_max_cellbox_id(self):
+    def get_max_cellbox_id(self) -> int:
         """
         returns the maximum cellbox id in the mesh
 
@@ -729,7 +745,7 @@ class EnvironmentMesh:
                 max_id = int(cellbox.get_id())
         return max_id
 
-    def remove_cellbox(self, cellbox):
+    def remove_cellbox(self, cellbox: AggregatedCellBox) -> None:
         """
         removes the given cellbox from the mesh
 
@@ -740,13 +756,13 @@ class EnvironmentMesh:
 
         self.neighbour_graph.remove_node_and_update_neighbours(cellbox.get_id())
 
-    def add_cellbox(self, cellbox):
+    def add_cellbox(self, cellbox: AggregatedCellBox) -> None:
         """
         adds the given cellbox to the mesh
         """
         self.agg_cellboxes.append(cellbox)
 
-    def increment_ids(self, increment):
+    def increment_ids(self, increment: int) -> None:
         for cellbox in self.agg_cellboxes:
             cellbox.set_id(str(int(cellbox.get_id()) + increment))
             cellbox.agg_data["id"] = str(int(cellbox.get_id()) + increment)
@@ -754,7 +770,7 @@ class EnvironmentMesh:
         self.neighbour_graph.increment_ids(increment)
 
     # Splitting
-    def sim_split_cellbox(self, cellbox_id):
+    def sim_split_cellbox(self, cellbox_id: str) -> list[AggregatedCellBox]:
         """
         splits the cellbox with the given id
 
@@ -788,7 +804,7 @@ class EnvironmentMesh:
 
         return [cellbox1, cellbox2, cellbox3, cellbox4]
 
-    def split_and_replace(self, cellbox_id):
+    def split_and_replace(self, cellbox_id: str) -> None:
         """
         splits the cellbox with the given id and replaces it with the new cellboxes
 
@@ -996,11 +1012,11 @@ class EnvironmentMesh:
 
     def fill_se_neighbour_map(
         self,
-        se_neighbour_map,
-        se_neighbour_id,
-        south_neighbour_index,
-        east_neighbour_indx,
-    ):
+        se_neighbour_map: dict[str, list[Any]],
+        se_neighbour_id: int,
+        south_neighbour_index: list[Any],
+        east_neighbour_indx: list[Any],
+    ) -> dict[str, list[Any]]:
         """
         fills the south east neighbour map with the given values
         Args:
@@ -1031,11 +1047,11 @@ class EnvironmentMesh:
 
     def fill_ne_neighbour_map(
         self,
-        ne_neighbour_map,
-        ne_neighbour_id,
-        north_neighbour_indx,
-        east_neighbour_indx,
-    ):
+        ne_neighbour_map: dict[str, list[Any]],
+        ne_neighbour_id: int,
+        north_neighbour_indx: list[Any],
+        east_neighbour_indx: list[Any],
+    ) -> dict[str, list[Any]]:
         """
         fills the north east neighbour map with the given values
         Args:
@@ -1066,11 +1082,11 @@ class EnvironmentMesh:
 
     def fill_sw_neighbour_map(
         self,
-        sw_neighbour_map,
-        sw_neighbour_id,
-        south_neighbour_index,
-        west_neighbour_indx,
-    ):
+        sw_neighbour_map: dict[str, list[Any]],
+        sw_neighbour_id: int,
+        south_neighbour_index: list[Any],
+        west_neighbour_indx: list[Any],
+    ) -> dict[str, list[Any]]:
         """
         fills the south west neighbour map with the given values
         Args:
@@ -1101,11 +1117,11 @@ class EnvironmentMesh:
 
     def fill_nw_neighbour_map(
         self,
-        nw_neighbour_map,
-        nw_neighbour_id,
-        north_neighbour_indx,
-        west_neighbour_indx,
-    ):
+        nw_neighbour_map: dict[str, list[Any]],
+        nw_neighbour_id: int,
+        north_neighbour_indx: list[Any],
+        west_neighbour_indx: list[Any],
+    ) -> dict[str, list[Any]]:
         """
         fills the north west neighbour map with the given values
         Args:
@@ -1134,7 +1150,7 @@ class EnvironmentMesh:
 
         return nw_neighbour_map
 
-    def to_json(self) -> dict:
+    def to_json(self) -> dict[str, Any]:
         """
         Returns this Mesh converted to a JSON object.\n
 
@@ -1156,12 +1172,12 @@ class EnvironmentMesh:
 
         return cast("dict[str, Any]", json.loads(json.dumps(output, indent=4)))
 
-    def to_shapely(self):
+    def to_shapely(self) -> Any:  # GeoDataFrame
         msh_shapely = gpd.GeoDataFrame(pd.DataFrame(self.cellboxes_to_json())).set_index("id")
         msh_shapely["geometry"] = msh_shapely["geometry"].apply(wkt.loads)
         return gpd.GeoDataFrame(msh_shapely, crs="EPSG:4326", geometry="geometry")
 
-    def to_png(self, params_file, path):
+    def to_png(self, params_file: str | None, path: str) -> None:
         """
         exports a mesh and saves to a png file
         Args:
@@ -1185,7 +1201,7 @@ class EnvironmentMesh:
 
         plotter.save(path)
 
-    def to_geojson(self, params_file=None):
+    def to_geojson(self, params_file: str | None = None) -> dict[str, Any]:
         """
         Returns the cellboxes of this mesh converted to a geoJSON format.\n
 
@@ -1241,7 +1257,7 @@ class EnvironmentMesh:
 
         return geojson
 
-    def to_tif(self, params_file, path):
+    def to_tif(self, params_file: str | None, path: str) -> None:
         """
         generates a representation of the mesh in geotif image format.\n
 
@@ -1275,7 +1291,7 @@ class EnvironmentMesh:
                 "GDAL is required for tif export. Install with: conda install -c conda-forge gdal"
             ) from err
 
-        def generate_samples():
+        def generate_samples() -> Any:
             """
             generates uniform lat, long samples covering the image resolution space.\n
 
@@ -1302,7 +1318,7 @@ class EnvironmentMesh:
             # shape the samples in 2d array (each entry in the array holds sample lat and long
             return np.reshape(samples, (nlines * ncols, 2))
 
-        def get_sample_value(sample):
+        def get_sample_value(sample: Any) -> float:
             """
             finds the aggregated cellbox that contains the sample lat and long and returns the value within.\n
 
@@ -1334,7 +1350,7 @@ class EnvironmentMesh:
                     break
             return value
 
-        def get_geo_transform(extent, nlines, ncols):
+        def get_geo_transform(extent: list[float], nlines: int, ncols: int) -> list[float]:
             """
             transforms from the image coordinate space (row, column) to the georeferenced coordinate space. \n
             Returns:
@@ -1351,7 +1367,7 @@ class EnvironmentMesh:
             resy = (extent[3] - extent[1]) / nlines
             return [extent[0], resx, 0, extent[3], 0, -resy]
 
-        def load_params(params_file):
+        def load_params(params_file: str | None) -> dict[str, Any]:
             """
             loads the parameters of the tif export and override the default values.\n
 
@@ -1382,7 +1398,7 @@ class EnvironmentMesh:
                         params["colour_conf"] = input_params["colour_conf"]
             return params
 
-        def transform_proj(path, params, default_proj):
+        def transform_proj(path: str, params: dict[str, Any], default_proj: int) -> None:
             """
             method that transforms the generated tif into another projection
 
@@ -1398,7 +1414,7 @@ class EnvironmentMesh:
                 # transform to target proj and save
                 gdal.Warp(str(path), str(path), dstSRS=dest.ExportToWkt())
 
-        def set_colour(data, input_file, params):
+        def set_colour(data: Any, input_file: str, params: dict[str, Any]) -> None:
             """
             method that changes the color of the generated tif instead of using the default greyscale.
             It defines a scale of RGB colors based on the range of data values(an example file is in unit_tests/resources/colour_conf.txt).\n
@@ -1411,8 +1427,8 @@ class EnvironmentMesh:
             """
             fp, color_file = tempfile.mkstemp(suffix=".txt")
             data = data[~np.isnan(data)]  # get rid of the nans before calculating range
-            _max = np.nanmax(data)
-            _min = np.nanmin(data)
+            _max: float = np.nanmax(data)
+            _min: float = np.nanmin(data)
             _range = _max - _min
             inf_color = "255 0 0"  # red color for inf value
             colors = [
@@ -1432,8 +1448,8 @@ class EnvironmentMesh:
             cmd = "gdaldem color-relief " + input_file + " " + color_file + " " + input_file
             subprocess.check_call(cmd, shell=True)
             # remove additional files created while generating the tif
-            file_path = os.path.abspath(input_file)
-            dir_path = os.path.split(file_path)[0]
+            file_path_str = os.path.abspath(input_file)
+            dir_path = os.path.split(file_path_str)[0]
             additional_files = ["grid_data", "grid_data.aux.xml"]
             for file in additional_files:
                 file_path = Path(dir_path + "/" + file)
@@ -1482,7 +1498,7 @@ class EnvironmentMesh:
         set_colour(data, path, params)
         logger.info(f"Generated GeoTIFF: {path}")
 
-    def cellboxes_to_json(self):
+    def cellboxes_to_json(self) -> list[dict[str, Any]]:
         """
         returns a list of dictionaries containing information about each cellbox
         in this Mesh.
@@ -1514,7 +1530,7 @@ class EnvironmentMesh:
             cellboxes_json.append(cell)
         return cellboxes_json
 
-    def update_cellbox(self, index, values):
+    def update_cellbox(self, index: int, values: dict[str, Any]) -> None:
         """
         method that adds values to the dict of a cellbox at certain index (to be used by the vessel perf. module to add the perf. metrics to the cellbox)
 

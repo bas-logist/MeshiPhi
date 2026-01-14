@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from meshiphi.mesh_generation.cellbox import CellBox
 
@@ -42,7 +42,7 @@ class Mesh:
     def __init__(
         self,
         boundary: Boundary,
-        cellboxes: list,
+        cellboxes: list[CellBox],
         neighbour_graph: NeighbourGraph,
         max_split_depth: int,
     ) -> None:
@@ -59,11 +59,11 @@ class Mesh:
         self.cellboxes = cellboxes
         self.neighbour_graph = neighbour_graph
         self.max_split_depth = max_split_depth
-        self.config: dict = {}
+        self.config: dict[str, Any] = {}
 
     # Functions for adding data to the Mesh
 
-    def add_data_points(self, data_points):
+    def add_data_points(self, data_points: Any) -> None:
         """
         takes a dataframe containing geospatial-temporal located values and assigns them to
         cellboxes within this Mesh.
@@ -91,16 +91,16 @@ class Mesh:
 
     # Functions for outputting the Mesh
 
-    def set_config(self, config: dict) -> None:
+    def set_config(self, config: dict[str, Any]) -> None:
         self.config = config
 
-    def get_config(self):
+    def get_config(self) -> dict[str, Any]:
         return self.config
 
-    def set_cellboxes(self, cellboxes):
+    def set_cellboxes(self, cellboxes: list[CellBox]) -> None:
         self.cellboxes = cellboxes
 
-    def get_cellboxes(self):
+    def get_cellboxes(self) -> list[CellBox]:
         """
         returns a list of dictionaries containing information about each cellbox
         in this Mesh.
@@ -136,7 +136,7 @@ class Mesh:
                 return_cellboxes.append(cellbox)
         return return_cellboxes
 
-    def get_cellbox(self, long, lat):
+    def get_cellbox(self, long: float, lat: float) -> CellBox:
         """
         Returns the CellBox which contains a point, given by parameters lat, long
 
@@ -154,8 +154,8 @@ class Mesh:
                 selected_cell.append(cellbox)
         return selected_cell[0]
 
-    def get_bounds(self):
+    def get_bounds(self) -> Boundary:
         return self.boundary
 
-    def get_max_split_depth(self):
+    def get_max_split_depth(self) -> int:
         return self.max_split_depth

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import abstractmethod
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -135,7 +135,7 @@ class VectorDataLoader(DataLoaderInterface):
             self.data = self.trim_datapoints(bounds)
 
     @abstractmethod
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset | pd.DataFrame:
         """
         User defined method for importing data from files, or even generating
         data from scratch
@@ -154,7 +154,7 @@ class VectorDataLoader(DataLoaderInterface):
                 Downsampling and reprojecting happen in __init__() method
         """
 
-    def add_default_params(self, params):
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for all scalar dataloaders. This function should be
         overloaded to include any extra params for a specific dataloader
@@ -202,7 +202,9 @@ class VectorDataLoader(DataLoaderInterface):
 
         return params
 
-    def add_mag_dir(self, data=None, data_names=None):
+    def add_mag_dir(
+        self, data: xr.Dataset | pd.DataFrame | None = None, data_names: list[str] | None = None
+    ) -> xr.Dataset | pd.DataFrame:
         """
         Adds magnitude and direction variables/columns to data for easier
         retrieval of value
@@ -223,7 +225,7 @@ class VectorDataLoader(DataLoaderInterface):
                 values for each.
         """
 
-        def add_mag_dir_to_df(data, names):
+        def add_mag_dir_to_df(data: pd.DataFrame, names: list[str]) -> pd.DataFrame:
             """
             Adds magnitude and direction columns to pd.DataFrame
 
@@ -238,7 +240,7 @@ class VectorDataLoader(DataLoaderInterface):
             data["_direction"] = np.arctan2(data[y], data[x])
             return data
 
-        def add_mag_dir_to_xr(data, names):
+        def add_mag_dir_to_xr(data: xr.Dataset, names: list[str]) -> xr.Dataset:
             """
             Adds magnitude and direction columns to xr.Dataset
 
@@ -269,7 +271,9 @@ class VectorDataLoader(DataLoaderInterface):
             return add_mag_dir_to_xr(data, names)
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    def calculate_coverage(self, bounds, data=None):
+    def calculate_coverage(
+        self, bounds: Boundary, data: xr.Dataset | pd.DataFrame | None = None
+    ) -> float:
         """
         Calculates percentage of boundary covered by dataset
 
@@ -286,7 +290,7 @@ class VectorDataLoader(DataLoaderInterface):
                 Decimal fraction of boundary covered by the dataset
         """
 
-        def calculate_coverage_from_df(bounds, data):
+        def calculate_coverage_from_df(bounds: Boundary, data: pd.DataFrame) -> float:
             data = data.dropna().reset_index()
             # If empty dataframe, 0% coverage
             if data.empty or data.lat.size == 0 or data.long.size == 0:
@@ -304,9 +308,9 @@ class VectorDataLoader(DataLoaderInterface):
             overlap_area = data_polygon.intersection(bounds_polygon).area
             total_area = bounds_polygon.area
 
-            return overlap_area / total_area
+            return cast("float", overlap_area / total_area)
 
-        def calculate_coverage_from_xr(bounds, data):
+        def calculate_coverage_from_xr(bounds: Boundary, data: xr.Dataset) -> float:
             # Remove all NaN columns/rows
             data = data.dropna(dim="lat", how="all")
             data = data.dropna(dim="long", how="all")
@@ -328,7 +332,7 @@ class VectorDataLoader(DataLoaderInterface):
             overlap_area = data_polygon.intersection(bounds_polygon).area
             total_area = bounds_polygon.area
 
-            return overlap_area / total_area
+            return cast("float", overlap_area / total_area)
 
         # Use self.data if not no explicit dataset specified
         if data is None:
@@ -340,7 +344,9 @@ class VectorDataLoader(DataLoaderInterface):
             return calculate_coverage_from_xr(bounds, data)
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def trim_datapoints(self, bounds, data=None):
+    def trim_datapoints(
+        self, bounds: Boundary, data: xr.Dataset | pd.DataFrame | None = None
+    ) -> xr.Dataset | pd.DataFrame:
         """
         Trims datapoints from self.data within boundary defined by 'bounds'.
         self.data can be pd.DataFrame or xr.Dataset
@@ -353,7 +359,7 @@ class VectorDataLoader(DataLoaderInterface):
                 Trimmed dataset in same format as self.data
         """
 
-        def trim_datapoints_from_df(data, bounds):
+        def trim_datapoints_from_df(data: pd.DataFrame, bounds: Boundary) -> pd.DataFrame:
             """
             Extracts data from a pd.DataFrame
             """
@@ -382,7 +388,7 @@ class VectorDataLoader(DataLoaderInterface):
             # Return column of data from within bounds
             return data.loc[mask]
 
-        def trim_datapoints_from_xr(data, bounds):
+        def trim_datapoints_from_xr(data: xr.Dataset, bounds: Boundary) -> xr.Dataset:
             """
             Extracts data from a xr.Dataset using optimized spatial indexing
             """
@@ -444,7 +450,13 @@ class VectorDataLoader(DataLoaderInterface):
             return trim_datapoints_from_xr(data, bounds)
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    def get_value(self, bounds, agg_type=None, skipna=True, data=None):
+    def get_value(
+        self,
+        bounds: Boundary,
+        agg_type: str | None = None,
+        skipna: bool = True,
+        data: xr.Dataset | pd.DataFrame | None = None,
+    ) -> dict[str, float]:
         """
         Retrieve aggregated value from within bounds
 
@@ -465,7 +477,13 @@ class VectorDataLoader(DataLoaderInterface):
             ValueError: aggregation type not in list of available methods
         """
 
-        def get_value_from_df(dps, variable_names, bounds, agg_type, skipna):
+        def get_value_from_df(
+            dps: pd.DataFrame,
+            variable_names: list[str],
+            bounds: Boundary,
+            agg_type: str,
+            skipna: bool,
+        ) -> list[float]:
             """
             Aggregates a value from a pd.Series.
 
@@ -516,7 +534,13 @@ class VectorDataLoader(DataLoaderInterface):
 
             return values
 
-        def get_value_from_xr(dps, variable_names, bounds, agg_type, skipna):
+        def get_value_from_xr(
+            dps: xr.Dataset,
+            variable_names: list[str],
+            bounds: Boundary,
+            agg_type: str,
+            skipna: bool,
+        ) -> list[float]:
             """
             Aggregates a value from a xr.DataArray.
 
@@ -588,7 +612,13 @@ class VectorDataLoader(DataLoaderInterface):
         # Put in dict to map variable to values
         return {self.data_name_list[i]: values[i] for i in range(len(self.data_name_list))}
 
-    def get_hom_condition(self, bounds, splitting_conds, _agg_type="MEAN", data=None):
+    def get_hom_condition(
+        self,
+        bounds: Boundary,
+        splitting_conds: dict[str, Any],
+        _agg_type: str = "MEAN",
+        data: xr.Dataset | pd.DataFrame | None = None,
+    ) -> str:
         """
         Retrieves homogeneity condition of data within boundary.
 
@@ -660,7 +690,13 @@ class VectorDataLoader(DataLoaderInterface):
 
         return hom_type
 
-    def reproject(self, in_proj="EPSG:4326", out_proj="EPSG:4326", x_col="lat", y_col="long"):
+    def reproject(
+        self,
+        in_proj: str = "EPSG:4326",
+        out_proj: str = "EPSG:4326",
+        x_col: str = "lat",
+        y_col: str = "long",
+    ) -> xr.Dataset | pd.DataFrame:
         """
         Reprojects data using pyProj.Transformer
         self.data can be pd.DataFrame or xr.Dataset
@@ -684,7 +720,9 @@ class VectorDataLoader(DataLoaderInterface):
                 replacing 'x_col' and 'y_col'
         """
 
-        def reproject_df(data, in_proj, out_proj, x_col, y_col):
+        def reproject_df(
+            data: pd.DataFrame, in_proj: str, out_proj: str, x_col: str, y_col: str
+        ) -> pd.DataFrame:
             """
             Reprojects a pandas dataframe
 
@@ -724,7 +762,14 @@ class VectorDataLoader(DataLoaderInterface):
 
             return data
 
-        def reproject_xr(data, in_proj, out_proj, x_col, y_col, fast=False):
+        def reproject_xr(
+            data: xr.Dataset,
+            in_proj: str,
+            out_proj: str,
+            x_col: str,
+            y_col: str,
+            fast: bool = False,
+        ) -> xr.Dataset:
             """
             Reprojects a xr.Dataset
 
@@ -784,7 +829,7 @@ class VectorDataLoader(DataLoaderInterface):
             )
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def downsample(self, agg_type=None):
+    def downsample(self, agg_type: str | None = None) -> xr.Dataset | pd.DataFrame:
         """
         Downsamples imported data to be more easily manipulated. Data size
         should be reduced by a factor of m*n, where (m,n) are the
@@ -801,7 +846,7 @@ class VectorDataLoader(DataLoaderInterface):
                 Downsampled data
         """
 
-        def downsample_xr(data, ds, agg_type):
+        def downsample_xr(data: xr.Dataset, ds: list[int], agg_type: str) -> xr.Dataset:
             """
             Downsample xarray dataset according to aggregation type
 
@@ -847,7 +892,7 @@ class VectorDataLoader(DataLoaderInterface):
                 data = data.thin(long=ds[0])
             return data
 
-        def downsample_df(data, _ds, _agg_type):
+        def downsample_df(data: pd.DataFrame, _ds: list[int], _agg_type: str) -> pd.DataFrame:
             """
             Downsample pandas dataframe
             Not implemented as it just adds to processing time,
@@ -875,7 +920,7 @@ class VectorDataLoader(DataLoaderInterface):
             return downsample_xr(self.data, self.downsample_factors, agg_type)
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def get_data_col_name(self):
+    def get_data_col_name(self) -> str:
         """
         Retrieve name of data column (for pd.DataFrame), or variable
         (for xr.Dataset). Used for when data_name not defined in params.
@@ -886,7 +931,7 @@ class VectorDataLoader(DataLoaderInterface):
                 Name of data columns, comma seperated
         """
 
-        def get_data_names_from_df(data):
+        def get_data_names_from_df(data: pd.DataFrame) -> str:
             """
             Filters out standard columns to extract only data column's name
             """
@@ -898,7 +943,7 @@ class VectorDataLoader(DataLoaderInterface):
             # Turn into comma seperated string and return
             return ",".join(data_names)
 
-        def get_data_names_from_xr(data):
+        def get_data_names_from_xr(data: xr.Dataset) -> str:
             """
             Extracts variable name directly from xr.Dataset metadata
             """
@@ -915,7 +960,7 @@ class VectorDataLoader(DataLoaderInterface):
             return get_data_names_from_xr(self.data)
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def get_data_col_name_list(self):
+    def get_data_col_name_list(self) -> list[str]:
         """
         Retrieve names of data columns (for pd.DataFrame), or variable
         (for xr.Dataset). Used for when data_name not defined in params.
@@ -926,7 +971,7 @@ class VectorDataLoader(DataLoaderInterface):
         """
         return self.get_data_col_name().split(",")
 
-    def set_data_col_name(self, new_names):
+    def set_data_col_name(self, new_names: list[str]) -> xr.Dataset | pd.DataFrame:
         """
         Sets name of data column/data variables from a comma-seperated string
 
@@ -940,14 +985,14 @@ class VectorDataLoader(DataLoaderInterface):
                 Data with variable name changed
         """
 
-        def set_names_df(data, name_dict):
+        def set_names_df(data: pd.DataFrame, name_dict: dict[str, str]) -> pd.DataFrame:
             """
             Renames data columns in pandas dataframe
             """
             # Rename data column to new name
             return data.rename(columns=name_dict)
 
-        def set_names_xr(data, name_dict):
+        def set_names_xr(data: xr.Dataset, name_dict: dict[str, str]) -> xr.Dataset:
             """
             Renames data variables in xarray dataset
             """
@@ -971,7 +1016,7 @@ class VectorDataLoader(DataLoaderInterface):
             return set_names_xr(self.data, name_dict)
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def set_data_col_name_list(self, new_names):
+    def set_data_col_name_list(self, new_names: list[str]) -> xr.Dataset | pd.DataFrame:
         """
         Sets name of data column/data variables from a list of strings.
         Also updates self.data_name_list with new names from list
@@ -996,14 +1041,19 @@ class VectorDataLoader(DataLoaderInterface):
             raise TypeError(
                 f"'new_names' must be list of 'str'. Currently {sum(str_items)} / 2 are strings!"
             )
-        new_data_name = ",".join(new_names)
 
         # Set names
         logger.info(f"\tSetting data names to {new_names}")
         self.data_name_list = new_names
-        return self.set_data_col_name(new_data_name)
+        return self.set_data_col_name(new_names)
 
-    def calc_curl(self, bounds, data=None, collapse=True, agg_type="MAX"):
+    def calc_curl(
+        self,
+        bounds: Boundary,
+        data: xr.Dataset | pd.DataFrame | None = None,
+        collapse: bool = True,
+        agg_type: str = "MAX",
+    ) -> float | xr.Dataset | pd.DataFrame:
         """
         Calculates the curl of vectors in a cellbox
 
@@ -1057,7 +1107,13 @@ class VectorDataLoader(DataLoaderInterface):
         # Else return field
         return curl
 
-    def calc_dmag(self, bounds, data=None, collapse=True, agg_type="MEAN"):
+    def calc_dmag(
+        self,
+        bounds: Boundary,
+        data: xr.Dataset | pd.DataFrame | None = None,
+        collapse: bool = True,
+        agg_type: str = "MEAN",
+    ) -> float | xr.Dataset | pd.DataFrame:
         """
         Calculates the dmag of vectors in a cellbox.
         dmag is defined as being the difference in magnitudes between
@@ -1111,7 +1167,9 @@ class VectorDataLoader(DataLoaderInterface):
         return d_mag
 
     @staticmethod
-    def _create_vector_meshgrid(data, data_name_list):
+    def _create_vector_meshgrid(
+        data: xr.Dataset | pd.DataFrame, data_name_list: list[str]
+    ) -> np.ndarray[Any, Any]:
         """
         Creates a np.meshgrid containing 2D vectors from a pd.DataFrame
 
@@ -1128,20 +1186,23 @@ class VectorDataLoader(DataLoaderInterface):
 
         """
 
-        def meshgrid_from_df(data, data_name_list):
+        def meshgrid_from_df(data: pd.DataFrame, data_name_list: list[str]) -> np.ndarray[Any, Any]:
             # Manipulate into meshgrid of 2D vectors
             x, y = data_name_list
             # Fields of each vector component
             vector_x_field = data.pivot(index="lat", columns="long", values=x)
             vector_y_field = data.pivot(index="lat", columns="long", values=y)
             # Combine into field of vectors
-            return np.swapaxes(np.stack((vector_x_field, vector_y_field), axis=-1), 0, 1)
+            return cast(
+                "np.ndarray[Any, Any]",
+                np.swapaxes(np.stack((vector_x_field, vector_y_field), axis=-1), 0, 1),
+            )
 
-        def meshgrid_from_xr(data, data_name_list):
+        def meshgrid_from_xr(data: xr.Dataset, data_name_list: list[str]) -> np.ndarray[Any, Any]:
             # Extract out each variable and combine as tuple
             data_arrays = [data[name].values for name in data_name_list]
             # Zip them together to make 2D array of n-dimensional vectors
-            return np.dstack(data_arrays)
+            return cast("np.ndarray[Any, Any]", np.dstack(data_arrays))
 
         if isinstance(data, pd.core.frame.DataFrame):
             return meshgrid_from_df(data, data_name_list)

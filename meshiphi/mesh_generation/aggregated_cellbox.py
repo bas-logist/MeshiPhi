@@ -30,7 +30,7 @@ class AggregatedCellBox:
         """
         cellbox_id = cellbox_json["id"]
 
-        def load_bounds(cellbox_json):
+        def load_bounds(cellbox_json: dict[str, Any]) -> Boundary:
             shape = shapely.wkt.loads(cellbox_json["geometry"])
             # Take case where crossing antimeridian
             if shape.geom_type == "MultiPolygon":
@@ -59,8 +59,8 @@ class AggregatedCellBox:
 
             return Boundary(lat_range, long_range)
 
-        def load_agg_data(cellbox_json):
-            dict_obj = {}
+        def load_agg_data(cellbox_json: dict[str, Any]) -> dict[str, Any]:
+            dict_obj: dict[str, Any] = {}
             for key in cellbox_json:
                 if key not in ["geometry", "cx", "cy", "dcx", "dcy", "id"]:
                     dict_obj[key] = cellbox_json[key]

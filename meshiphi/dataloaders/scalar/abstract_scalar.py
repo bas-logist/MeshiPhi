@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import abstractmethod
-from typing import Any, overload
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -132,7 +132,7 @@ class ScalarDataLoader(DataLoaderInterface):
             self.data = self.trim_datapoints(bounds)
 
     @abstractmethod
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset | pd.DataFrame:
         """
         User defined method for importing data from files, or even generating
         data from scratch
@@ -151,7 +151,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 Downsampling and reprojecting happen in __init__() method
         """
 
-    def add_default_params(self, params):
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for all scalar dataloaders. This function should be
         overloaded to include any extra params for a specific dataloader
@@ -198,7 +198,9 @@ class ScalarDataLoader(DataLoaderInterface):
 
         return params
 
-    def calculate_coverage(self, bounds, data=None):
+    def calculate_coverage(
+        self, bounds: Boundary, data: xr.Dataset | pd.DataFrame | None = None
+    ) -> float:
         """
         Calculates percentage of boundary covered by dataset
 
@@ -215,7 +217,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 Decimal fraction of boundary covered by the dataset
         """
 
-        def calculate_coverage_from_df(bounds, data):
+        def calculate_coverage_from_df(bounds: Boundary, data: pd.DataFrame) -> float:
             data = data.dropna().reset_index()
             # If empty dataframe, 0% coverage
             if data.empty or data.lat.size == 0 or data.long.size == 0:
@@ -233,9 +235,9 @@ class ScalarDataLoader(DataLoaderInterface):
             overlap_area = data_polygon.intersection(bounds_polygon).area
             total_area = bounds_polygon.area
 
-            return overlap_area / total_area
+            return cast("float", overlap_area / total_area)
 
-        def calculate_coverage_from_xr(bounds, data):
+        def calculate_coverage_from_xr(bounds: Boundary, data: xr.Dataset) -> float:
             # Remove all NaN columns/rows
             data = data.dropna(dim="lat", how="all")
             data = data.dropna(dim="long", how="all")
@@ -256,7 +258,7 @@ class ScalarDataLoader(DataLoaderInterface):
             overlap_area = data_polygon.intersection(bounds_polygon).area
             total_area = bounds_polygon.area
 
-            return overlap_area / total_area
+            return cast("float", overlap_area / total_area)
 
         # Use self.data if not no explicit dataset specified
         if data is None:
@@ -268,7 +270,9 @@ class ScalarDataLoader(DataLoaderInterface):
             return calculate_coverage_from_xr(bounds, data)
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def trim_datapoints(self, bounds, data=None):
+    def trim_datapoints(
+        self, bounds: Boundary, data: xr.Dataset | pd.DataFrame | None = None
+    ) -> xr.Dataset | pd.DataFrame:
         """
         Trims datapoints from self.data within boundary defined by 'bounds'.
         self.data can be pd.DataFrame or xr.Dataset
@@ -281,7 +285,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 Trimmed dataset in same format as self.data
         """
 
-        def trim_datapoints_from_df(data, bounds):
+        def trim_datapoints_from_df(data: pd.DataFrame, bounds: Boundary) -> pd.DataFrame:
             """
             Extracts datapoints from a pd.DataFrame
 
@@ -383,7 +387,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 # Return column of data from within bounds
                 return data.loc[mask]
 
-        def trim_datapoints_from_xr(data, bounds):
+        def trim_datapoints_from_xr(data: xr.Dataset, bounds: Boundary) -> xr.Dataset:
             """
             Extracts datapoints from a xr.Dataset
 
@@ -458,15 +462,13 @@ class ScalarDataLoader(DataLoaderInterface):
             return trim_datapoints_from_xr(data, bounds)
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    @overload
-    def get_value(self, bounds: Boundary, agg_type: str) -> dict[str, float]: ...
-
-    @overload
     def get_value(
-        self, bounds: Boundary, data: Any = None, agg_type: str | None = None, skipna: bool = True
-    ) -> dict[str, float]: ...
-
-    def get_value(self, bounds, data=None, agg_type=None, skipna=True):
+        self,
+        bounds: Boundary,
+        data: xr.Dataset | pd.DataFrame | None = None,
+        agg_type: str | None = None,
+        skipna: bool = True,
+    ) -> dict[str, float]:
         """
         Retrieve aggregated value from within bounds
 
@@ -487,7 +489,9 @@ class ScalarDataLoader(DataLoaderInterface):
             ValueError: aggregation type not in list of available methods
         """
 
-        def get_value_from_df(dps, bounds, agg_type, skipna):
+        def get_value_from_df(
+            dps: pd.Series, bounds: Boundary, agg_type: str, skipna: bool
+        ) -> float:
             """
             Aggregates a value from a pd.Series.
 
@@ -520,19 +524,21 @@ class ScalarDataLoader(DataLoaderInterface):
                 return np.nan
             # Return float of aggregated value
             if agg_type == "MIN":
-                return dps.min(skipna=skipna)
+                return float(dps.min(skipna=skipna))
             if agg_type == "MAX":
-                return dps.max(skipna=skipna)
+                return float(dps.max(skipna=skipna))
             if agg_type == "MEAN":
-                return dps.mean(skipna=skipna)
+                return float(dps.mean(skipna=skipna))
             if agg_type == "MEDIAN":
-                return dps.median(skipna=skipna)
+                return float(dps.median(skipna=skipna))
             if agg_type == "STD":
-                return dps.std(skipna=skipna)
+                return float(dps.std(skipna=skipna))
             # If aggregation_type not available
             raise ValueError(f"Unknown aggregation type {agg_type}")
 
-        def get_value_from_xr(dps, bounds, agg_type, skipna):
+        def get_value_from_xr(
+            dps: xr.DataArray, bounds: Boundary, agg_type: str, skipna: bool
+        ) -> float:
             """
             Aggregates a value from a xr.DataArray.
 
@@ -557,35 +563,35 @@ class ScalarDataLoader(DataLoaderInterface):
             )
             # If want the number of datapoints
             if agg_type == "COUNT":
-                return dps.size
+                return float(dps.size)
             # If no data
             if dps.size == 0 or np.isnan(dps).all():
                 return np.nan
             # Return float of aggregated value
             if agg_type == "MIN":
                 if skipna:
-                    return np.nanmin(dps)
-                return np.min(dps)
+                    return float(np.nanmin(dps))
+                return float(np.min(dps))
             if agg_type == "MAX":
                 if skipna:
-                    return np.nanmax(dps)
-                return np.max(dps)
+                    return float(np.nanmax(dps))
+                return float(np.max(dps))
             if agg_type == "MEAN":
                 if skipna:
-                    return np.nanmean(dps)
-                return np.mean(dps)
+                    return float(np.nanmean(dps))
+                return float(np.mean(dps))
             if agg_type == "MEDIAN":
                 if skipna:
-                    return np.nanmedian(dps)
-                return np.median(dps)
+                    return float(np.nanmedian(dps))
+                return float(np.median(dps))
             if agg_type == "STD":
                 if skipna:
-                    return np.nanstd(dps)
-                return np.std(dps)
+                    return float(np.nanstd(dps))
+                return float(np.std(dps))
             if agg_type == "RMSE":
                 if skipna:
-                    return np.sqrt(np.nanmean((dps - np.nanmean(dps)) ** 2))
-                return np.sqrt(np.mean((dps - np.mean(dps)) ** 2))
+                    return float(np.sqrt(np.nanmean((dps - np.nanmean(dps)) ** 2)))
+                return float(np.sqrt(np.mean((dps - np.mean(dps)) ** 2)))
             # If aggregation_type not available
             raise ValueError(f"Unknown aggregation type {agg_type}")
 
@@ -602,9 +608,16 @@ class ScalarDataLoader(DataLoaderInterface):
             value = get_value_from_xr(dps, bounds, agg_type, skipna)
 
         # Cast to regular float before returning so can be saved in JSON later
+        if self.data_name is None:
+            raise ValueError("data_name is None")
         return {self.data_name: float(value)}
 
-    def get_hom_condition(self, bounds, splitting_conds, data=None):
+    def get_hom_condition(
+        self,
+        bounds: Boundary,
+        splitting_conds: dict[str, Any],
+        data: xr.Dataset | pd.DataFrame | None = None,
+    ) -> str:
         """
         Retrieves homogeneity condition of data within
         boundary.
@@ -642,7 +655,7 @@ class ScalarDataLoader(DataLoaderInterface):
 
         """
 
-        def get_hom_condition_from_df(dps, splitting_conds):
+        def get_hom_condition_from_df(dps: pd.Series, splitting_conds: dict[str, Any]) -> str:
             """
             Determined homogeneity condition from pd.Series.
 
@@ -684,7 +697,7 @@ class ScalarDataLoader(DataLoaderInterface):
             )
             return hom_type
 
-        def get_hom_condition_from_xr(dps, splitting_conds):
+        def get_hom_condition_from_xr(dps: xr.DataArray, splitting_conds: dict[str, Any]) -> str:
             """
             Determined homogeneity condition from xr.DataArray.
 
@@ -742,7 +755,13 @@ class ScalarDataLoader(DataLoaderInterface):
             return get_hom_condition_from_xr(dps, splitting_conds)
         raise TypeError(f"Unknown type {type(dps)}")
 
-    def reproject(self, in_proj="EPSG:4326", out_proj="EPSG:4326", x_col="lat", y_col="long"):
+    def reproject(
+        self,
+        in_proj: str = "EPSG:4326",
+        out_proj: str = "EPSG:4326",
+        x_col: str = "lat",
+        y_col: str = "long",
+    ) -> xr.Dataset | pd.DataFrame:
         """
         Reprojects data using pyProj.Transformer
         self.data can be pd.DataFrame or xr.Dataset
@@ -766,7 +785,9 @@ class ScalarDataLoader(DataLoaderInterface):
                 replacing 'x_col' and 'y_col'
         """
 
-        def reproject_df(data, in_proj, out_proj, x_col, y_col):
+        def reproject_df(
+            data: pd.DataFrame, in_proj: str, out_proj: str, x_col: str, y_col: str
+        ) -> pd.DataFrame:
             """
             Reprojects a pandas dataframe
 
@@ -806,7 +827,14 @@ class ScalarDataLoader(DataLoaderInterface):
 
             return data
 
-        def reproject_xr(data, in_proj, out_proj, x_col, y_col, fast=False):
+        def reproject_xr(
+            data: xr.Dataset,
+            in_proj: str,
+            out_proj: str,
+            x_col: str,
+            y_col: str,
+            fast: bool = False,
+        ) -> xr.Dataset:
             """
             Reprojects a xr.Dataset
 
@@ -866,7 +894,7 @@ class ScalarDataLoader(DataLoaderInterface):
             )
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def downsample(self, agg_type=None):
+    def downsample(self, agg_type: str | None = None) -> xr.Dataset | pd.DataFrame:
         """
         Downsamples imported data to be more easily manipulated. Data size
         should be reduced by a factor of m*n, where (m,n) are the
@@ -883,7 +911,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 Downsampled data
         """
 
-        def downsample_xr(data, ds, agg_type):
+        def downsample_xr(data: xr.Dataset, ds: list[int], agg_type: str) -> xr.Dataset:
             """
             Downsample xarray dataset according to aggregation type
 
@@ -929,7 +957,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 data = data.thin(long=ds[0])
             return data
 
-        def downsample_df(data, _ds, _agg_type):
+        def downsample_df(data: pd.DataFrame, _ds: list[int], _agg_type: str) -> pd.DataFrame:
             """
             Downsample pandas dataframe
             Not implemented as it just adds to processing time,
@@ -957,7 +985,7 @@ class ScalarDataLoader(DataLoaderInterface):
             return downsample_xr(self.data, self.downsample_factors, agg_type)
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def get_data_col_name(self):
+    def get_data_col_name(self) -> str:
         """
         Retrieve name of data column (for pd.DataFrame), or variable
         (for xr.Dataset). Used for when data_name not defined in params.
@@ -972,7 +1000,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 name
         """
 
-        def get_data_name_from_df(data):
+        def get_data_name_from_df(data: pd.DataFrame) -> str:
             """
             Filters out standard columns to extract only data column's name
             from pd.DataFrame
@@ -994,9 +1022,9 @@ class ScalarDataLoader(DataLoaderInterface):
                     f"More than 1 data column detected, cannot retrieve data \
                     name! Found columns: {','.join(name)}"
                 )
-            return name[0]
+            return str(name[0])
 
-        def get_data_name_from_xr(data):
+        def get_data_name_from_xr(data: xr.Dataset) -> str:
             """
             Extracts variable name directly from xr.Dataset metadata
 
@@ -1015,7 +1043,7 @@ class ScalarDataLoader(DataLoaderInterface):
                     f"More than 1 data column detected, cannot retrieve data \
                     name! Found columns: {','.join(name)}"
                 )
-            return name[0]
+            return str(name[0])
 
         logger.debug(f"\tRetrieving data name from {type(self.data)}")
         # Choose method of extraction based on data type
@@ -1025,7 +1053,7 @@ class ScalarDataLoader(DataLoaderInterface):
             return get_data_name_from_xr(self.data)
         raise TypeError(f"Unsupported data type: {type(self.data)}")
 
-    def set_data_col_name(self, new_name):
+    def set_data_col_name(self, new_name: str) -> xr.Dataset | pd.DataFrame:
         """
         Sets name of data column/data variable
 
@@ -1037,7 +1065,7 @@ class ScalarDataLoader(DataLoaderInterface):
                 Data with variable name changed
         """
 
-        def set_name_df(data, old_name, new_name):
+        def set_name_df(data: pd.DataFrame, old_name: str, new_name: str) -> pd.DataFrame:
             """
             Renames data column in pandas dataframe
 
@@ -1056,7 +1084,7 @@ class ScalarDataLoader(DataLoaderInterface):
             # Rename data column to new name
             return data.rename(columns={old_name: new_name})
 
-        def set_name_xr(data, old_name, new_name):
+        def set_name_xr(data: xr.Dataset, old_name: str, new_name: str) -> xr.Dataset:
             """
             Renames data variable in xarray dataset
 

@@ -1,14 +1,14 @@
 class Direction:
-    north_east = 1
-    east = 2
-    south_east = 3
-    south = 4
-    south_west = -1
-    west = -2
-    north_west = -3
-    north = -4
+    north_east: int = 1
+    east: int = 2
+    south_east: int = 3
+    south: int = 4
+    south_west: int = -1
+    west: int = -2
+    north_west: int = -3
+    north: int = -4
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.north_east = 1
         self.east = 2
         self.south_east = 3

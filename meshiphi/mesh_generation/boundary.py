@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from math import asin, cos, radians, sin, sqrt
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from shapely import MultiPolygon, wkt
+
+if TYPE_CHECKING:
+    from shapely.geometry import Polygon
 
 
 class Boundary:
@@ -66,7 +69,7 @@ class Boundary:
 
             # pos_coords on +180 side of antimeridian
             # neg_coords on -180 side of antimeridian
-            pos_coords, neg_coords = [coord_string.split(",") for coord_string in coord_strings]
+            pos_coords, neg_coords = (coord_string.split(",") for coord_string in coord_strings)
             # Remove leading whitespace from WKT elements
             pos_coords = [pc.lstrip() for pc in pos_coords]
             neg_coords = [nc.lstrip() for nc in neg_coords]
@@ -227,7 +230,7 @@ class Boundary:
                 )
 
     # Functions used for getting data from a cellbox
-    def getcx(self):
+    def getcx(self) -> float:
         """
         returns x-position of the centroid of the cellbox
 
@@ -242,7 +245,7 @@ class Boundary:
 
         return cx
 
-    def getcy(self):
+    def getcy(self) -> float:
         """
         returns y-position of the centroid of the cellbox
 
@@ -252,7 +255,7 @@ class Boundary:
         """
         return self.lat_range[0] + self.get_height() / 2
 
-    def get_height(self):
+    def get_height(self) -> float:
         """
         returns height of the cellbox
 
@@ -262,7 +265,7 @@ class Boundary:
         """
         return self.lat_range[1] - self.lat_range[0]
 
-    def get_width(self):
+    def get_width(self) -> float:
         """
         returns width of the cellbox
 
@@ -340,7 +343,7 @@ class Boundary:
 
         return self.time_range[1]
 
-    def get_bounds(self):
+    def get_bounds(self) -> list[list[float]]:
         """
         returns the bounds of this cellbox
 
@@ -358,7 +361,7 @@ class Boundary:
             ],
         ]
 
-    def calc_size(self):
+    def calc_size(self) -> float:
         """
         Calculate the great circle distance (in meters) between
         two points on the earth (specified in decimal degrees)
@@ -383,7 +386,7 @@ class Boundary:
         # Divide by sqrt(2) to get 'square' side length
         return m / sqrt(2)
 
-    def to_polygon(self):
+    def to_polygon(self) -> Polygon | MultiPolygon:
         """
         Creates a shapely polygon from the extent of the boundary. Will be a
         rectangle in mercator projection.
@@ -438,7 +441,7 @@ class Boundary:
             polygon = MultiPolygon([polygon_1, polygon_2])
         return polygon
 
-    def to_poly_string(self):
+    def to_poly_string(self) -> str:
         """
         Creates a string representation of the polygon from the extent of the boundary.
         Will be a rectangle in mercator projection.
@@ -448,9 +451,9 @@ class Boundary:
                 String representation of the shapely polygon with corners at
                 the min/max lat/long values of this boundary
         """
-        return self.to_polygon().wkt
+        return str(self.to_polygon().wkt)
 
-    def split(self):
+    def split(self) -> list[Boundary]:
         """
         Splits the boundary into four equal parts.
 
@@ -486,7 +489,7 @@ class Boundary:
             ),
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         lat_range = "lat range :[" + str(self.get_lat_min()) + "," + str(self.get_lat_max()) + "]"
         long_range = (
             "long range :[" + str(self.get_long_min()) + "," + str(self.get_long_max()) + "]"

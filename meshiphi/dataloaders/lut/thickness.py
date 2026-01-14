@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 import pandas as pd
 from shapely import Polygon
 
@@ -5,7 +9,7 @@ from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
 from meshiphi.mesh_generation.boundary import Boundary
 
 # Mapping of month number to season per hemisphere
-northern_seasons = {
+northern_seasons: dict[int, str] = {
     1: "wi",
     2: "wi",
     12: "wi",
@@ -19,7 +23,7 @@ northern_seasons = {
     10: "au",
     11: "au",
 }
-southern_seasons = {
+southern_seasons: dict[int, str] = {
     1: "su",
     2: "su",
     12: "su",
@@ -35,23 +39,29 @@ southern_seasons = {
 }
 
 
-class ThicknessDataLoader(LutDataLoader):
+class ThicknessDataLoader(LutDataLoader):  # type: ignore[misc]
     class Region:
         """
         Data storage object with region boundary as polygon, seasonal
         sea ice densities, and a dict mapping from integer month to season
         """
 
-        def __init__(self, name, geometry, value_dict, seasons=southern_seasons):
-            self.name = name
-            self.geometry = geometry
-            self.value_dict = value_dict
-            self.month_to_season = seasons
+        def __init__(
+            self,
+            name: str,
+            geometry: Any,
+            value_dict: dict[str, float],
+            seasons: dict[int, str] = southern_seasons,
+        ) -> None:
+            self.name: str = name
+            self.geometry: Any = geometry
+            self.value_dict: dict[str, float] = value_dict
+            self.month_to_season: dict[int, str] = seasons
 
-        def get_value(self, month):
+        def get_value(self, month: int) -> float:
             """
             Returns the sea ice density for a given month, taking into account
-            seasons per hemisphere
+            seasons per hemisphere.
 
             Args:
                 month (int): Month as an integer (1 = Jan ... 12 = Dec)
@@ -61,7 +71,7 @@ class ThicknessDataLoader(LutDataLoader):
             """
             return self.value_dict[self.month_to_season[month]]
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Creates a simulated dataset of sea ice thickness based on
         scientific literature.

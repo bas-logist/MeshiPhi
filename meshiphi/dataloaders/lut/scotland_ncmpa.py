@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import geopandas as gpd
 import pandas as pd
 from shapely.ops import unary_union
@@ -6,8 +8,8 @@ from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
 from meshiphi.mesh_generation.boundary import Boundary
 
 
-class ScotlandNCMPA(LutDataLoader):
-    def import_data(self, bounds):
+class ScotlandNCMPA(LutDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Creates a simulated dataset of sea ice thickness based on
         scientific literature.

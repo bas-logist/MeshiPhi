@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 from datetime import datetime
 from os.path import basename
+from typing import TYPE_CHECKING
 
 import xarray as xr
 
 from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
-class ERA5MaxWaveHeightDataLoader(ScalarDataLoader):
-    def import_data(self, bounds):
+
+class ERA5MaxWaveHeightDataLoader(ScalarDataLoader):  # type: ignore[misc]
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from an ERA5 NetCDF file.
         Renames coordinates to 'lat' and 'long'
@@ -26,7 +32,7 @@ class ERA5MaxWaveHeightDataLoader(ScalarDataLoader):
         # Reduce files to those within date range
         if self.files is None:
             raise ValueError("files parameter is required for ERA5MaxWaveHeightDataLoader")
-        self.files = [
+        self.files: list[str] = [
             file
             for file in self.files
             if time_range[0]
