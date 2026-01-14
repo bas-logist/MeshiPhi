@@ -65,6 +65,7 @@ dev = [
     "ruff",
     "mypy",
     "types-requests",
+    "types-jsonschema",
     "pytest",
     "pytest-xdist",
     "pytest-cov",
@@ -198,14 +199,7 @@ module = [
     "numpy.*",
     "sklearn.*",
     "scipy.*",
-    "jsonschema",
-    "jsonschema.*",
     "tqdm",
     "tqdm.*",
 ]
 ignore_missing_imports = true
-
-# Disable disallow_untyped_calls for the config validation module which uses jsonschema
-[[tool.mypy.overrides]]
-module = "meshiphi.config_validation.*"
-disallow_untyped_calls = false
