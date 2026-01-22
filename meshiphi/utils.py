@@ -171,12 +171,12 @@ def round_to_sigfig(
     if orig_type not in [list, float, int, np.ndarray, np.float64]:
         raise ValueError(f"Cannot round {type(x)} to sig figs!")
 
-    # Cast as array if not initially, so that later processes all act as expected
-    if orig_type in [int, float, np.float64]:
-        x = [x]  # type: ignore[list-item]
-    x = np.array(x)
+    # Convert to 1-d array - np.atleast_1d handles scalars, lists, and arrays uniformly
+    # For scalars, creates shape (1,); for lists/arrays, ensures at least 1-d
+    # Convert to float for calculations (log10 requires float), but preserve original type info
+    x_array = np.atleast_1d(np.asarray(x, dtype=np.float64))
     # Create a mask disabling any values of inf or zero being passed to log10
-    loggable_idxs = ([x != 0] & np.isfinite(x))[0]
+    loggable_idxs = ([x_array != 0] & np.isfinite(x_array))[0]
     # Determine number of decimal places to round each number to
     # np.abs because can't find log of negative number
     # np.log10 to get position of most significant digit
@@ -186,14 +186,20 @@ def round_to_sigfig(
     # np.array.astype(int) to enable np.around to work later
     dec_pl = (
         sigfig
-        - np.floor(np.log10(np.abs(x), where=loggable_idxs, out=np.zeros_like(x))).astype(int)
+        - np.floor(
+            np.log10(np.abs(x_array), where=loggable_idxs, out=np.zeros_like(x_array))
+        ).astype(int)
         - 1
     )
     # Round to sig figs
-    rounded = np.array([np.around(x[i], decimals=dec_pl[i]) for i in range(len(x))])
+    rounded = np.array([np.around(x_array[i], decimals=dec_pl[i]) for i in range(len(x_array))])
     # Return as single value if input that way
-    if orig_type in [int, float]:
-        return cast("int | float", rounded.item())
+    if orig_type in [int, float, np.float64]:
+        result = rounded.item()
+        # Convert back to int if original was int (to preserve type)
+        if orig_type is int:
+            return cast("int | float", int(result))
+        return cast("int | float", result)
     # Return as python list
     if orig_type is list:
         return cast("list[float]", rounded.tolist())
