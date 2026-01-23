@@ -36,7 +36,7 @@ class NeighbourGraph:
 
     def __init__(self, cellboxes: list[Any] | None = None, grid_width: int = 0) -> None:
         # initialize graph with an empty one
-        self.neighbour_graph: dict[str, Any] = {}
+        self.neighbour_graph: dict[int, Any] = {}
         if cellboxes is None:
             cellboxes = []
         self.initialise_neighbour_graph(cellboxes, grid_width)
@@ -49,9 +49,15 @@ class NeighbourGraph:
         Args:
         ng_json (json_object): json object that contains the neighbour_graph data
         """
-        neighbour_graph = {}
+        neighbour_graph: dict[int, Any] = {}
         for key in ng_json:
-            neighbour_graph[key] = ng_json[key]
+            # Convert string node key to integer
+            node_key = int(key)
+            # Convert string direction keys to integers in neighbour map
+            neighbour_map: dict[int, list[Any]] = {}
+            for dir_key, neighbours in ng_json[key].items():
+                neighbour_map[int(dir_key)] = neighbours
+            neighbour_graph[node_key] = neighbour_map
         obj = NeighbourGraph()
         obj.neighbour_graph = neighbour_graph
         return obj
@@ -65,30 +71,30 @@ class NeighbourGraph:
         """
 
         ng = self.get_graph()
-        new_ng = {}
+        new_ng: dict[int, Any] = {}
 
         for node in ng:
             for direction in ng[node]:
                 inc_neighbours = [x + inc for x in ng[node][direction]]
                 ng[node][direction] = inc_neighbours
 
-            new_ng[str(int(node) + inc)] = ng[node]
+            new_ng[int(node) + inc] = ng[node]
 
         self.neighbour_graph = new_ng
 
-    def get_graph(self) -> dict[str, Any]:
+    def get_graph(self) -> dict[int, Any]:
         """
         returns the graph dict
         """
         return self.neighbour_graph
 
-    def update_neighbour(self, index: str, direction: str, neighbours: list[Any]) -> None:
+    def update_neighbour(self, index: int, direction: int, neighbours: list[Any]) -> None:
         """
         updates the neighbour in a certain direction
         """
         self.neighbour_graph[index][direction] = neighbours
 
-    def add_neighbour(self, index: Any, direction: str, neighbour_indx: Any) -> None:
+    def add_neighbour(self, index: int, direction: int, neighbour_indx: Any) -> None:
         """
         adds a neighbour in a certain direction
 
@@ -99,7 +105,7 @@ class NeighbourGraph:
         """
         self.neighbour_graph[index][direction].append(neighbour_indx)
 
-    def remove_node_and_update_neighbours(self, cellbox_index: str) -> None:
+    def remove_node_and_update_neighbours(self, cellbox_index: int) -> None:
         """
         method that removes a node in the neighbour_graph at a given index. remove_node_from_neighbours should be called first.
         Args:
@@ -112,13 +118,13 @@ class NeighbourGraph:
 
         self.neighbour_graph.pop(cellbox_index)
 
-    def get_neighbours(self, cellbox_indx: Any, direction: str) -> list[Any]:
+    def get_neighbours(self, cellbox_indx: int, direction: int) -> list[Any]:
         """
         returns neighbour in a certain direction
         """
         return cast("list[Any]", self.neighbour_graph[cellbox_indx][direction])
 
-    def add_node(self, index: Any, neighbour_map: dict[Any, list[Any]]) -> None:
+    def add_node(self, index: int, neighbour_map: dict[int, list[Any]]) -> None:
         """
         method that adds a node to the neighbour_graph at a given index
         Args:
@@ -127,7 +133,7 @@ class NeighbourGraph:
         """
         self.neighbour_graph[index] = neighbour_map
 
-    def remove_node(self, cellbox_index: str) -> None:
+    def remove_node(self, cellbox_index: int) -> None:
         """
         method that removes a node to the neighbour_graph at a given index
         Args:
@@ -137,7 +143,7 @@ class NeighbourGraph:
 
     def update_neighbours(
         self,
-        cellbox_indx: Any,
+        cellbox_indx: int,
         new_neighbours_indx: list[Any],
         direction: int,
         cellboxes: list[Any],
@@ -170,29 +176,21 @@ class NeighbourGraph:
             if crossing_case != 0:
                 self.neighbour_graph[indx][crossing_case].append(new_neighbours_indx[1])
 
-    def remove_node_from_neighbours(self, cellbox_indx: str, direction: int) -> None:
+    def remove_node_from_neighbours(self, cellbox_indx: int, direction: int) -> None:
         """
         method that goes through neighbours in a given direction and remove cellbox_index from their neighbour_maps
         Args:
         cellbox_indx (int): the index of the cellbox that we will go through its neighbours and remove this index from their neighbour_map
         direction (int): an int that represents the direction of the neighbours that will get updated (e.g. north, south ,..)
         """
-
-        # Try with int keys first as in mesh construction then try with str keys for json mesh
-        try:
-            neighbour_indx_list = self.neighbour_graph[cellbox_indx][direction]
-        except KeyError:
-            neighbour_indx_list = self.neighbour_graph[cellbox_indx][str(direction)]
+        neighbour_indx_list = self.neighbour_graph[cellbox_indx][direction]
 
         for indx in neighbour_indx_list:
-            try:
-                self.neighbour_graph[indx][-1 * direction].remove(cellbox_indx)
-            except KeyError:
-                self.neighbour_graph[str(indx)][str(-1 * direction)].remove(int(cellbox_indx))
+            self.neighbour_graph[indx][-1 * direction].remove(cellbox_indx)
 
     def update_corner_neighbours(
         self,
-        cellbox_indx: str,
+        cellbox_indx: int,
         north_west_indx: Any,
         north_east_indx: Any,
         south_west_indx: Any,
@@ -201,29 +199,27 @@ class NeighbourGraph:
         """
         method that updates the corner neighbours of cellbox_indx with the given indeces
         """
-        north_east_corner_indx = self.neighbour_graph[cellbox_indx][Direction.north_east]
+        node_map = self.neighbour_graph[cellbox_indx]
+
+        north_east_corner_indx = node_map[Direction.north_east]
         if len(north_east_corner_indx) > 0:
-            self.neighbour_graph[north_east_corner_indx[0]][Direction.south_west] = [
-                north_east_indx
-            ]
+            corner_idx = north_east_corner_indx[0]
+            self.neighbour_graph[corner_idx][Direction.south_west] = [north_east_indx]
 
-        north_west_corner_indx = self.neighbour_graph[cellbox_indx][Direction.north_west]
+        north_west_corner_indx = node_map[Direction.north_west]
         if len(north_west_corner_indx) > 0:
-            self.neighbour_graph[north_west_corner_indx[0]][Direction.south_east] = [
-                north_west_indx
-            ]
+            corner_idx = north_west_corner_indx[0]
+            self.neighbour_graph[corner_idx][Direction.south_east] = [north_west_indx]
 
-        south_east_corner_indx = self.neighbour_graph[cellbox_indx][Direction.south_east]
+        south_east_corner_indx = node_map[Direction.south_east]
         if len(south_east_corner_indx) > 0:
-            self.neighbour_graph[south_east_corner_indx[0]][Direction.north_west] = [
-                south_east_indx
-            ]
+            corner_idx = south_east_corner_indx[0]
+            self.neighbour_graph[corner_idx][Direction.north_west] = [south_east_indx]
 
-        south_west_corner_indx = self.neighbour_graph[cellbox_indx][Direction.south_west]
+        south_west_corner_indx = node_map[Direction.south_west]
         if len(south_west_corner_indx) > 0:
-            self.neighbour_graph[south_west_corner_indx[0]][Direction.north_east] = [
-                south_west_indx
-            ]
+            corner_idx = south_west_corner_indx[0]
+            self.neighbour_graph[corner_idx][Direction.north_east] = [south_west_indx]
 
     def get_neighbour_case_bounds(self, bounds_a: Any, bounds_b: Any) -> int:
         """
@@ -463,7 +459,7 @@ class NeighbourGraph:
             return Direction.north
         return 0  # Cells are not neighbours.
 
-    def remove_neighbour(self, index: str, direction: str, neighbour_index: Any) -> None:
+    def remove_neighbour(self, index: int, direction: int, neighbour_index: Any) -> None:
         """
         remove certain neighbour in a specific direction
         """
@@ -477,15 +473,15 @@ class NeighbourGraph:
             cellbox_indx = cellboxes.index(cellbox)
             neighbour_map = self.initialise_map(cellbox_indx, grid_width, len(cellboxes))
 
-            self.add_node(str(cellbox_indx), neighbour_map)
+            self.add_node(cellbox_indx, neighbour_map)
 
     def initialise_map(
         self, cellbox_indx: int, grid_width: int, cellboxes_length: int
-    ) -> dict[str, list[Any]]:
+    ) -> dict[int, list[Any]]:
         """
         initialse the neighbour map of a cellbox with the given cellbox_index
         """
-        neighbour_map: dict[Any, list[Any]] = {
+        neighbour_map: dict[int, list[Any]] = {
             Direction.north_east: [],
             Direction.east: [],
             Direction.south_east: [],
@@ -531,5 +527,5 @@ class NeighbourGraph:
     def is_global_mesh(self) -> bool:
         return self._is_global_mesh
 
-    def get_neighbour_map(self, _id: str) -> dict[str, list[Any]]:
-        return cast("dict[str, list[Any]]", self.neighbour_graph[_id])
+    def get_neighbour_map(self, _id: int) -> dict[int, list[Any]]:
+        return cast("dict[int, list[Any]]", self.neighbour_graph[_id])

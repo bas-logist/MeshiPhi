@@ -368,35 +368,35 @@ class MeshBuilder:
             for i in range(len(min_long_cellboxes)):
                 self.neighbour_graph.add_neighbour(
                     int(min_long_cellboxes[i].get_id()),
-                    str(Direction.west),
+                    Direction.west,
                     int(max_long_cellboxes[i].get_id()),
                 )
                 self.neighbour_graph.add_neighbour(
                     int(max_long_cellboxes[i].get_id()),
-                    str(Direction.east),
+                    Direction.east,
                     int(min_long_cellboxes[i].get_id()),
                 )
                 # checks to avoid the very upper and lower cellboxes as they do not have north/south neighbours
                 if 0 <= i < len(min_long_cellboxes) - 1:
                     self.neighbour_graph.add_neighbour(
                         int(min_long_cellboxes[i].get_id()),
-                        str(Direction.north_west),
+                        Direction.north_west,
                         int(max_long_cellboxes[i + 1].get_id()),
                     )
                     self.neighbour_graph.add_neighbour(
                         int(max_long_cellboxes[i].get_id()),
-                        str(Direction.north_east),
+                        Direction.north_east,
                         int(min_long_cellboxes[i + 1].get_id()),
                     )
                 if 0 < i <= len(min_long_cellboxes) - 1:
                     self.neighbour_graph.add_neighbour(
                         int(min_long_cellboxes[i].get_id()),
-                        str(Direction.south_west),
+                        Direction.south_west,
                         int(max_long_cellboxes[i - 1].get_id()),
                     )
                     self.neighbour_graph.add_neighbour(
                         int(max_long_cellboxes[i].get_id()),
-                        str(Direction.south_east),
+                        Direction.south_east,
                         int(min_long_cellboxes[i - 1].get_id()),
                     )
 
@@ -443,10 +443,10 @@ class MeshBuilder:
         south_west_indx = cellboxes.index(split_cellboxes[2])
         south_east_indx = cellboxes.index(split_cellboxes[3])
 
-        south_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, "4")
-        north_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, "-4")
-        east_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, "2")
-        west_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, "-2")
+        south_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, Direction.south)
+        north_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, Direction.north)
+        east_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, Direction.east)
+        west_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, Direction.west)
 
         # Create neighbour map for SW split cell.
         sw_neighbour_map = {
@@ -456,7 +456,7 @@ class MeshBuilder:
             Direction.south: [],
             # update to use the NG class
             Direction.south_west: self.neighbour_graph.get_neighbours(
-                cellbox_indx, str(Direction.south_west)
+                cellbox_indx, Direction.south_west
             ),
             Direction.west: [],
             Direction.north_west: [],
@@ -477,7 +477,7 @@ class MeshBuilder:
             Direction.south_west: [],
             Direction.west: [],
             Direction.north_west: self.neighbour_graph.get_neighbours(
-                cellbox_indx, str(Direction.north_west)
+                cellbox_indx, Direction.north_west
             ),
             Direction.north: [],
         }
@@ -490,7 +490,7 @@ class MeshBuilder:
         # Create neighbour map for NE split cell
         ne_neighbour_map = {
             Direction.north_east: self.neighbour_graph.get_neighbours(
-                cellbox_indx, str(Direction.north_east)
+                cellbox_indx, Direction.north_east
             ),
             Direction.east: [],
             Direction.south_east: [],
@@ -510,7 +510,7 @@ class MeshBuilder:
             Direction.north_east: [],
             Direction.east: [],
             Direction.south_east: self.neighbour_graph.get_neighbours(
-                cellbox_indx, str(Direction.south_east)
+                cellbox_indx, Direction.south_east
             ),
             Direction.south: [],
             Direction.south_west: [],
@@ -544,7 +544,7 @@ class MeshBuilder:
         )
         # Update corner neighbour maps
         self.neighbour_graph.update_corner_neighbours(
-            str(cellbox_indx),
+            cellbox_indx,
             north_west_indx,
             north_east_indx,
             south_west_indx,
@@ -552,7 +552,7 @@ class MeshBuilder:
         )
 
         # remove the original splitted cellbox from the neighbour_graph
-        self.neighbour_graph.remove_node(str(cellbox_indx))
+        self.neighbour_graph.remove_node(cellbox_indx)
         # set the original splitted cellbox to None
         cellboxes[cellbox_indx] = None  # type: ignore[call-overload]
 
