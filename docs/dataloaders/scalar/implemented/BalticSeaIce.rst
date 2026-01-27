@@ -9,7 +9,7 @@ From their webpage:
    The parameters are based on ice chart produced on daily basis during the 
    Baltic Sea ice season and show the ice concentration in a 1 km grid.
 
-Name in config: :code:`'baltic_sic'`
+Name in config: `'baltic_sic'`
 
 Data can be downloaded from `here <https://data.marine.copernicus.eu/product/SEAICE_BAL_PHY_L4_MY_011_019/description>`_
 

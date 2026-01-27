@@ -1,7 +1,6 @@
-.. _testing_strategy:
+# Development
 
-Testing Strategy
-=================
+## Testing
 
 When updating any files within the MeshiPhi repository, tests must be run to ensure that the core functionality of the software remains unchanged.
 

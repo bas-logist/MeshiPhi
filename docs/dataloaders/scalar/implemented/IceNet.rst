@@ -11,7 +11,7 @@ at the British Antarctic Survey. From the website:
    trained on climate simulations and observational data to forecast the 
    next 6 months of monthly-averaged sea ice concentration maps.
 
-Name in config: :code:`'icenet'`
+Name in config: `'icenet'`
 
 Data for IceNet V1 is available from `here <https://ramadda.data.bas.ac.uk/repository/entry/show>`_
 Data for IceNet V2 is not publicly available.

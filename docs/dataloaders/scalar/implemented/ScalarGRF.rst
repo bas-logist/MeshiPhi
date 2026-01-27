@@ -7,7 +7,7 @@ Scalar GRF Dataloader
 Produces a gaussian random field of scalar values, useful for producing 
 artificial, yet somewhat realistic values for real-world variables.
 
-Name in config: :code:`'scalar_grf'`
+Name in config: `'scalar_grf'`
 
 Can be used to generate :ref:`binary masks<binary-grf>`.
 
@@ -38,8 +38,8 @@ For vector fields, see  the :ref:`Vector GRF page<vector-grf>`.
 NOTE: min/max are set BEFORE multiplier and offset are used. The actual values for
 the min and max are 
 
-| :code:`actual_min = multiplier * min + offset`
-| :code:`actual_max = multiplier * max + offset` 
+| `actual_min = multiplier * min + offset`
+| `actual_max = multiplier * max + offset` 
 
 The dataloader is implemented as follows:
 

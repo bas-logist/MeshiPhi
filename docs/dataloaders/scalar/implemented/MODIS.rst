@@ -9,7 +9,7 @@ From their website:
    MODIS are viewing the entire Earth's surface every 1 to 2 days, 
    acquiring data in 36 spectral bands, or groups of wavelengths.
 
-Name in config: :code:`'modis'`
+Name in config: `'modis'`
 
 Information on where to download their data products can be 
 found `here <https://modis.gsfc.nasa.gov/data/dataprod/mod29.php>`_

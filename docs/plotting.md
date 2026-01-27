@@ -1,11 +1,7 @@
-############################
-Mesh Plotting
-############################
+# Mesh Plotting
 
-As well as the interactive plotting functionality provided by `GeoPlot <https://github.com/bas-amop/GeoPlot>`_,
-Meshiphi also contains a built-in plotting class :code:`mesh_plotter` that allows the user to produce static plots of a
+As well as the interactive plotting functionality provided by [GeoPlot](https://github.com/bas-amop/GeoPlot),
+Meshiphi also contains a built-in plotting class `mesh_plotter` that allows the user to produce static plots of a
 given environmental mesh.
 
-.. automodule:: meshiphi.mesh_plotting.mesh_plotter
-    :special-members: __init__
-    :members:
+::: meshiphi.mesh_plotting.mesh_plotter

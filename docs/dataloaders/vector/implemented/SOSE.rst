@@ -10,7 +10,7 @@ From their website:
    observations. As such, it provides a quantitatively useful climatology of the mean-state 
    of the Southern Ocean.
 
-Name in config: :code:`'sose'`
+Name in config: `'sose'`
 
 Data can be downloaded from `here <http://sose.ucsd.edu/sose_stateestimation_data_05to10.html>`_
 

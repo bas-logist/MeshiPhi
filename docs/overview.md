@@ -1,10 +1,8 @@
-**********
-Background
-**********
+# Background
 
 
-Code Structure
-##############
+## Code Structure
+
 The aim of this manual is to provide the user with all the tools that they need to run the software for a set of
 examples. We also hope that the background information supplied for each section allows the user to understand the
 methods used throughout this package.

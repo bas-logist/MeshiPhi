@@ -13,7 +13,7 @@ From their website:
    surface up to a height of 80km. ERA5 includes information about
    uncertainties for all variables at reduced spatial and temporal resolutions.
 
-Name in config: :code:`'era5_wave_period'`
+Name in config: `'era5_wave_period'`
 
 Instructions for how to download their data products are
 available `here <https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5>`_

@@ -12,7 +12,7 @@ From their website:
    available. Part of the processing is fitted to the Global Ocean. The product gives additional variables (i.e.
    Absolute Dynamic Topography and geostrophic currents).
 
-Name in config: :code:`'duacs_currents'`
+Name in config: `'duacs_currents'`
 
 Near real-time data can be downloaded from `here <https://data.marine.copernicus.eu/product/SEALEVEL_GLO_PHY_L4_NRT_008_046/description>`_.
 

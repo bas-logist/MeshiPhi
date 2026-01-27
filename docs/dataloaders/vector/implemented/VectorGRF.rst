@@ -9,7 +9,7 @@ artificial, yet somewhat realistic values for real-world variables.
 Values are broken down into `x` and `y` components, and saved in two
 columns in the final dataframe.
 
-Name in config: :code:`'vector_grf'`
+Name in config: `'vector_grf'`
 
 Can be used to generate :ref:`binary masks<binary-grf>`.
 

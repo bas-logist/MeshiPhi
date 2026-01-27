@@ -30,6 +30,6 @@ only True/False. It is useful for generating land masks.
         }
     }
 
-Name in config: :code:`'binary_grf'`
+Name in config: `'binary_grf'`
 
 See the :ref:`Scalar GRF page<scalar-grf>` for documentation on the dataloader

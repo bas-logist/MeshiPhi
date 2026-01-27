@@ -12,7 +12,7 @@ From their website:
    observations. As such, it provides a quantitatively useful climatology of the mean-state 
    of the Southern Ocean. 
 
-Name in config: :code:`'bsose_depth'`
+Name in config: `'bsose_depth'`
 
 Data can be downloaded from `here <http://sose.ucsd.edu/BSOSE_iter105_solution.html>`_
 
