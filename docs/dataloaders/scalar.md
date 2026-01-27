@@ -66,4 +66,260 @@ class MyDataLoader(ScalarDataLoader):
         return data
 ```
 
-## Implemented Scalar Dataloaders
+## Included Scalar Dataloaders
+
+The following dataloaders are included in MeshiPhi.
+
+See the package [API Reference](autoapi) section of the docs for details.
+
+### AMSR
+
+The AMSR (Advanced Microwave Scanning Radiometer) dataset is a publicly
+available that provides Sea Ice Concentration scans of the earth's oceans.
+It is produced by researchers at the University of Bremen.
+
+The AMSR dataloader is currently the only 'standalone' dataloader, in that it
+is defined independently of the abstract base class. This is due to issues
+with `pandas` calculating mean values differently depending on how the 
+data is loaded. This caused issues with the regression tests passing. 
+This issue will be rectified soon by updating the regression tests.
+
+Name in config: `'amsr'`
+
+Data can be downloaded from the [University of Bremen Sea Ice Data Archive](https://seaice.uni-bremen.de/data-archive/).
+
+### Baltic Sea Ice 
+
+Baltic sea ice concentration values are provided by the Finnish Meteorological Institute (FMI).
+From their webpage:
+
+   The operational sea ice service at FMI provides ice parameters over the Baltic Sea. 
+   The parameters are based on ice chart produced on daily basis during the 
+   Baltic Sea ice season and show the ice concentration in a 1 km grid.
+
+Name in config: `'baltic_sic'`
+
+Data can be downloaded from <https://data.marine.copernicus.eu/product/SEAICE_BAL_PHY_L4_MY_011_019/description>
+
+### Binary GRF 
+
+The binary GRF dataloader is the same as the :ref:`Scalar GRF<scalar-grf>`
+The only difference is that instead of returning a dataframe that consists
+of values between the min/max set in the config, this dataframe will contain
+only True/False. It is useful for generating land masks.
+
+Default parameters for binary/mask GRF dataloader :
+
+```json
+{
+    "loader": "binary_grf",
+    "params":{
+        "data_name": "data",    # - Name of the data column
+        "seed":       None,     # - Seed for random number generator. Must
+                                #   be int or None. None sets a random seed
+        "size":       512,      # - Number of datapoints per lat/long axis
+        "alpha":      3,        # - Power of the power-law momentum 
+                                #   distribution used to generate GRF
+        "min":        0,        # - Minimum value of GRF
+        "max":        1,        # - Maximum value of GRF
+        "binary":     True,     # - Flag specifying this GRF is a binary mask
+        "threshold":  0.5       # - Value around which mask values are set.
+                                #   Below this, values are set to False 
+                                #   Above this, values are set to True
+    }
+}
+```
+
+Name in config: `'binary_grf'`
+
+See the :ref:`Scalar GRF page<scalar-grf>` for documentation on the dataloader
+
+### BSOSE Depth 
+
+B-SOSE (Biogeochemical Southern Ocean State Estimate solution) provide a publicly available dataset that
+hosts (amongst other products) sea ice concentration (SIC) of the southern ocean. Their SIC product provides 
+a 'depth' value, which this dataloader ingests.
+BSOSE is an extension of the SOSE project led by Mazloff at the Scripps Institution of Oceanography.
+
+From their website:
+>   The Southern Ocean State Estimate (SOSE) is a model-generated best fit to Southern Ocean 
+>   observations. As such, it provides a quantitatively useful climatology of the mean-state 
+>   of the Southern Ocean. 
+
+Name in config: `'bsose_depth'`
+
+Data can be downloaded from <http://sose.ucsd.edu/BSOSE_iter105_solution.html>
+
+**Note**: This dataloader may not work "as is" for new data downloaded, it has been internally collated into
+a more easily ingestable format.
+
+### BSOSE Sea Ice 
+
+B-SOSE (Biogeochemical Southern Ocean State Estimate solution) provide a publicly available dataset that
+hosts (amongst other products) sea ice concentration of the southern ocean. It is an extension of the 
+SOSE project led by Mazloff at the Scripps Institution of Oceanography.
+
+From their website:
+>   The Southern Ocean State Estimate (SOSE) is a model-generated best fit to Southern Ocean 
+>   observations. As such, it provides a quantitatively useful climatology of the mean-state 
+>   of the Southern Ocean.
+
+Name in config: `'bsose_sic'`
+
+Data can be downloaded from <http://sose.ucsd.edu/BSOSE_iter105_solution.html>
+
+**Note**: This dataloader may not work as is for new data downloaded, it has been internally collated into 
+a more easily ingestable format.
+
+
+### ECMWFSigWaveHeight 
+
+The ECMWF (European Centre for Medium-Range Weather Forecasts) are both a 
+research institute and a 24/7 operational service, producing global numerical 
+weather predictions and other data for their Member and Co-operating States 
+and the broader community. The Centre has one of the largest supercomputer 
+facilities and meteorological data archives in the world. Other strategic 
+activities include delivering advanced training and assisting the WMO in 
+implementing its programmes.
+(description taken from <https://www.ecmwf.int/en/about>)
+
+Name in config: `'ecmwf_sig_wave_height'`
+
+Data can be downloaded from <https://data.ecmwf.int/forecasts/>
+
+This dataloader is for the grib2 files
+
+### ERA5 Dataloaders
+
+ERA5 is a family of data products produced by the European Centre for Medium-Range Weather Forecasts (ECMWF).
+It is the fifth generation ECMWF atmospheric reanalysis of the global climate covering the period from January 1950 to present.
+
+From their website:
+
+>   ERA5 provides hourly estimates of a large number of atmospheric,
+>   land and oceanic climate variables. The data cover the Earth on a
+>   30km grid and resolve the atmosphere using 137 levels from the
+>   surface up to a height of 80km. ERA5 includes information about
+>   uncertainties for all variables at reduced spatial and temporal resolutions.
+
+Instructions for how to download their data products are
+available from <https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5>
+
+Variables and their names in config:
+* Maximum Wave Height: `'era5_max_wave_height'`
+* Significant Wave Height: `'era5_sig_wave_height'`
+* Mean Wave Direction Dataloader: `'era5_wave_dir'`
+* Mean Wave Period: `'era5_wave_period'`
+* Wind Direction: `'era5_wind_dir'`
+* Wind Magnitude: `'era5_wind_mag'`
+
+### GEBCO
+
+The General Bathymetric Chart of the Oceans (GEBCO) is a publicly available
+bathymetric chart of the Earth's oceans. It is a common resource used by
+ocean scientists, amongst others.
+
+Name in config: `'gebco'`
+
+Data can be downloaded from <https://download.gebco.net/>
+
+### IceNet
+
+IceNet is a seasonal sea ice forecasting tool being developed by researchers
+at the British Antarctic Survey. From the website:
+
+>   IceNet is a probabilistic, deep learning sea ice forecasting system 
+>   developed by an international team and led by British Antarctic Survey 
+>   and The Alan Turing Institute [Andersson et al., 2021]. IceNet has been 
+>   trained on climate simulations and observational data to forecast the 
+>   next 6 months of monthly-averaged sea ice concentration maps.
+
+Name in config: `'icenet'`
+
+Data for IceNet V1 is available from <https://ramadda.data.bas.ac.uk/repository/entry/show>
+Data for IceNet V2 is not publicly available.
+
+### MODIS
+
+Moderate Resolution Imaging Spectroradiometer (MODIS) is a satellite-borne 
+instrument developed by NASA.
+
+From their website:
+>   MODIS are viewing the entire Earth's surface every 1 to 2 days, 
+>   acquiring data in 36 spectral bands, or groups of wavelengths.
+
+Name in config: `'modis'`
+
+Information on where to download their data products can be 
+found at <https://modis.gsfc.nasa.gov/data/dataprod/mod29.php>
+
+### Scalar CSV
+
+The scalar CSV dataloader is designed to take any `.csv` file and cast
+it into a data source for mesh construction. It was primarily used in testing 
+for loading dummy data to test performance. As such, there is no data source 
+for this dataloader.
+
+Name in config: `'scalar_csv'`
+
+### Scalar GRF
+
+Produces a gaussian random field of scalar values, useful for producing 
+artificial, yet somewhat realistic values for real-world variables.
+
+Name in config: `'scalar_grf'`
+
+Can be used to generate :ref:`binary masks<binary-grf>`.
+
+For vector fields, see  the :ref:`Vector GRF page<vector-grf>`.
+
+Default parameters for scalar GRF dataloader. 
+
+```json
+{
+    "loader": "scalar_grf",
+    "params":{
+        "data_name": "data",    # - Name of the data column
+        "seed":       None,     # - Seed for random number generator. Must
+                                #   be int or None. None sets a random seed
+        "size":       512,      # - Number of datapoints per lat/long axis
+        "alpha":      3,        # - Power of the power-law momentum 
+                                #   distribution used to generate GRF
+        "binary":     False,    # - Flag specifying this GRF isn't a binary mask
+        "threshold":  [0, 1],   # - Caps of min/max values to ensure normalising 
+                                #   not skewed by outlier in randomised GRF
+        "min":        -10,      # - Minimum value of GRF
+        "max":        10,       # - Maximum value of GRF
+        "multiplier": 1,        # - Multiplier for entire dataset
+        "offset":     0         # - Offset for entire dataset
+    }
+}
+```
+
+**NOTE**: min/max are set BEFORE multiplier and offset are used. The actual values for
+the min and max are 
+
+* `actual_min = multiplier * min + offset`
+* `actual_max = multiplier * max + offset` 
+
+### Shape Dataloader
+
+The shape dataloader is designed to create abstract shapes with well known 
+boundaries, and cast it into a data source for mesh construction. It was primarily 
+used in testing to debug cellbox generation. As such, there is no data source 
+for this dataloader.
+
+### Visual_iced 
+
+Visual_iced is a dataloader for .tiff images, which are outputs from the visual_iced library
+developed by Martin Rogers at the British Antarctic Survey's AI Lab. These visual_iced
+images are ice/water binary files, generated from a combination of MODIS and SAR
+satellite imagery. 
+
+In the source data, 0s are representative of open water, and 1s are representative of
+ice. In the dataloader, we map these values to sea ice concentration, in the range of 0 to 100.
+Values between 0 and 100 are generated by the aggregation of the 0s and 1s within each cell.
+
+**Note**: The visual_iced dataloader only supports loading in single files, as the visual_iced datasets are not temporally continuous within a given boundary.
+
+Name in config: `'visual_iced'`
