@@ -17,10 +17,11 @@ plugins:
             - meshiphi
           options:
             docstring_style: google
-            show_object_full_path: true
+            # show_object_full_path: true
             merge_init_into_class: true
             show_docstring_functions: true
             show_docstring_classes: true
+            show_source: false
   - mkdocs-autoapi:
       autoapi_dir: meshiphi
       autoapi_add_nav_entry: true

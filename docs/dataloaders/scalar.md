@@ -6,8 +6,9 @@ The Abstract Base Class of the scalar dataloaders holds most of the
 functionality that would be needed to manipulate the data to work 
 with the mesh. When creating a new dataloader, the user must define
 how to open the data files, and what methods are required to manipulate
-the data into a standard format. More details are provided on the 
-[abstractScalar doc page](./abstract.md).
+the data into a standard format. 
+
+Documentation for the abstract `ScalarDataLoader` is available in the [API documentation](../../autoapi/meshiphi/dataloaders/scalar/abstract_scalar).
 
 ## Scalar Dataloader Examples
 
@@ -68,9 +69,9 @@ class MyDataLoader(ScalarDataLoader):
 
 ## Included Scalar Dataloaders
 
-The following dataloaders are included in MeshiPhi.
+The following scalar dataloaders are included in MeshiPhi.
 
-See the package [API Reference](autoapi) section of the docs for details.
+See the package [API Reference](../../autoapi/meshiphi/dataloaders/scalar) section of the docs for details.
 
 ### AMSR
 
@@ -84,9 +85,11 @@ with `pandas` calculating mean values differently depending on how the
 data is loaded. This caused issues with the regression tests passing. 
 This issue will be rectified soon by updating the regression tests.
 
+Data can be downloaded from the [University of Bremen Sea Ice Data Archive](https://seaice.uni-bremen.de/data-archive/).
+
 Name in config: `'amsr'`
 
-Data can be downloaded from the [University of Bremen Sea Ice Data Archive](https://seaice.uni-bremen.de/data-archive/).
+Class documentation: [AMSRDataLoader](../../autoapi/meshiphi/dataloaders/scalar/amsr)
 
 ### Baltic Sea Ice 
 
@@ -97,9 +100,11 @@ From their webpage:
    The parameters are based on ice chart produced on daily basis during the 
    Baltic Sea ice season and show the ice concentration in a 1 km grid.
 
+Data can be downloaded from <https://data.marine.copernicus.eu/product/SEAICE_BAL_PHY_L4_MY_011_019/description>
+
 Name in config: `'baltic_sic'`
 
-Data can be downloaded from <https://data.marine.copernicus.eu/product/SEAICE_BAL_PHY_L4_MY_011_019/description>
+Class documentation: [BalticSeaIceDataLoader](../../autoapi/meshiphi/dataloaders/scalar/baltic_sea_ice)
 
 ### Binary GRF 
 
@@ -134,6 +139,8 @@ Name in config: `'binary_grf'`
 
 See the :ref:`Scalar GRF page<scalar-grf>` for documentation on the dataloader
 
+
+
 ### BSOSE Depth 
 
 B-SOSE (Biogeochemical Southern Ocean State Estimate solution) provide a publicly available dataset that
@@ -150,6 +157,8 @@ Name in config: `'bsose_depth'`
 
 Data can be downloaded from <http://sose.ucsd.edu/BSOSE_iter105_solution.html>
 
+Class documentation: [BSOSEDepthDataLoader](../../autoapi/meshiphi/dataloaders/scalar/bsose_depth)
+
 **Note**: This dataloader may not work "as is" for new data downloaded, it has been internally collated into
 a more easily ingestable format.
 
@@ -164,9 +173,11 @@ From their website:
 >   observations. As such, it provides a quantitatively useful climatology of the mean-state 
 >   of the Southern Ocean.
 
+Data can be downloaded from <http://sose.ucsd.edu/BSOSE_iter105_solution.html>
+
 Name in config: `'bsose_sic'`
 
-Data can be downloaded from <http://sose.ucsd.edu/BSOSE_iter105_solution.html>
+Class documentation: [BSOSESeaIceDataLoader](../../autoapi/meshiphi/dataloaders/scalar/bsose_sea_ice)
 
 **Note**: This dataloader may not work as is for new data downloaded, it has been internally collated into 
 a more easily ingestable format.
@@ -183,11 +194,13 @@ activities include delivering advanced training and assisting the WMO in
 implementing its programmes.
 (description taken from <https://www.ecmwf.int/en/about>)
 
-Name in config: `'ecmwf_sig_wave_height'`
+**Note**: This dataloader is for the grib2 files.
 
 Data can be downloaded from <https://data.ecmwf.int/forecasts/>
 
-This dataloader is for the grib2 files
+Name in config: `'ecmwf_sig_wave_height'`
+
+Class documentation: [ECMWFSigWaveHeightDataLoader](../../autoapi/meshiphi/dataloaders/scalar/ecmwf_sig_wave_height)
 
 ### ERA5 Dataloaders
 
@@ -205,13 +218,14 @@ From their website:
 Instructions for how to download their data products are
 available from <https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5>
 
-Variables and their names in config:
-* Maximum Wave Height: `'era5_max_wave_height'`
-* Significant Wave Height: `'era5_sig_wave_height'`
-* Mean Wave Direction Dataloader: `'era5_wave_dir'`
-* Mean Wave Period: `'era5_wave_period'`
-* Wind Direction: `'era5_wind_dir'`
-* Wind Magnitude: `'era5_wind_mag'`
+Variables, their names in config and class documentation:
+
+* Maximum Wave Height: `'era5_max_wave_height'` - [ERA5MaxWaveHeightDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_max_wave_height)
+* Significant Wave Height: `'era5_sig_wave_height'` - [ERA5SigWaveHeightDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_sig_wave_height)
+* Mean Wave Direction Dataloader: `'era5_wave_dir'` - [ERA5MeanWaveDirDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wave_dir)
+* Mean Wave Period: `'era5_wave_period'` - [ERA5WavePeriodDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wave_period)
+* Wind Direction: `'era5_wind_dir'` - [ERA5WindDirDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wind_dir)
+* Wind Magnitude: `'era5_wind_mag'` - [ERA5WindMagDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wind_mag)
 
 ### GEBCO
 
@@ -219,9 +233,11 @@ The General Bathymetric Chart of the Oceans (GEBCO) is a publicly available
 bathymetric chart of the Earth's oceans. It is a common resource used by
 ocean scientists, amongst others.
 
+Data can be downloaded from <https://download.gebco.net/>
+
 Name in config: `'gebco'`
 
-Data can be downloaded from <https://download.gebco.net/>
+Class documentation: [GEBCODataLoader](../../autoapi/meshiphi/dataloaders/scalar/gebco)
 
 ### IceNet
 
@@ -234,10 +250,13 @@ at the British Antarctic Survey. From the website:
 >   trained on climate simulations and observational data to forecast the 
 >   next 6 months of monthly-averaged sea ice concentration maps.
 
-Name in config: `'icenet'`
-
 Data for IceNet V1 is available from <https://ramadda.data.bas.ac.uk/repository/entry/show>
 Data for IceNet V2 is not publicly available.
+
+Name in config: `'icenet'`
+
+Class documentation: [IceNetDataLoader](../../autoapi/meshiphi/dataloaders/scalar/icenet)
+
 
 ### MODIS
 
@@ -248,10 +267,12 @@ From their website:
 >   MODIS are viewing the entire Earth's surface every 1 to 2 days, 
 >   acquiring data in 36 spectral bands, or groups of wavelengths.
 
+Information on where to download their data products can be found at <https://modis.gsfc.nasa.gov/data/dataprod/mod29.php>
+
 Name in config: `'modis'`
 
-Information on where to download their data products can be 
-found at <https://modis.gsfc.nasa.gov/data/dataprod/mod29.php>
+Class documentation: [MODISDataLoader](../../autoapi/meshiphi/dataloaders/scalar/modis)
+
 
 ### Scalar CSV
 
@@ -261,6 +282,8 @@ for loading dummy data to test performance. As such, there is no data source
 for this dataloader.
 
 Name in config: `'scalar_csv'`
+
+Class documentation: [ScalarCSVDataLoader](../../autoapi/meshiphi/dataloaders/scalar/scalar_csv)
 
 ### Scalar GRF
 
@@ -272,6 +295,8 @@ Name in config: `'scalar_grf'`
 Can be used to generate :ref:`binary masks<binary-grf>`.
 
 For vector fields, see  the :ref:`Vector GRF page<vector-grf>`.
+
+Class documentation: [ScalarGRFDataLoader](../../autoapi/meshiphi/dataloaders/scalar/scalar_grf)
 
 Default parameters for scalar GRF dataloader. 
 
@@ -309,6 +334,8 @@ boundaries, and cast it into a data source for mesh construction. It was primari
 used in testing to debug cellbox generation. As such, there is no data source 
 for this dataloader.
 
+Class documentation: [ShapeDataLoader](../../autoapi/meshiphi/dataloaders/scalar/shape)
+
 ### Visual_iced 
 
 Visual_iced is a dataloader for .tiff images, which are outputs from the visual_iced library
@@ -323,3 +350,5 @@ Values between 0 and 100 are generated by the aggregation of the 0s and 1s withi
 **Note**: The visual_iced dataloader only supports loading in single files, as the visual_iced datasets are not temporally continuous within a given boundary.
 
 Name in config: `'visual_iced'`
+
+Class documentation: [VisualIcedDataLoader](../../autoapi/meshiphi/dataloaders/scalar/visual_iced)
