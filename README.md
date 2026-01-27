@@ -54,19 +54,6 @@ create_mesh --help
 
 See the [documentation](https://bas-amop.github.io/MeshiPhi/) for more details and advanced usage.
 
-## Documentation
-Sphinx is used to generate documentation for this project. The dependencies can be installed through pip:
-```
-pip install sphinx sphinx_markdown_builder sphinx_rtd_theme rinohtype
-```
-When updating the docs, run the following command within the MeshiPhi directory to recompile.
-```
-sphinx-build -b html ./docs/source ./docs/html
-```
-Sometimes the cache needs to be cleared for internal links to update. If facing this problem, run this from the MeshiPhi directory.
-```
-rm -r docs/build/.doctrees/
-```
 
 ## Required Data sources
 Meshiφ has been built to work with a variety of open-source atmospheric and oceanographic data sources.

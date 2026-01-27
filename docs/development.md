@@ -23,3 +23,11 @@ To avoid running slow tests:
 To run only slow tests:
 
 `pytest -m slow`
+
+## Documentation
+
+Documentation is built from the `docs/` directory using `mkdocs` and plugins.
+
+To install the docs dependencies, from the project root run `pip install --group docs` in your virtual environment.
+
+To serve the docs locally, run `mkdocs serve`.

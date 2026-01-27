@@ -26,6 +26,8 @@ plugins:
       autoapi_add_nav_entry: true
       autoapi_file_patterns:
         - "*.py"
+  - include-markdown:
+      rewrite_relative_urls: true
 
 nav:
   - Home: index.md
@@ -51,3 +53,4 @@ nav:
   - mesh_construction/overview.md
   - plotting.md
   - development.md
+  - contributing.md
