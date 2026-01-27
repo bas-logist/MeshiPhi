@@ -1,0 +1,53 @@
+site_name: MeshiPhi
+repo_url: https://github.com/bas-amop/MeshiPhi/
+edit_uri: edit/main/docs/
+theme: 
+  name: material
+  logo: https://cdn.web.bas.ac.uk/bas-style-kit/0.7.3/img/logos-symbols/bas-roundel-inverse-transparent-64.png
+  favicon: https://cdn.web.bas.ac.uk/bas-style-kit/0.7.3/img/favicon/favicon-16x16.png
+  icon:
+    repo: fontawesome/brands/github
+
+plugins: 
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - meshiphi
+          options:
+            docstring_style: google
+            show_object_full_path: true
+            merge_init_into_class: true
+            show_docstring_functions: true
+            show_docstring_classes: true
+  - mkdocs-autoapi:
+      autoapi_dir: meshiphi
+      autoapi_add_nav_entry: true
+      autoapi_file_patterns:
+        - "*.py"
+
+nav:
+  - Home: index.md
+  - installation.md
+  - examples.md
+  - cli.md
+  - overview.md
+  - Configuration:
+    - config/overview.md
+    - config/mesh_construction.md
+  - output.md
+  - Dataloaders:
+    - dataloaders/overview.md
+    - dataloaders/interface.md
+    - dataloaders/factory.md
+    - dataloaders/scalar.md
+    - dataloaders/vector.md
+    - dataloaders/lut.md
+# scalar
+# vector
+# lut
+    - dataloaders/adding.md
+  - mesh_construction/overview.md
+  - plotting.md
+  - development.md
