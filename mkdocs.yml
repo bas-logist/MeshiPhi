@@ -31,10 +31,10 @@ plugins:
 
 nav:
   - Home: index.md
+  - overview.md
   - installation.md
   - examples.md
   - cli.md
-  - overview.md
   - Configuration:
     - config/overview.md
     - config/mesh_construction.md
@@ -46,11 +46,8 @@ nav:
     - dataloaders/scalar.md
     - dataloaders/vector.md
     - dataloaders/lut.md
-# scalar
-# vector
-# lut
     - dataloaders/adding.md
-  - mesh_construction/overview.md
+  - mesh_construction.md
   - plotting.md
   - development.md
   - contributing.md
