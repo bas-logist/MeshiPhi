@@ -312,7 +312,7 @@ to the mesh.
 where the variables are as follows:
 
 
-* `loader` *(string)* : The name of the data loader to be used to add this data source to the mesh see the :ref:`abstractScalarDataloader doc page<dataloaders-overview>` for further information about the available data loaders.
+* `loader` *(string)* : The name of the data loader to be used to add this data source to the mesh see the [abstractScalarDataloader](../dataloaders/scalar.md) for further information about the available data loaders.
 * `params` *(dict)* : A dictionary containing optional parameters which may be required by the specified data loader in 'loader'. These parameters include the following:
 
    * `value_fill_types` *(string)* : Determines the actions taken if a cellbox is generated with no data. The possible values are either parent (which implies assigning the value of the parent cellbox), zero or nan.

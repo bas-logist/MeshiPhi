@@ -16,7 +16,7 @@ mesh_json = mesh.to_json()
 ```
 
 !!! note
-    Examples and a description of the configuration files can be found in the :ref:`configuration - mesh construction` section of this document.
+    Examples and a description of the configuration files can be found in the [configuration - mesh construction](config/mesh_construction.md) section of this document.
 
 
 The json object outputted by the Mesh consists of 3 sections: `config`,

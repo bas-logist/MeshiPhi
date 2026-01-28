@@ -33,5 +33,5 @@ method into details
 
 ![](../assets/figures/build-env-mesh.drawio.png)
 
-For a more in-depth explanation of the mesh construction methods, please refer to the :ref:`Mesh Construction - Classes`
+For a more in-depth explanation of the mesh construction methods, please refer to the [Mesh Construction - Classes](classes.md)
 section.

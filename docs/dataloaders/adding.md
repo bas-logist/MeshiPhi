@@ -3,7 +3,7 @@
 ## Adding within your own code
 
 If you do not wish to modify the repo to add a dataloader, you may add one into the mesh by calling the 
-`add_dataloader()` method of :ref:`MeshBuilder`.
+`add_dataloader()` method of [`MeshBuilder`](../mesh_construction/classes.md#meshbuilder).
 
 An example of how to do this is detailed below. Assuming you're working out of a Jupyter notebook, the 
 basic steps would be to
@@ -83,10 +83,10 @@ basic steps would be to
 Each dataloader is to be implemented as a separate object for the environmental mesh to interface with.
 The general workflow for creating a new dataloader is as follows:
 
-* Choose an appropriate dataloader type (see :ref:`Dataloader Types`).
+* Choose an appropriate dataloader type (see [Dataloader Types](overview.md#dataloader-types)).
 * Create a new file under `meshiphi.DataLoaders/{dataloader-type}` with an appropriate name.
-* Create `import_data()` and (optionally) `add_default_params()` methods. Examples of how to do this are shown on the :ref:`abstractScalar<abstract-scalar-dataloader-index>` and :ref:`abstractVector<abstract-vector-dataloader-index>` pages.
-* Add a new entry to the dataloader factory object, within `meshiphi.Dataloaders/Factory.py`. Instructions on how to do so are shown in :ref:`dataloader-factory`
+* Create `import_data()` and (optionally) `add_default_params()` methods. Examples of how to do this are shown on the [abstractScalar](scalar.md#abstract-scalar-base-class) and [abstractVector](vector.md#abstract-vector-base-class) pages.
+* Add a new entry to the dataloader factory object, within `meshiphi.Dataloaders/Factory.py`. Instructions on how to do so are shown in [dataloader-factory](factory.md).
 
 After performing these actions, the dataloader should be ready to go. It is useful for debugging purposes 
 to create the dataloader object from within `meshiphi.Dataloaders/Factory.py` (e.g. within

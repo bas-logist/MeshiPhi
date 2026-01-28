@@ -66,12 +66,16 @@ nav:
     - dataloaders/vector.md
     - dataloaders/lut.md
     - dataloaders/adding.md
-  - mesh_construction.md
+  - Mesh Construction:
+    - Overview: mesh_construction/index.md
+    - Classes: mesh_construction/classes.md
   - plotting.md
   - development.md
   - contributing.md
 
 markdown_extensions:
+  - toc:
+      permalink: True
   - admonition
   - pymdownx.details
   - pymdownx.superfences

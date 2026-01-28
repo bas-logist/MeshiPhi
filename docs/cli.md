@@ -20,7 +20,7 @@ positional arguments:
 config : A configuration file detailing how to build the digital environment. JSON parsable
 ```
 
-The format of the required *<config.json>* file can be found in the :ref:`configuration - mesh construction` section of the documentation.
+The format of the required *<config.json>* file can be found in the [configuration - mesh construction](config/mesh_construction.md) section of the documentation.
 There are also example configuration files available in the directory `examples/environment_config/grf_example.config.json` on GitHub.
 
 optional arguments:
@@ -30,11 +30,11 @@ optional arguments:
 -o <output location> (set output location for mesh)
 ```
 
-The format of the returned mesh.json file is explain in :ref:`the mesh.json file` section of the documentation.
+The format of the returned mesh.json file is explain in the [mesh.json file](output.md#the-meshjson-file) section of the documentation.
 
 ## `export_mesh`
 
-Once a mesh has been built using the :ref:`create_mesh` command, it can be exported other file types for 
+Once a mesh has been built using the [`create_mesh`](#create_mesh) command, it can be exported other file types for 
 use in other systems (such as GIS software) using the the *export_mesh* command.
 
 ```sh
@@ -98,7 +98,7 @@ which of the data layers you want to export as a single GEOJSON file.
 
 ## `rebuild_mesh`
 
-Once a mesh has been built using the :ref:`create_mesh` command the *rebuild_mesh* command allows a user to rebuild it based on the
+Once a mesh has been built using the [`create_mesh`](#create_mesh) command the *rebuild_mesh* command allows a user to rebuild it based on the
 original configs stored within the mesh file. This is primarily useful for debugging or to update old meshes produced with an older version
 of the package.
 
@@ -115,7 +115,7 @@ optional arguments:
 
 ##`merge_mesh`
 
-When multiple compatible meshes have been created using the :ref:`create_mesh` command, they can be merged together using the :ref:`merge_mesh` command.
+When multiple compatible meshes have been created using the [`create_mesh`](#create_mesh) command, they can be merged together using the `merge_mesh`command.
 This will combine the meshes into a single mesh file, replacing cellboxes in mesh1 with cellboxes in mesh2 where they overlap.
 
 ```sh
@@ -142,7 +142,7 @@ optional arguments:
 Meshes produced at any stage in the route planning process can be visualised using the [GeoPlot 
 library](https://github.com/bas-amop/GeoPlot). Meshes and routes can also be
 plotted in other GIS software such as QGIS or ArcGIS by exporting the mesh to a common format such as .geojson or .tif
-using the :ref:`export_mesh` command.
+using the [`export_mesh`](#export_mesh) command.
 
 ```sh
 plot_mesh <mesh.json>

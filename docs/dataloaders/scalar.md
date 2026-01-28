@@ -108,7 +108,7 @@ Class documentation: [BalticSeaIceDataLoader](../../autoapi/meshiphi/dataloaders
 
 ### Binary GRF 
 
-The binary GRF dataloader is the same as the :ref:`Scalar GRF<scalar-grf>`
+The binary GRF dataloader is the same as the [Scalar GRF](#scalar-grf).
 The only difference is that instead of returning a dataframe that consists
 of values between the min/max set in the config, this dataframe will contain
 only True/False. It is useful for generating land masks.
@@ -137,7 +137,7 @@ Default parameters for binary/mask GRF dataloader :
 
 Name in config: `'binary_grf'`
 
-See the :ref:`Scalar GRF page<scalar-grf>` for documentation on the dataloader
+See [scalar GRF](#scalar-grf) for documentation on the dataloader
 
 
 
@@ -293,9 +293,9 @@ artificial, yet somewhat realistic values for real-world variables.
 
 Name in config: `'scalar_grf'`
 
-Can be used to generate :ref:`binary masks<binary-grf>`.
+Can be used to generate [binary masks](#binary-grf).
 
-For vector fields, see  the :ref:`Vector GRF page<vector-grf>`.
+For vector fields, see [vector GRF](vector.md#vector-grf).
 
 Class documentation: [ScalarGRFDataLoader](../../autoapi/meshiphi/dataloaders/scalar/scalar_grf)
 

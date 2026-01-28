@@ -13,7 +13,7 @@ Documentation for the abstract `LutDataLoader` is available in the [API document
 ## LUT Dataloader Examples
 
 Creating a LUT dataloader is almost identical to creating a 
-:ref:`scalar dataloader<abstract-scalar-dataloader>`. The key differences 
+[scalar dataloader](scalar.md#abstract-scalar-base-class). The key differences 
 are that the `LUTDataLoader` abstract base class must be used, and 
 regions are defined by Shapely polygons. Data is imported and saved as 
 GeoPandas dataframes, holding a polygon and an associated value.

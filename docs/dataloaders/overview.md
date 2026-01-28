@@ -24,22 +24,22 @@ There are three main types of dataloaders that are implemented as abstract class
 **Scalar dataloaders** are to be used on scalar datasets; i.e. variables with a single value
 per latitude/longitude(/time) coordinate. Examples of this are bathymetry, sea ice concentration, etc... 
 While the raw datasets may contain more than one variable (a common example being the existence of values and errors in the same file),
-these *MUST* be cut down to just coordinates, and a single variable, in order to work correctly with the :ref:`abstractScalar<abstract-scalar-dataloader>` dataloader.
-To read more on how to implement these, follow instructions in :ref:`Adding Dataloaders page<adding-dataloaders>` and the :ref:`abstract scalar dataloader page<abstract-scalar-dataloader-index>`.
+these *MUST* be cut down to just coordinates, and a single variable, in order to work correctly with the [abstractScalar](scalar.md#abstract-scalar-base-class) dataloader.
+To read more on how to implement these, follow instructions in [Adding Dataloaders](adding.md) page and the [abstract scalar dataloader](scalar.md#abstract-scalar-base-class) page.
 
 **Vector dataloaders** are to be used on vector datasets; i.e. variables with multi-dimensional values
 per latitude/longitude(/time) coordinate. Examples of this are ocean currents,
 wind, etc... The datasets will have multiple data variables, and should be cut down to include only coordinates ('lat', 'long', 
 and optionally 'time'), and the values for each dimensional component of the variable. This will generally be two dimensions, 
-however the :ref:`abstractVector<abstract-vector-dataloader>` dataloader should be flexible to n-dimensional data. 
+however the [abstractVector](vector.md#abstract-vector-base-class) dataloader should be flexible to n-dimensional data. 
 Rigor should be taken when testing these dataloaders to ensure that the outputs of `get_value()` method of these dataloaders produces outputs that make sense.
-To read more on how to implement these, follow instructions in :ref:`Adding Dataloaders page<adding-dataloaders>` and :ref:`abstract vector dataloader page<abstract-vector-dataloader-index>`.
+To read more on how to implement these, follow instructions in [Adding Dataloaders](adding.md) page and [abstract vector](vector.md#abstract-vector-base-class) dataloader page.
 
 **Look-up Table Dataloaders** are to be used on datasets where boundaries define a value.
 Real data is always preferred to this method, however in the case where there is no data, the LUT
 can provide an alternative. Examples of this include ice density, exclusion zones, and marine-protected areas. For these examples,
 weather conditions dictate their values, and these weather conditions can be localised to specific areas.
-To read more on how to implement these, follow instructions in :ref:`Adding Dataloaders page<adding-dataloaders>` and :ref:`abstract LUT dataloader page<abstract-lut-dataloader-index>`.
+To read more on how to implement these, follow instructions in [Adding Dataloaders](adding.md) page and [abstract LUT](lut.md#abstract-lut-base-class) dataloader page.
 
 
 
@@ -48,16 +48,16 @@ To read more on how to implement these, follow instructions in :ref:`Adding Data
 
 To look at specific abstract dataloaders, use the following links:
 
-- :ref:`abstract-scalar-dataloader`
-- :ref:`abstract-vector-dataloader`
-- :ref:`abstract-lut-dataloader`
+- [abstract scalar dataloader](scalar.md#abstract-scalar-base-class)
+- [abstract vector dataloader](vector.md#abstract-vector-base-class)
+- [abstract LUT dataloader](lut.md#abstract-lut-base-class)
 
 These are the templates to be used when implementing new dataloaders into MeshiPhi.
 They have been split into three separate categories: Scalar, Vector, and LUT, detailed in `Dataloader Types`_.
 The abstract classes generalise the methods used by each dataloader type to produce outputs
-that the Environmental Mesh can retrieve via the  :ref:`dataloader interface<dataloader-interface>`. 
-Scalar and Vector dataloaders are flexible in that they can store and process data as both `xarray.Dataset`'s or 
-`pandas.DataFrame`'s (and by extension, `dask.DataFrames`'s). 
+that the Environmental Mesh can retrieve via the [dataloader interface](interface.md). 
+Scalar and Vector dataloaders are flexible in that they can store and process data as both `xarray.Dataset`s or 
+`pandas.DataFrame`s (and by extension, `dask.DataFrames`s). 
 When creating your own, `dask` and `xarray` should be utilised as much as possible to 
 reduce memory consumption.
 LUT dataloaders are flexible in that they can read in CSV's, GeoJSON's, or Shapefiles, but are otherwise stored internally
