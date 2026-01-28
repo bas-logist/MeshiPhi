@@ -8,6 +8,24 @@ Thank you for considering contributing to MeshiPhi!
 - Run tests and linters before submitting a pull request.
 - Add or update documentation as needed.
 
+## Development Setup
+
+We provide a `Makefile` with common development commands to streamline your workflow. After cloning the repository, set up your development environment:
+
+```sh
+pip install -e .[dev]
+```
+
+### Makefile Commands
+
+The following commands are available via the Makefile:
+
+- **`make coverage`** - Generate coverage report (terminal and HTML)
+- **`make clean`** - Clean build artifacts and cache files
+- **`make docs`** - Build documentation
+- **`make docs-clean`** - Clean documentation build artifacts
+- **`make help`** - Show all available commands with descriptions
+
 ## Pre-commit Hooks
 We use [pre-commit](https://pre-commit.com/) to automate code linting and formatting (Ruff). Please install and run pre-commit before pushing your changes:
 

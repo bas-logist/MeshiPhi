@@ -10,6 +10,7 @@
 [![Issues](https://img.shields.io/github/issues/bas-amop/MeshiPhi)](https://github.com/bas-amop/MeshiPhi/issues)
 [![License](https://img.shields.io/github/license/bas-amop/MeshiPhi)](https://github.com/bas-amop/MeshiPhi/blob/main/LICENSE)
 [![Test Status](https://github.com/bas-amop/MeshiPhi/actions/workflows/test.yml/badge.svg)](https://github.com/bas-amop/MeshiPhi/actions/workflows/test.yml)
+[![Coverage](https://img.shields.io/badge/coverage-report-blue)](https://github.com/bas-amop/MeshiPhi/actions/workflows/test.yml)
 [![Ruff](https://img.shields.io/badge/code%20style-ruff-0C3A5C?logo=ruff&logoColor=white)](https://github.com/astral-sh/ruff)
 
 
@@ -64,9 +65,8 @@ A list of supported data sources and their associated data-loaders is given in t
 ## Developers
 Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, David Wyld, Thomas Zwagerman, Jonathan Smith, Maria Fox, and James Byrne
 
-## Collaboration
-We are currently assessing the best practice for collaboration on the codebase, until then please contact [polarroute@bas.ac.uk](polarroute@bas.ac.uk) for further info.
-
+## Contributing
+For more details on contributing, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 This software is licensed under a MIT license, but request users cite our publication.
