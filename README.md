@@ -69,7 +69,7 @@ Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, David Wyld, Thomas Zwage
 For more details on contributing, see the [contributing](./CONTRIBUTING.md) guide.
 
 ## License
-This software is licensed under a MIT license, but request users cite our publication.
+This software is licensed under a MIT license, but request users cite our publication:
 
 Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne,  J. Alexander Brearley, Derek Long, Michael Meredith, Maria Fox (2022) Autonomous Passage Planning for a Polar Vessel. _arXiv_, <https://arxiv.org/abs/2209.02389>
 
