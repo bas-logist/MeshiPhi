@@ -26,9 +26,11 @@ With that said, below are instructions for various operating systems.
 
 ### Windows
 
-**Note**: We assume a version of Windows 10 or higher, with a working version of Python 3.9 including pip installed. 
+!!! note
+    We assume a version of Windows 10 or higher, with a working version of Python 3.9 including pip installed. 
 
-**Note**: We recommend installing MeshiPhi into a virtual environment.
+!!! note
+    We recommend installing MeshiPhi into a virtual environment.
 
 
 ```sh

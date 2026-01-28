@@ -7,6 +7,11 @@ theme:
   favicon: https://cdn.web.bas.ac.uk/bas-style-kit/0.7.3/img/favicon/favicon-16x16.png
   icon:
     repo: fontawesome/brands/github
+  features:
+    # Enables copying of code blocks
+    - content.code.copy
+    # Enables "edit this page" to contribute to docs
+    - content.action.edit
 
 plugins: 
   - search
@@ -37,11 +42,11 @@ nav:
   - examples.md
   - cli.md
   - Configuration:
-    - config/overview.md
-    - config/mesh_construction.md
+    - Overview: config/overview.md
+    - Mesh Construction: config/mesh_construction.md
   - output.md
   - Dataloaders:
-    - dataloaders/overview.md
+    - Overview: dataloaders/overview.md
     - dataloaders/interface.md
     - dataloaders/factory.md
     - dataloaders/scalar.md
@@ -52,5 +57,10 @@ nav:
   - plotting.md
   - development.md
   - contributing.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 
 copyright: Copyright &copy; 2026 British Antarctic Survey

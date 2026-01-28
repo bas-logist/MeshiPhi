@@ -194,8 +194,8 @@ Name in config: `'sose'`
 
 Class documentation: [SOSEDataLoader](../../autoapi/meshiphi/dataloaders/vector/sose)
 
-**Note**: This dataloader may not work as is for new data downloaded, it has been internally collated into 
-a more easily ingestable format.
+!!! note
+    This dataloader may not work as is for new data downloaded, it has been internally collated into  a more easily ingestable format.
 
 ### Vector CSV 
 

@@ -22,9 +22,7 @@ GeoPandas dataframes, holding a polygon and an associated value.
 
 ### Density 
 
-Density values were taken from the paper 'Thickness distribution of Antarctic sea ice'
-(Worby, A.P. et al.). This paper took a density model from the paper 'Structure, principal 
-properties and strength of Antarctic sea ice' (Buynitskiy, V.K.). 
+Density values were taken from the paper 'Thickness distribution of Antarctic sea ice' Worby, A.P. _et al._ (2008) <https://doi.org/10.1029/2007JC004254>. This paper took a density model from the paper 'Structure, principal properties and strength of Antarctic sea ice' (Buynitskiy, V.K.). 
 
 Name in config: `'density'`
 
@@ -67,7 +65,7 @@ Class documentation: [ScotlandNCMPA](../../autoapi/meshiphi/dataloaders/lut/scot
 
 ### Thickness Dataloader
 
-Thickness values were taken from the paper 'Thickness distribution of Antarctic sea ice' (Worby, A.P. et al.).
+Thickness values were taken from the paper 'Thickness distribution of Antarctic sea ice' Worby, A.P. _et al._ (2008) <https://doi.org/10.1029/2007JC004254>
 
 Data is generated using the values from this paper, and so no data file is available for download.
 

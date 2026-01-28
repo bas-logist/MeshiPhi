@@ -250,7 +250,8 @@ where the variables are as follows:
 * `cell_width`    *(float, degrees)*      : Initial Cell Box Width prior to splitting 
 * `cell_height`   *(float, degrees)*      : Initial Cell Box Height prior to splitting 
 
-**Note**: Variables `start_time` and `end_time` also support reference to system time using the keyword **TODAY** *e.g.* 
+!!! note
+    Variables `start_time` and `end_time` also support reference to system time using the keyword **TODAY** *e.g.* 
 
 ```
 "startTime": "TODAY" ,  "endTime": "TODAY + 5"
@@ -323,7 +324,8 @@ where the variables are as follows:
    * [vector] `splitting_conditions` *(list)* : The conditions which determine if a cellbox should be split based on a vector dataset. 
       * `curl` *(float)* : The threshold value above which a cellbox will split. Is calculated as the maximum value of **Curl(F)** within a cellbox (where **F** is the vector field).
 
-**Note**: Splitting conditions are applied in the order they are specified in the configuration file.
+!!! note
+    Splitting conditions are applied in the order they are specified in the configuration file.
 
 
 ## Splitting

@@ -15,7 +15,8 @@ mesh = Mesh(config)
 mesh_json = mesh.to_json()
 ```
 
-**Note**: Examples and a description of the configuration files can be found in the :ref:`configuration - mesh construction` section of this document.
+!!! note
+    Examples and a description of the configuration files can be found in the :ref:`configuration - mesh construction` section of this document.
 
 
 The json object outputted by the Mesh consists of 3 sections: `config`,
@@ -83,7 +84,8 @@ Where the values within the CellBox represent the following:
 
 For each CellBox in the `cellboxes` section of the json object, there will be a corresponding entry in the `neighbour_graph`.
 
-**Note**: Once the vehicle accessibility conditions have been applied to the json object, this may no longer be true as inaccessible CellBoxes will be removed from *neighbour_graph* but will remain in *cellboxes*
+!!! note
+    Once the vehicle accessibility conditions have been applied to the json object, this may no longer be true as inaccessible CellBoxes will be removed from *neighbour_graph* but will remain in *cellboxes*
 
 Each entry in the `neighbour_graph` is of the following form:
 
