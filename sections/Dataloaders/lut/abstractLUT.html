@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7.5.1.1. Abstract Look Up Table Dataloader &mdash; meshiphi 2.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=c3c8ae58"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="7.5.3.1. Density Dataloader" href="implemented/Density.html" />
+    <link rel="prev" title="7.5. LUT Dataloaders" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            meshiphi
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Installation.html">1. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Examples.html">2. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Command_line_interface.html">3. Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Code_overview.html">4. Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Configuration/Configuration_overview.html">5. Configuration Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Outputs.html">6. Outputs - Data Types</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../overview.html">7. Dataloader Overview</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../DataLoaderInterface.html">7.1. Dataloader Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Factory.html">7.2. Dataloader Factory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scalar/index.html">7.3. Scalar Dataloaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/index.html">7.4. Vector Dataloaders</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">7.5. LUT Dataloaders</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#abstract-lut-base-class">7.5.1. Abstract LUT Base Class</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">7.5.1.1. Abstract Look Up Table Dataloader</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#lut-dataloader-examples">7.5.2. LUT Dataloader Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#implemented-lut-dataloaders">7.5.3. Implemented LUT Dataloaders</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../AddingDataloaders.html">7.6. Adding New Dataloaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../overview.html#section-overview">7.7. Section Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../Mesh_Construction/Mesh_construction_overview.html">8. Methods - Mesh Construction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Plotting/mesh_plotting.html">9. Mesh Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing_strategy.html">10. Testing Strategy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">meshiphi</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../overview.html"><span class="section-number">7. </span>Dataloader Overview</a></li>
+          <li class="breadcrumb-item"><a href="index.html"><span class="section-number">7.5. </span>LUT Dataloaders</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">7.5.1.1. </span>Abstract Look Up Table Dataloader</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/sections/Dataloaders/lut/abstractLUT.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-meshiphi.dataloaders.lut.abstract_lut">
+<span id="abstract-look-up-table-dataloader"></span><span id="abstract-lut-dataloader"></span><h1><span class="section-number">7.5.1.1. </span>Abstract Look Up Table Dataloader<a class="headerlink" href="#module-meshiphi.dataloaders.lut.abstract_lut" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">meshiphi.dataloaders.lut.abstract_lut.</span></span><span class="sig-name descname"><span class="pre">LutDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader" title="Link to this definition"></a></dt>
+<dd><p>Abstract class for all LookUp Table Datasets.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.__init__" title="Link to this definition"></a></dt>
+<dd><p>This is where large-scale operations are performed,
+such as importing data, downsampling, reprojecting, and renaming
+variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bounds</strong> (<em>Boundary</em>) – Initial mesh boundary to limit scope of data ingest</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – Values needed by dataloader to initialise. Unique to each
+dataloader</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.self.data">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.self.data" title="Link to this definition"></a></dt>
+<dd><p>Data stored by dataloader to use when called upon by the mesh.
+Must be saved in mercator projection (EPSG:4326), with
+columns ‘geometry’ and data_name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>gpd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.self.data_name">
+<span class="sig-prename descclassname"><span class="pre">self.</span></span><span class="sig-name descname"><span class="pre">data_name</span></span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.self.data_name" title="Link to this definition"></a></dt>
+<dd><p>Name of scalar variable. Must be the column name in the dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If no data lies within the parsed boundary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.add_default_params">
+<span class="sig-name descname"><span class="pre">add_default_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.add_default_params" title="Link to this definition"></a></dt>
+<dd><p>Set default values for all LUT dataloaders. This function should be
+overloaded to include any extra params for a specific dataloader</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary containing attributes that are required for each
+dataloader.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of attributes the dataloader will require,
+completed with default values if not provided in config.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.calculate_coverage">
+<span class="sig-name descname"><span class="pre">calculate_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.calculate_coverage" title="Link to this definition"></a></dt>
+<dd><p>Calculates percentage of boundary covered by dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bounds</strong> (<em>Boundary</em>) – Boundary being compared against</p></li>
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – Dataset with shapely polygons in ‘geometry’ column
+Defaults to objects internal dataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decimal fraction of boundary covered by the dataset</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.downsample">
+<span class="sig-name descname"><span class="pre">downsample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.downsample" title="Link to this definition"></a></dt>
+<dd><p>Downsampling not supported by LookUpTable Dataloader</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.get_data_col_name">
+<span class="sig-name descname"><span class="pre">get_data_col_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.get_data_col_name" title="Link to this definition"></a></dt>
+<dd><p>Retrieve name of data column.
+Used for when data_name not defined in params.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Name of data column</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If multiple possible data columns found, can’t retrieve data
+    name</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.get_hom_condition">
+<span class="sig-name descname"><span class="pre">get_hom_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitting_conds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.get_hom_condition" title="Link to this definition"></a></dt>
+<dd><p>Retrieves homogeneity condition of data within
+boundary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bounds</strong> (<em>Boundary</em>) – Boundary object with limits of datarange to analyse</p></li>
+<li><p><strong>splitting_conds</strong> (<em>dict</em>) – <p>Containing the following keys:</p>
+<dl class="simple">
+<dt>’boundary’:</dt><dd><p><cite>(boolean)</cite> True if user wants to split when polygon boundary
+goes through bounds</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>The homogeniety condtion returned is of the form:</p>
+<p>’CLR’ = the boundary is completely contained within the LUT
+regions, no need to split</p>
+<p>’MIN’ = the boundary contains no LUT data, can’t split</p>
+<p>’HET’ = the boundary contains an edge within the LUT data,
+should split</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.get_value">
+<span class="sig-name descname"><span class="pre">get_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agg_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipna</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.get_value" title="Link to this definition"></a></dt>
+<dd><p>Retrieve aggregated value from within bounds</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aggregation_type</strong> (<em>str</em>) – Method of aggregation of datapoints within
+bounds. Can be upper or lower case.
+Accepts ‘MIN’, ‘MAX’, ‘MEAN’, ‘MEDIAN’, ‘STD’, ‘COUNT’</p></li>
+<li><p><strong>bounds</strong> (<em>Boundary</em>) – Boundary object with limits of lat/long</p></li>
+<li><p><strong>skipna</strong> (<em>bool</em>) – Defines whether to propogate NaN’s or not
+Default = False (includes NaN’s)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>{variable (str): aggregated_value (float)}
+Aggregated value within bounds following aggregation_type</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – aggregation type not in list of available methods</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.import_data">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.import_data" title="Link to this definition"></a></dt>
+<dd><p>User defined method for importing data from files, or even generating
+data from scratch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>Coordinates and data being imported from file</p>
+<dl class="simple">
+<dt>if pd.DataFrame,</dt><dd><ul class="simple">
+<li><p>Must have columns ‘geometry’ and data_name</p></li>
+<li><p>Must have single data column</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.reproject">
+<span class="sig-name descname"><span class="pre">reproject</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.reproject" title="Link to this definition"></a></dt>
+<dd><p>Reprojection not supported by LookUpTable Dataloader</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.set_data_col_name">
+<span class="sig-name descname"><span class="pre">set_data_col_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.set_data_col_name" title="Link to this definition"></a></dt>
+<dd><p>Sets name of data column/data variable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name to replace currently stored name with</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Data with variable name changed</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.trim_datapoints">
+<span class="sig-name descname"><span class="pre">trim_datapoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.trim_datapoints" title="Link to this definition"></a></dt>
+<dd><p>Trims datapoints from self.data within boundary defined by ‘bounds’.
+self.data can be pd.DataFrame or xr.Dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bounds</strong> (<em>Boundary</em>) – Limits of lat/long/time to select data from</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Trimmed dataset in same format as self.data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.verify_data">
+<span class="sig-name descname"><span class="pre">verify_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#meshiphi.dataloaders.lut.abstract_lut.LutDataLoader.verify_data" title="Link to this definition"></a></dt>
+<dd><p>Verifies that all geometries read in are Polygons or MultiPolygons
+If MultiPolygon, then split out into multiple Polygons</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>pd.DataFrame</em><em>, </em><em>optional</em>) – DataFrame with at least columns ‘geometry’ and a variable.
+Defaults to dataloader’s data attribute.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If read in a geometry that is not Polygon or MultiPolygon</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="7.5. LUT Dataloaders" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="implemented/Density.html" class="btn btn-neutral float-right" title="7.5.3.1. Density Dataloader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-, BAS AI Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

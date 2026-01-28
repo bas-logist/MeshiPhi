@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Methods - Mesh Construction &mdash; meshiphi 2.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=c3c8ae58"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="8.4.1. Mesh Construction - Classes" href="Mesh_construction_classes.html" />
+    <link rel="prev" title="7.6. Adding New Dataloaders" href="../Dataloaders/AddingDataloaders.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            meshiphi
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Installation.html">1. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Examples.html">2. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Command_line_interface.html">3. Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Code_overview.html">4. Background</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Configuration/Configuration_overview.html">5. Configuration Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Outputs.html">6. Outputs - Data Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Dataloaders/overview.html">7. Dataloader Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Methods - Mesh Construction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">8.1. Mesh Construction - Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-construction-design">8.2. Mesh Construction Design</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-construction-use-case">8.3. Mesh Construction Use case</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mesh-construction-additional">8.4. Mesh Construction - Additional</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Mesh_construction_classes.html">8.4.1. Mesh Construction - Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Mesh_validation.html">8.4.2. Mesh Validation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Plotting/mesh_plotting.html">9. Mesh Plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing_strategy.html">10. Testing Strategy</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">meshiphi</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Methods - Mesh Construction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/sections/Mesh_Construction/Mesh_construction_overview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="methods-mesh-construction">
+<span id="mesh-construction-overview"></span><h1><span class="section-number">8. </span>Methods - Mesh Construction<a class="headerlink" href="#methods-mesh-construction" title="Link to this heading"></a></h1>
+<p>Throughout this section we will outline an overview of the Environment Mesh Construction
+module, describe the main classes that composes the module and illustrate a use case for
+the Discrete Meshing of the environment.</p>
+<section id="id1">
+<h2><span class="section-number">8.1. </span>Mesh Construction - Overview<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>A general overview of the method can be seen below:</p>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="../../_images/FlowDiagram_MeshGraph.png"><img alt="../../_images/FlowDiagram_MeshGraph.png" src="../../_images/FlowDiagram_MeshGraph.png" width="700" />
+</a>
+<figcaption>
+<p><span class="caption-text">Overview figure of the Discrete Meshing from the multi-data input.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="mesh-construction-design">
+<h2><span class="section-number">8.2. </span>Mesh Construction Design<a class="headerlink" href="#mesh-construction-design" title="Link to this heading"></a></h2>
+<p>The below UML diagram describes how the Environment Mesh Construction module is designed.
+It depicts the classes of the module and how they interact with each other.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../../_images/mesh-construct-UML.drawio.png"><img alt="../../_images/mesh-construct-UML.drawio.png" src="../../_images/mesh-construct-UML.drawio.png" width="1000" />
+</a>
+</figure>
+</section>
+<section id="mesh-construction-use-case">
+<h2><span class="section-number">8.3. </span>Mesh Construction Use case<a class="headerlink" href="#mesh-construction-use-case" title="Link to this heading"></a></h2>
+<p>This sequence diagram illustrates a use case for the Discrete Meshing of the environment,
+where the module’s client starts by initializing the MeshBuilder with a certain mesh
+configuration (see Input-Configuration section for more details about the configuration format)
+then calls build_environment_mesh method.</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../../_images/mesh-build-sequence-diagram.drawio.png"><img alt="../../_images/mesh-build-sequence-diagram.drawio.png" src="../../_images/mesh-build-sequence-diagram.drawio.png" width="1000" />
+</a>
+</figure>
+<p>The following diagram depicts the sequence of events that take place inside build_environment_mesh
+method into details</p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../../_images/build-env-mesh.drawio.png"><img alt="../../_images/build-env-mesh.drawio.png" src="../../_images/build-env-mesh.drawio.png" width="1000" />
+</a>
+</figure>
+<p>For a more in-depth explanation of the mesh construction methods, please refer to the <a class="reference internal" href="Mesh_construction_classes.html#mesh-construction-classes"><span class="std std-ref">Mesh Construction - Classes</span></a>
+section.</p>
+</section>
+<section id="mesh-construction-additional">
+<h2><span class="section-number">8.4. </span>Mesh Construction - Additional<a class="headerlink" href="#mesh-construction-additional" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Mesh_construction_classes.html">8.4.1. Mesh Construction - Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Mesh_validation.html">8.4.2. Mesh Validation</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../Dataloaders/AddingDataloaders.html" class="btn btn-neutral float-left" title="7.6. Adding New Dataloaders" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Mesh_construction_classes.html" class="btn btn-neutral float-right" title="8.4.1. Mesh Construction - Classes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021-, BAS AI Lab.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
