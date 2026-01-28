@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from math import asin, cos, radians, sin, sqrt
 from typing import TYPE_CHECKING, Any
 
-from shapely import MultiPolygon, wkt
+from shapely import wkt
 
 if TYPE_CHECKING:
-    from shapely.geometry import Polygon
+    from shapely.geometry import MultiPolygon, Polygon
 
 
 class Boundary:
@@ -423,22 +423,23 @@ class Boundary:
                 + f"{self.get_long_min()} {self.get_lat_min()}))"
             )
         else:
-            # Create a multipolygon of boundary
-            polygon_1 = wkt.loads(
-                f"POLYGON(({self.get_long_min()} {self.get_lat_min()},"
+            # Create a multipolygon of boundary directly from WKT string
+            # This avoids numpy/shapely compatibility issues when constructing from separate polygons
+            polygon = wkt.loads(
+                "MULTIPOLYGON((("
+                + f"{self.get_long_min()} {self.get_lat_min()},"
                 + f"{self.get_long_min()} {self.get_lat_max()},"
                 + f"180 {self.get_lat_max()},"
                 + f"180 {self.get_lat_min()},"
-                + f"{self.get_long_min()} {self.get_lat_min()}))"
-            )
-            polygon_2 = wkt.loads(
-                f"POLYGON((-180 {self.get_lat_min()},"
+                + f"{self.get_long_min()} {self.get_lat_min()}"
+                + ")),(("
+                + f"-180 {self.get_lat_min()},"
                 + f"-180 {self.get_lat_max()},"
                 + f"{self.get_long_max()} {self.get_lat_max()},"
                 + f"{self.get_long_max()} {self.get_lat_min()},"
-                + f"-180 {self.get_lat_min()}))"
+                + f"-180 {self.get_lat_min()}"
+                + ")))"
             )
-            polygon = MultiPolygon([polygon_1, polygon_2])
         return polygon
 
     def to_poly_string(self) -> str:

@@ -10,7 +10,7 @@ import tracemalloc
 from calendar import monthrange
 from datetime import datetime, timedelta
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Callable, Generator, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Any, Callable, Generator, ParamSpec, TypeVar, cast, overload
 
 import numpy as np
 import numpy.typing as npt
@@ -26,6 +26,8 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 F = TypeVar("F", bound=Callable[..., Any])
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 @overload
@@ -172,11 +174,13 @@ def round_to_sigfig(
         raise ValueError(f"Cannot round {type(x)} to sig figs!")
 
     # Cast as array if not initially, so that later processes all act as expected
+    x_array: npt.NDArray[np.floating[Any]]
     if orig_type in [int, float, np.float64]:
-        x = [x]  # type: ignore[list-item]
-    x = np.array(x)
+        x_array = np.array([float(x)], dtype=np.float64)  # Explicit conversion to array
+    else:
+        x_array = np.array(x, dtype=np.float64)
     # Create a mask disabling any values of inf or zero being passed to log10
-    loggable_idxs = ([x != 0] & np.isfinite(x))[0]
+    loggable_idxs = ([x_array != 0] & np.isfinite(x_array))[0]
     # Determine number of decimal places to round each number to
     # np.abs because can't find log of negative number
     # np.log10 to get position of most significant digit
@@ -186,11 +190,13 @@ def round_to_sigfig(
     # np.array.astype(int) to enable np.around to work later
     dec_pl = (
         sigfig
-        - np.floor(np.log10(np.abs(x), where=loggable_idxs, out=np.zeros_like(x))).astype(int)
+        - np.floor(
+            np.log10(np.abs(x_array), where=loggable_idxs, out=np.zeros_like(x_array))
+        ).astype(int)
         - 1
     )
     # Round to sig figs
-    rounded = np.array([np.around(x[i], decimals=dec_pl[i]) for i in range(len(x))])
+    rounded = np.array([np.around(x_array[i], decimals=dec_pl[i]) for i in range(len(x_array))])
     # Return as single value if input that way
     if orig_type in [int, float]:
         return cast("int | float", rounded.item())
@@ -276,9 +282,9 @@ def gaussian_random_field(size: int, alpha: float) -> npt.NDArray[np.floating[An
     return grf / (np.max(grf) - np.min(grf))
 
 
-def memory_trace(func: F) -> F:
+def memory_trace(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         tracemalloc.start(20)
         res = func(*args, **kwargs)
         snapshot = tracemalloc.take_snapshot()
@@ -289,25 +295,25 @@ def memory_trace(func: F) -> F:
         logging.info("\n".join(stat.traceback.format()))
         return res
 
-    return wrapper  # type: ignore[return-value]
+    return wrapper
 
 
-def timed_call(func: F) -> F:
+def timed_call(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         start = time.perf_counter()
         res = func(*args, **kwargs)
         end = time.perf_counter()
         logger.info(f"Timed call to {func.__name__} took {end - start:02f} seconds")
         return res
 
-    return wrapper  # type: ignore[return-value]
+    return wrapper
 
 
 # CLI utilities
 def setup_logging(
-    func: F, log_format: str = "[%(asctime)-17s :%(levelname)-8s] - %(message)s"
-) -> F:
+    func: Callable[P, R], log_format: str = "[%(asctime)-17s :%(levelname)-8s] - %(message)s"
+) -> Callable[P, R]:
     """Wraps a CLI endpoint and sets up logging for it
 
     This is probably not the smoothest implementation, but it's an educational
@@ -322,7 +328,7 @@ def setup_logging(
     """
 
     @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         parsed_args = func(*args, **kwargs)
         level = logging.INFO
 
@@ -343,4 +349,4 @@ def setup_logging(
         logging.getLogger("urllib3").setLevel(logging.WARNING)
         return parsed_args
 
-    return wrapper  # type: ignore[return-value]
+    return wrapper

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import xarray as xr
 
@@ -87,4 +87,4 @@ class VisualIcedDataLoader(ScalarDataLoader):
 
         # convert back to xarray
         vi_dataframe = vi_dataframe.set_index(["x", "y"])
-        return vi_dataframe.to_xarray()  # type: ignore[no-any-return]
+        return cast("xr.Dataset", vi_dataframe.to_xarray())

@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 import pandas as pd
-import xarray as xr  # noqa: TC002
 
 from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
 
 if TYPE_CHECKING:
+    import xarray as xr
+
     from meshiphi.mesh_generation.boundary import Boundary
 
 logger = logging.getLogger(__name__)
@@ -99,7 +100,7 @@ class ShapeDataLoader(ScalarDataLoader):
             raise ValueError(f"Unknown abstract shape type: {self.dataloader_name}")
 
         # No need to trim data, as was defined by bounds
-        return data.set_index(["lat", "long"]).to_xarray()  # type: ignore[no-any-return]
+        return cast("xr.Dataset", data.set_index(["lat", "long"]).to_xarray())
 
     def gen_circle(self, bounds: Boundary) -> pd.DataFrame:
         """
@@ -118,9 +119,7 @@ class ShapeDataLoader(ScalarDataLoader):
         # Set centre as centre of data_grid if none specified
         if self.radius is None:
             raise ValueError("radius parameter is required for circle")
-        centre: tuple[float | None, float | None] = (
-            self.centre if hasattr(self, "centre") else (None, None)  # type: ignore[assignment]
-        )
+        centre = self.centre if self.centre is not None else (None, None)
         c_y = self.lat[int(self.ny / 2)] if centre[0] is None else centre[0]
         c_x = self.long[int(self.nx / 2)] if centre[1] is None else centre[1]
 
@@ -154,9 +153,7 @@ class ShapeDataLoader(ScalarDataLoader):
         # Change boolean values to int
         dummy_df["dummy_data"] = dummy_df["dummy_data"].astype(int)
         # Multiply by scaling factor if present
-        multiplier: float = (
-            self.multiplier if hasattr(self, "multiplier") and self.multiplier is not None else 1.0
-        )
+        multiplier = self.multiplier if self.multiplier is not None else 1.0
         dummy_df["dummy_data"] = dummy_df["dummy_data"] * multiplier
 
         return dummy_df
@@ -276,9 +273,7 @@ class ShapeDataLoader(ScalarDataLoader):
         # Set centre as centre of data_grid if none specified
         if self.width is None or self.height is None:
             raise ValueError("width and height parameters are required for rectangle")
-        centre_rect: tuple[float | None, float | None] = (
-            self.centre if hasattr(self, "centre") else (None, None)  # type: ignore[assignment]
-        )
+        centre_rect = self.centre if self.centre is not None else (None, None)
         c_y = self.lat[int(self.ny / 2)] if centre_rect[0] is None else centre_rect[0]
         c_x = self.long[int(self.nx / 2)] if centre_rect[1] is None else centre_rect[1]
 

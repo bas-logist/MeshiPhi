@@ -365,12 +365,19 @@ class EnvironmentMesh:
                 if str(neighbour_case) == "1":
                     north_east_neighbours.append(int(cellbox_l.get_id()))
 
+            # Ensure the cellbox exists in neighbour graph before appending
+            cellbox_id = cellbox_s.get_id()
+            if cellbox_id not in self.neighbour_graph.get_graph():
+                self.neighbour_graph.add_node(
+                    cellbox_id, {-4: [], -3: [], -2: [], -1: [], 1: [], 2: [], 3: [], 4: []}
+                )
+
             for neighbour in north_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-4"].append(neighbour)  #
+                self.neighbour_graph.get_graph()[cellbox_id]["-4"].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id]["-3"].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id]["1"].append(neighbour)
 
     def tie_southern_cellbox_ng(
         self,
@@ -407,12 +414,19 @@ class EnvironmentMesh:
                 if str(neighbour_case) == "1":
                     north_east_neighbours.append(int(cellbox_s.get_id()))
 
+            # Ensure the cellbox exists in neighbour graph before appending
+            cellbox_id = cellbox_l.get_id()
+            if cellbox_id not in self.neighbour_graph.get_graph():
+                self.neighbour_graph.add_node(
+                    cellbox_id, {-4: [], -3: [], -2: [], -1: [], 1: [], 2: [], 3: [], 4: []}
+                )
+
             for neighbour in north_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-4"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][-4].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][-3].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][1].append(neighbour)
 
         # Tie southern interior cellboxes to southern exterior cellboxes
 
@@ -436,12 +450,19 @@ class EnvironmentMesh:
                 if str(neighbour_case) == "3":
                     south_east_neighbours.append(int(cellbox_l.get_id()))
 
+            # Ensure the cellbox exists in neighbour graph before appending
+            cellbox_id = cellbox_s.get_id()
+            if cellbox_id not in self.neighbour_graph.get_graph():
+                self.neighbour_graph.add_node(
+                    cellbox_id, {-4: [], -3: [], -2: [], -1: [], 1: [], 2: [], 3: [], 4: []}
+                )
+
             for neighbour in south_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["4"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][4].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][-1].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][3].append(neighbour)
 
     def tie_eastern_cellbox_ng(
         self,

@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 import pandas as pd
-import xarray as xr  # noqa: TC002
 
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 from meshiphi.utils import gaussian_random_field
 
 if TYPE_CHECKING:
+    import xarray as xr
+
     from meshiphi.mesh_generation.boundary import Boundary
 
 
@@ -123,4 +124,4 @@ class VectorGRFDataLoader(VectorDataLoader):
         # Cast to dataframe
         data = pd.DataFrame(rows).set_index(["lat", "long"])
         # Set to xarray dataset
-        return data.to_xarray()  # type: ignore[no-any-return]
+        return cast("xr.Dataset", data.to_xarray())
