@@ -1,0 +1,83 @@
+site_name: MeshiPhi
+repo_url: https://github.com/bas-amop/MeshiPhi/
+edit_uri: edit/main/docs/
+theme: 
+  name: material
+  logo: https://cdn.web.bas.ac.uk/bas-style-kit/0.7.3/img/logos-symbols/bas-roundel-inverse-transparent-64.png
+  favicon: https://cdn.web.bas.ac.uk/bas-style-kit/0.7.3/img/favicon/favicon-16x16.png
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    # Enables copying of code blocks
+    - content.code.copy
+    # Enables "edit this page" to contribute to docs
+    - content.action.edit
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins: 
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths:
+            - meshiphi
+          options:
+            docstring_style: google
+            # show_object_full_path: true
+            merge_init_into_class: true
+            show_docstring_functions: true
+            show_docstring_classes: true
+            show_source: false
+  - mkdocs-autoapi:
+      autoapi_dir: meshiphi
+      autoapi_add_nav_entry: true
+      autoapi_file_patterns:
+        - "*.py"
+  - include-markdown:
+      rewrite_relative_urls: true
+
+nav:
+  - Home: index.md
+  - overview.md
+  - installation.md
+  - examples.md
+  - cli.md
+  - Configuration:
+    - Overview: config/overview.md
+    - Mesh Construction: config/mesh_construction.md
+  - output.md
+  - Dataloaders:
+    - Overview: dataloaders/overview.md
+    - dataloaders/interface.md
+    - dataloaders/factory.md
+    - dataloaders/scalar.md
+    - dataloaders/vector.md
+    - dataloaders/lut.md
+    - dataloaders/adding.md
+  - Mesh Construction:
+    - Overview: mesh_construction/index.md
+    - Classes: mesh_construction/classes.md
+  - plotting.md
+  - development.md
+  - contributing.md
+
+markdown_extensions:
+  - toc:
+      permalink: True
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+copyright: Copyright &copy; 2026 British Antarctic Survey

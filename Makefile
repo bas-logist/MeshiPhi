@@ -25,11 +25,9 @@ clean:  ## Clean build artifacts and cache
 	@echo "Clean complete."
 
 docs:  ## Build documentation
-	cd docs && sphinx-build -b html source _build/html
-	@echo "Documentation built in docs/_build/html/"
+	mkdocs build
+	@echo "Documentation built in site/"
 
 docs-clean:  ## Clean documentation build artifacts
-	rm -rf docs/_build/
-	rm -rf docs/html/
-	rm -rf docs/build/.doctrees/
+	rm -rf site
 	@echo "Documentation build artifacts cleaned."

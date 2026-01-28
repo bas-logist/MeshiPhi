@@ -48,11 +48,13 @@ dependencies = [
     "rasterio"
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 docs = [
-    "sphinx",
-    "sphinx_rtd_theme",
-    "sphinx_markdown_builder"
+    "mkdocs",
+    "mkdocs-autoapi",
+    "mkdocs-include-markdown-plugin",
+    "mkdocstrings[python]",
+    "mkdocs-material",
 ]
 test = [
     "pytest",
