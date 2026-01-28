@@ -34,3 +34,9 @@ tests/regression_tests/.outputs/*
 docs/doctrees
 docs/html/*
 docs/index.html
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
+*.cover

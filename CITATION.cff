@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+title: "MeshiPhi: Earth's digital twin mapped on a non-uniform mesh"
+authors:
+  - family-names: Smith
+    given-names: Jonathan D.
+  - family-names: Hall
+    given-names: Samuel
+  - family-names: Coombs
+    given-names: George
+  - family-names: Byrne
+    given-names: James
+  - family-names: Thorne
+    given-names: Michael A. S.
+  - family-names: Brearley
+    given-names: J. Alexander
+  - family-names: Long
+    given-names: Derek
+  - family-names: Meredith
+    given-names: Michael
+  - family-names: Wyld
+    given-names: David
+  - family-names: Zwagerman
+    given-names: Thomas
+  - family-names: Fox
+    given-names: Maria
+version: "2.3.0"
+doi: 10.48550/arXiv.2209.02389
+url: https://github.com/bas-amop/MeshiPhi
+repository-code: https://github.com/bas-amop/MeshiPhi
+date-released: 2022-09-06
+license: MIT
+message: "If you use this software, please cite our arXiv paper."
+citation: "Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne,  J. Alexander Brearley, Derek Long, Michael Meredith, Maria Fox,  (2022), Autonomous Passage Planning for a Polar Vessel, arXiv, https://arxiv.org/abs/2209.02389"

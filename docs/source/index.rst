@@ -32,3 +32,4 @@ Contents:
    ./sections/Dataloaders/overview
    ./sections/Mesh_Construction/Mesh_construction_overview
    ./sections/Plotting/mesh_plotting
+   ./sections/testing_strategy

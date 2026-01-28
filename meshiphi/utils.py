@@ -6,11 +6,13 @@ import logging
 import time
 import tracemalloc
 import numpy as np
-
 from datetime import datetime, timedelta
 from functools import wraps
 from calendar import monthrange
 from scipy.fftpack import fftshift
+
+logger = logging.getLogger(__name__)
+
 
 def longitude_domain(long):
     """
@@ -25,8 +27,9 @@ def longitude_domain(long):
     elif long in [-180, 180]:
         return long
     # Otherwise convert it to be within domain
-    else:    
+    else:
         return (long + 180) % 360 - 180
+
 
 def longitude_distance(long_a, long_b):
     """
@@ -41,19 +44,19 @@ def longitude_distance(long_a, long_b):
     else:
         return long_dist
 
+
 def frac_of_month(year, month, start_date=None, end_date=None):
-    
     # Determine the number of days in the month specified
     days_in_month = monthrange(year, month)[1]
     # If not specified, default to beginning/end of month
     if start_date is None:
-        start_date = str_to_datetime(f'{year}-{month}-01')
+        start_date = str_to_datetime(f"{year}-{month}-01")
     if end_date is None:
-        end_date = str_to_datetime(f'{year}-{month}-{days_in_month}')
-        
+        end_date = str_to_datetime(f"{year}-{month}-{days_in_month}")
+
     # Ensure that input to fn was valid
-    assert(start_date.month == month), 'Start date not in same month!'
-    assert(end_date.month == month), 'End date not in same month!'
+    assert start_date.month == month, "Start date not in same month!"
+    assert end_date.month == month, "End date not in same month!"
     # Determine overlap from dates (inclusive)
     days_overlap = (end_date - start_date).days + 1
     # Return fraction
@@ -67,7 +70,7 @@ def boundary_to_coords(bounds):
 
 
 def str_to_datetime(date_str):
-    return datetime.strptime(date_str, '%Y-%m-%d')
+    return datetime.strptime(date_str, "%Y-%m-%d")
 
 
 def date_range(start_date, end_date):
@@ -121,14 +124,14 @@ def round_to_sigfig(x, sigfig=5):
     # Save original type of data so can be returned as input
     orig_type = type(x)
     if orig_type not in [list, float, int, np.ndarray, np.float64]:
-        raise ValueError(f'Cannot round {type(x)} to sig figs!')
-    
+        raise ValueError(f"Cannot round {type(x)} to sig figs!")
+
     # Cast as array if not initially, so that later processes all act as expected
     if orig_type in [int, float, np.float64]:
         x = [x]
     x = np.array(x)
     # Create a mask disabling any values of inf or zero being passed to log10
-    loggable_idxs  = ([x!=0] & np.isfinite(x))[0]
+    loggable_idxs = ([x != 0] & np.isfinite(x))[0]
     # Determine number of decimal places to round each number to
     # np.abs because can't find log of negative number
     # np.log10 to get position of most significant digit
@@ -136,20 +139,20 @@ def round_to_sigfig(x, sigfig=5):
     #   out = 0, setting default value where x=0 or inf
     # np.floor to round to position of most significant digit
     # np.array.astype(int) to enable np.around to work later
-    dec_pl = sigfig - np.floor(np.log10(np.abs(x), 
-                                        where = loggable_idxs,
-                                        out   = np.zeros_like(x))
-                               ).astype(int) - 1
+    dec_pl = (
+        sigfig
+        - np.floor(
+            np.log10(np.abs(x), where=loggable_idxs, out=np.zeros_like(x))
+        ).astype(int)
+        - 1
+    )
     # Round to sig figs
-    rounded = np.array(
-                    [np.around(x[i], decimals=dec_pl[i]) 
-                    for i in range(len(x))]
-                )
+    rounded = np.array([np.around(x[i], decimals=dec_pl[i]) for i in range(len(x))])
     # Return as single value if input that way
     if orig_type in [int, float]:
         return rounded.item()
     # Return as python list
-    elif orig_type == list:
+    elif orig_type is list:
         return rounded.tolist()
     # Otherwise, return np.array
     else:
@@ -190,7 +193,7 @@ def fftind(size):
             array[1,:,:] = k_y components
     """
     # Create array
-    k_ind = np.mgrid[:size, :size] - int( (size + 1)/2 )
+    k_ind = np.mgrid[:size, :size] - int((size + 1) / 2)
     # Fourier shift
     k_ind = fftshift(k_ind)
     return k_ind
@@ -213,25 +216,26 @@ def gaussian_random_field(size, alpha):
         np.array:
             2D Array of datapoints, shape (size, size)
     """
-                
+
     # Defines momentum indices
     k_idx = fftind(size)
 
     # Defines the amplitude as a power law 1/|k|^(alpha/2)
-    amplitude = np.power( k_idx[0]**2 + k_idx[1]**2 + 1e-10, -alpha/4.0 )
-    amplitude[0,0] = 0
+    amplitude = np.power(k_idx[0] ** 2 + k_idx[1] ** 2 + 1e-10, -alpha / 4.0)
+    amplitude[0, 0] = 0
 
     # Draws a complex gaussian random noise with normal
     # (circular) distribution
-    noise = np.random.normal(size = (size, size)) \
-        + 1j * np.random.normal(size = (size, size))
+    noise = np.random.normal(size=(size, size)) + 1j * np.random.normal(
+        size=(size, size)
+    )
 
     # To real space
     grf = np.fft.ifft2(noise * amplitude).real
 
     # Normalise the GRF:
     grf = grf - np.min(grf)
-    grf = grf/(np.max(grf)-np.min(grf))
+    grf = grf / (np.max(grf) - np.min(grf))
 
     return grf
 
@@ -242,13 +246,13 @@ def memory_trace(func):
         tracemalloc.start(20)
         res = func(*args, **kwargs)
         snapshot = tracemalloc.take_snapshot()
-        top_stats = snapshot.statistics('traceback')
+        top_stats = snapshot.statistics("traceback")
 
         stat = top_stats[0]
-        logging.info("{} memory blocks: {.1f} KiB".
-                     format(stat.count, stat.size / 1024))
+        logging.info("{} memory blocks: {.1f} KiB".format(stat.count, stat.size / 1024))
         logging.info("\n".join(stat.traceback.format()))
         return res
+
     return wrapper
 
 
@@ -258,15 +262,16 @@ def timed_call(func):
         start = time.perf_counter()
         res = func(*args, **kwargs)
         end = time.perf_counter()
-        logging.info("Timed call to {} took {:02f} seconds".
-                     format(func.__name__, end - start))
+        logger.info(
+            "Timed call to {} took {:02f} seconds".format(func.__name__, end - start)
+        )
         return res
+
     return wrapper
 
 
 # CLI utilities
-def setup_logging(func,
-                  log_format="[%(asctime)-17s :%(levelname)-8s] - %(message)s"):
+def setup_logging(func, log_format="[%(asctime)-17s :%(levelname)-8s] - %(message)s"):
     """Wraps a CLI endpoint and sets up logging for it
 
     This is probably not the smoothest implementation, but it's an educational
@@ -279,6 +284,7 @@ def setup_logging(func,
     :param log_format:
     :return:
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         parsed_args = func(*args, **kwargs)
@@ -300,4 +306,5 @@ def setup_logging(func,
         logging.getLogger("tensorflow").setLevel(logging.WARNING)
         logging.getLogger("urllib3").setLevel(logging.WARNING)
         return parsed_args
+
     return wrapper
