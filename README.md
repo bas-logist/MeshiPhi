@@ -1,6 +1,6 @@
 # Meshiφ (MeshiPhi)
 
-![](logo.jpg)
+![](./docs/assets/logo.jpg)
 
 ![Dev Status](https://img.shields.io/badge/Status-Active-green)
 [![Documentation](https://img.shields.io/badge/Manual%20-github.io%2FMeshiPhi%2F-red)](https://bas-amop.github.io/MeshiPhi/)
@@ -55,19 +55,6 @@ create_mesh --help
 
 See the [documentation](https://bas-amop.github.io/MeshiPhi/) for more details and advanced usage.
 
-## Documentation
-Sphinx is used to generate documentation for this project. The dependencies can be installed through pip:
-```
-pip install sphinx sphinx_markdown_builder sphinx_rtd_theme rinohtype
-```
-When updating the docs, run the following command within the MeshiPhi directory to recompile.
-```
-sphinx-build -b html ./docs/source ./docs/html
-```
-Sometimes the cache needs to be cleared for internal links to update. If facing this problem, run this from the MeshiPhi directory.
-```
-rm -r docs/build/.doctrees/
-```
 
 ## Required Data sources
 Meshiφ has been built to work with a variety of open-source atmospheric and oceanographic data sources.
@@ -79,19 +66,19 @@ A list of supported data sources and their associated data-loaders is given in t
 Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, David Wyld, Thomas Zwagerman, Jonathan Smith, Maria Fox, and James Byrne
 
 ## Contributing
-For more details on contributing, see [CONTRIBUTING.md](CONTRIBUTING.md).
+For more details on contributing, see the [contributing](./CONTRIBUTING.md) guide.
 
 ## License
-This software is licensed under a MIT license, but request users cite our publication.
+This software is licensed under a MIT license, but request users cite our publication:
 
-Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne,  J. Alexander Brearley, Derek Long, Michael Meredith, Maria Fox,  (2022), Autonomous Passage Planning for a Polar Vessel, arXiv, https://arxiv.org/abs/2209.02389
+Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne,  J. Alexander Brearley, Derek Long, Michael Meredith, Maria Fox (2022) Autonomous Passage Planning for a Polar Vessel. _arXiv_, <https://arxiv.org/abs/2209.02389>
 
-For more information please see the attached ``LICENSE`` file.
+For more information please see the [`LICENSE`](./LICENSE) file.
 
 ## How to Cite
 
 If you use Meshiφ in your research, please cite our software and publication:
 
-- See the [CITATION.cff](./CITATION.cff) file for citation metadata.
+- See the [`CITATION.cff`](./CITATION.cff) file for citation metadata.
 
 You can also use the "Cite this repository" button on GitHub for formatted citations.
