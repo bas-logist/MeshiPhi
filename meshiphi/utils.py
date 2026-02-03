@@ -175,7 +175,7 @@ def round_to_sigfig(
 
     # Cast as array if not initially, so that later processes all act as expected
     x_array: npt.NDArray[np.floating[Any]]
-    if orig_type in [int, float, np.float64]:
+    if isinstance(x, (int, float, np.floating)):
         x_array = np.array([float(x)], dtype=np.float64)  # Explicit conversion to array
     else:
         x_array = np.array(x, dtype=np.float64)

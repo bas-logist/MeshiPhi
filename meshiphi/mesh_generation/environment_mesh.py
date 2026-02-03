@@ -210,7 +210,7 @@ class EnvironmentMesh:
             AggregatedCellBox: the cellbox with the given id
         """
         for cellbox in self.agg_cellboxes:
-            if str(cellbox.get_id()) == str(cellbox_id):
+            if cellbox.get_id() == int(cellbox_id):
                 return cellbox
         raise ValueError(f"Cellbox with id {cellbox_id} not found")
 
@@ -329,19 +329,19 @@ class EnvironmentMesh:
                     cb_l_bounds, cb_s_bounds
                 )
 
-                if str(neighbour_case) == "4":
-                    south_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "-1":
-                    south_west_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "3":
-                    south_east_neighbours.append(int(cellbox_s.get_id()))
+                if neighbour_case == 4:
+                    south_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == -1:
+                    south_west_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == 3:
+                    south_east_neighbours.append(cellbox_s.get_id())
 
             for neighbour in south_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["4"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][4].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-1].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][3].append(neighbour)
 
         # Tie northen interior cellboxes to northen exterior cellboxes
 
@@ -358,12 +358,12 @@ class EnvironmentMesh:
                     cb_s_bounds, cb_l_bounds
                 )
 
-                if str(neighbour_case) == "-4":
-                    north_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "-3":
-                    north_west_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "1":
-                    north_east_neighbours.append(int(cellbox_l.get_id()))
+                if neighbour_case == -4:
+                    north_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == -3:
+                    north_west_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == 1:
+                    north_east_neighbours.append(cellbox_l.get_id())
 
             # Ensure the cellbox exists in neighbour graph before appending
             cellbox_id = cellbox_s.get_id()
@@ -373,11 +373,11 @@ class EnvironmentMesh:
                 )
 
             for neighbour in north_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_id]["-4"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][-4].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_id]["-3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][-3].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_id]["1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_id][1].append(neighbour)
 
     def tie_southern_cellbox_ng(
         self,
@@ -407,12 +407,12 @@ class EnvironmentMesh:
                     cb_l_bounds, cb_s_bounds
                 )
 
-                if str(neighbour_case) == "-4":
-                    north_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "-3":
-                    north_west_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "1":
-                    north_east_neighbours.append(int(cellbox_s.get_id()))
+                if neighbour_case == -4:
+                    north_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == -3:
+                    north_west_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == 1:
+                    north_east_neighbours.append(cellbox_s.get_id())
 
             # Ensure the cellbox exists in neighbour graph before appending
             cellbox_id = cellbox_l.get_id()
@@ -443,12 +443,12 @@ class EnvironmentMesh:
                     cb_s_bounds, cb_l_bounds
                 )
 
-                if str(neighbour_case) == "4":
-                    south_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "-1":
-                    south_west_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "3":
-                    south_east_neighbours.append(int(cellbox_l.get_id()))
+                if neighbour_case == 4:
+                    south_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == -1:
+                    south_west_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == 3:
+                    south_east_neighbours.append(cellbox_l.get_id())
 
             # Ensure the cellbox exists in neighbour graph before appending
             cellbox_id = cellbox_s.get_id()
@@ -492,19 +492,19 @@ class EnvironmentMesh:
                     cb_l_bounds, cb_s_bounds
                 )
 
-                if str(neighbour_case) == "-2":
-                    west_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "-1":
-                    south_west_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "-3":
-                    north_west_neighbours.append(int(cellbox_s.get_id()))
+                if neighbour_case == -2:
+                    west_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == -1:
+                    south_west_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == -3:
+                    north_west_neighbours.append(cellbox_s.get_id())
 
             for neighbour in west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-2"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-2].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-1].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-3].append(neighbour)
 
         # Tie eastern interior cellboxes to eastern exterior cellboxes
 
@@ -521,19 +521,19 @@ class EnvironmentMesh:
                     cb_s_bounds, cb_l_bounds
                 )
 
-                if str(neighbour_case) == "2":
-                    east_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "3":
-                    south_east_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "1":
-                    north_east_neighbours.append(int(cellbox_l.get_id()))
+                if neighbour_case == 2:
+                    east_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == 3:
+                    south_east_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == 1:
+                    north_east_neighbours.append(cellbox_l.get_id())
 
             for neighbour in east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["2"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][2].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][3].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][1].append(neighbour)
 
     def tie_western_cellbox_ng(
         self,
@@ -563,19 +563,19 @@ class EnvironmentMesh:
                     cb_l_bounds, cb_s_bounds
                 )
 
-                if str(neighbour_case) == "2":
-                    east_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "3":
-                    south_east_neighbours.append(int(cellbox_s.get_id()))
-                if str(neighbour_case) == "1":
-                    north_east_neighbours.append(int(cellbox_s.get_id()))
+                if neighbour_case == 2:
+                    east_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == 3:
+                    south_east_neighbours.append(cellbox_s.get_id())
+                if neighbour_case == 1:
+                    north_east_neighbours.append(cellbox_s.get_id())
 
             for neighbour in east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["2"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][2].append(neighbour)
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][3].append(neighbour)
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][1].append(neighbour)
 
         # Tie western interior cellboxes to western exterior cellboxes
 
@@ -592,19 +592,19 @@ class EnvironmentMesh:
                     cb_s_bounds, cb_l_bounds
                 )
 
-                if str(neighbour_case) == "-2":
-                    west_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "-1":
-                    south_west_neighbours.append(int(cellbox_l.get_id()))
-                if str(neighbour_case) == "-3":
-                    north_west_neighbours.append(int(cellbox_l.get_id()))
+                if neighbour_case == -2:
+                    west_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == -1:
+                    south_west_neighbours.append(cellbox_l.get_id())
+                if neighbour_case == -3:
+                    north_west_neighbours.append(cellbox_l.get_id())
 
             for neighbour in west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-2"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-2].append(neighbour)
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-1].append(neighbour)
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(neighbour)
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-3].append(neighbour)
 
     def get_cellboxes_within_bounds(self, bounds: Boundary) -> list[AggregatedCellBox]:
         """
@@ -763,8 +763,8 @@ class EnvironmentMesh:
         """
         max_id = 0
         for cellbox in self.agg_cellboxes:
-            if int(cellbox.get_id()) > max_id:
-                max_id = int(cellbox.get_id())
+            if cellbox.get_id() > max_id:
+                max_id = cellbox.get_id()
         return max_id
 
     def remove_cellbox(self, cellbox: AggregatedCellBox) -> None:
@@ -786,18 +786,18 @@ class EnvironmentMesh:
 
     def increment_ids(self, increment: int) -> None:
         for cellbox in self.agg_cellboxes:
-            cellbox.set_id(str(int(cellbox.get_id()) + increment))
-            cellbox.agg_data["id"] = str(int(cellbox.get_id()) + increment)
+            cellbox.set_id(cellbox.get_id() + increment)
+            cellbox.agg_data["id"] = cellbox.get_id()
 
         self.neighbour_graph.increment_ids(increment)
 
     # Splitting
-    def sim_split_cellbox(self, cellbox_id: str) -> list[AggregatedCellBox]:
+    def sim_split_cellbox(self, cellbox_id: str | int) -> list[AggregatedCellBox]:
         """
         splits the cellbox with the given id
 
         Args:
-            cellbox_id (string): the id of the cellbox to be split
+            cellbox_id (str | int): the id of the cellbox to be split
         Returns:
             split_cells (list<AggregatedCellBox>): a list of the new cellboxes created by the split
         """
@@ -808,30 +808,30 @@ class EnvironmentMesh:
         # Copy agg_data, update id's
         agg_data = cellbox.get_agg_data()
         agg_data1 = agg_data.copy()
-        agg_data1["id"] = str(max_id + 1)
+        agg_data1["id"] = max_id + 1
         agg_data2 = agg_data.copy()
-        agg_data2["id"] = str(max_id + 2)
+        agg_data2["id"] = max_id + 2
         agg_data3 = agg_data.copy()
-        agg_data3["id"] = str(max_id + 3)
+        agg_data3["id"] = max_id + 3
         agg_data4 = agg_data.copy()
-        agg_data4["id"] = str(max_id + 4)
+        agg_data4["id"] = max_id + 4
 
         bounds = cellbox.get_bounds()
         split_bounds = bounds.split()
 
-        cellbox1 = AggregatedCellBox(split_bounds[0], agg_data1, str(max_id + 1))
-        cellbox2 = AggregatedCellBox(split_bounds[1], agg_data2, str(max_id + 2))
-        cellbox3 = AggregatedCellBox(split_bounds[2], agg_data3, str(max_id + 3))
-        cellbox4 = AggregatedCellBox(split_bounds[3], agg_data4, str(max_id + 4))
+        cellbox1 = AggregatedCellBox(split_bounds[0], agg_data1, max_id + 1)
+        cellbox2 = AggregatedCellBox(split_bounds[1], agg_data2, max_id + 2)
+        cellbox3 = AggregatedCellBox(split_bounds[2], agg_data3, max_id + 3)
+        cellbox4 = AggregatedCellBox(split_bounds[3], agg_data4, max_id + 4)
 
         return [cellbox1, cellbox2, cellbox3, cellbox4]
 
-    def split_and_replace(self, cellbox_id: str) -> None:
+    def split_and_replace(self, cellbox_id: str | int) -> None:
         """
         splits the cellbox with the given id and replaces it with the new cellboxes
 
         Args:
-            cellbox_id (string): the id of the cellbox to be split
+            cellbox_id (str | int): the id of the cellbox to be split
         """
 
         # Create new cellboxes and append to agg_cellboxes
@@ -840,10 +840,10 @@ class EnvironmentMesh:
             self.agg_cellboxes.append(cellbox)
 
         # get ID's of new cellboxes
-        north_west_index = int(split_cellboxes[1].get_agg_data()["id"])
-        north_east_index = int(split_cellboxes[3].get_agg_data()["id"])
-        south_west_index = int(split_cellboxes[0].get_agg_data()["id"])
-        south_east_index = int(split_cellboxes[2].get_agg_data()["id"])
+        north_west_index = split_cellboxes[1].get_agg_data()["id"]
+        north_east_index = split_cellboxes[3].get_agg_data()["id"]
+        south_west_index = split_cellboxes[0].get_agg_data()["id"]
+        south_east_index = split_cellboxes[2].get_agg_data()["id"]
 
         # Get neighbours of original cellbox
         cellbox_id_int = int(cellbox_id)

@@ -171,6 +171,7 @@ line-ending = "auto"
 
 [tool.mypy]
 python_version = "3.13"
+strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -183,6 +184,12 @@ warn_no_return = true
 strict_equality = true
 show_error_codes = true
 follow_imports = "normal"
+
+# Exclude tests from strict checking
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+strict = false
+disallow_untyped_defs = false
 
 # Ignore missing imports and untyped libraries for third-party libraries without type stubs
 [[tool.mypy.overrides]]

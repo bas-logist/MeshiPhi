@@ -290,28 +290,28 @@ def dummy_cellbox(arbitrary_boundary):
 def dummy_agg_cellbox():
     """Basic aggregated cellbox for testing."""
     arbitrary_agg_data = {"dummy_data": 1}
-    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, "0")
+    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, 0)
 
 
 @pytest.fixture
 def arbitrary_agg_cellbox():
     """Arbitrary aggregated cellbox for testing."""
     arbitrary_agg_data = {"dummy_data": 1}
-    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, "1")
+    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, 1)
 
 
 @pytest.fixture
 def equatorial_agg_cellbox():
     """Aggregated cellbox crossing equator."""
     arbitrary_agg_data = {"dummy_data": 1}
-    return AggregatedCellBox(Boundary([-10, 10], [45, 60]), arbitrary_agg_data, "2")
+    return AggregatedCellBox(Boundary([-10, 10], [45, 60]), arbitrary_agg_data, 2)
 
 
 @pytest.fixture
 def meridian_agg_cellbox():
     """Aggregated cellbox crossing prime meridian."""
     arbitrary_agg_data = {"dummy_data": 1}
-    return AggregatedCellBox(Boundary([45, 60], [-10, 10]), arbitrary_agg_data, "3")
+    return AggregatedCellBox(Boundary([45, 60], [-10, 10]), arbitrary_agg_data, 3)
 
 
 @pytest.fixture

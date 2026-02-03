@@ -20,7 +20,7 @@ def test_from_json():
         "SIC": 0.0,
         "thickness": 0.82,
         "density": 900.0,
-        "id": "1",
+        "id": 1,
     }
 
     agg_cb_from_json = AggregatedCellBox.from_json(agg_cb_json)
@@ -39,7 +39,7 @@ def test_from_json():
     ("attr", "test_value", "getter", "setter"),
     [
         ("boundary", Boundary([10, 20], [30, 40]), "get_bounds", "set_bounds"),
-        ("id", "123", "get_id", "set_id"),
+        ("id", 123, "get_id", "set_id"),
         ("agg_data", {"dummy_data": "456"}, "get_agg_data", "set_agg_data"),
     ],
 )
@@ -66,7 +66,7 @@ def test_to_json():
         "SIC": 0.0,
         "thickness": 0.82,
         "density": 900.0,
-        "id": "1",
+        "id": 1,
     }
     agg_cb_boundary = Boundary.from_poly_string(agg_cb_json["geometry"])
 

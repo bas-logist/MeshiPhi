@@ -367,37 +367,37 @@ class MeshBuilder:
             # update NG to connect cellboxes
             for i in range(len(min_long_cellboxes)):
                 self.neighbour_graph.add_neighbour(
-                    int(min_long_cellboxes[i].get_id()),
+                    min_long_cellboxes[i].get_id(),
                     Direction.west,
-                    int(max_long_cellboxes[i].get_id()),
+                    max_long_cellboxes[i].get_id(),
                 )
                 self.neighbour_graph.add_neighbour(
-                    int(max_long_cellboxes[i].get_id()),
+                    max_long_cellboxes[i].get_id(),
                     Direction.east,
-                    int(min_long_cellboxes[i].get_id()),
+                    min_long_cellboxes[i].get_id(),
                 )
                 # checks to avoid the very upper and lower cellboxes as they do not have north/south neighbours
                 if 0 <= i < len(min_long_cellboxes) - 1:
                     self.neighbour_graph.add_neighbour(
-                        int(min_long_cellboxes[i].get_id()),
+                        min_long_cellboxes[i].get_id(),
                         Direction.north_west,
-                        int(max_long_cellboxes[i + 1].get_id()),
+                        max_long_cellboxes[i + 1].get_id(),
                     )
                     self.neighbour_graph.add_neighbour(
-                        int(max_long_cellboxes[i].get_id()),
+                        max_long_cellboxes[i].get_id(),
                         Direction.north_east,
-                        int(min_long_cellboxes[i + 1].get_id()),
+                        min_long_cellboxes[i + 1].get_id(),
                     )
                 if 0 < i <= len(min_long_cellboxes) - 1:
                     self.neighbour_graph.add_neighbour(
-                        int(min_long_cellboxes[i].get_id()),
+                        min_long_cellboxes[i].get_id(),
                         Direction.south_west,
-                        int(max_long_cellboxes[i - 1].get_id()),
+                        max_long_cellboxes[i - 1].get_id(),
                     )
                     self.neighbour_graph.add_neighbour(
-                        int(max_long_cellboxes[i].get_id()),
+                        max_long_cellboxes[i].get_id(),
                         Direction.south_east,
-                        int(min_long_cellboxes[i - 1].get_id()),
+                        min_long_cellboxes[i - 1].get_id(),
                     )
 
         return is_global_mesh

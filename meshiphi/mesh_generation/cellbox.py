@@ -110,11 +110,11 @@ class CellBox:
         """
         self.bounds = bounds
 
-    def get_id(self) -> Any:
+    def get_id(self) -> int:
         """
         method returns cellbox cell id
         """
-        return self.id
+        return int(self.id)
 
     def get_minimum_datapoints(self) -> int:
         """

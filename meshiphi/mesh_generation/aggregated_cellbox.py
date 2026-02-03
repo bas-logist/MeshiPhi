@@ -28,7 +28,7 @@ class AggregatedCellBox:
         Args:
             cellbox_json(Json): json object that encapsulates boundary, agg_data and id of the CellBox
         """
-        cellbox_id = cellbox_json["id"]
+        cellbox_id = int(cellbox_json["id"])
 
         def load_bounds(cellbox_json: dict[str, Any]) -> Boundary:
             shape = shapely.wkt.loads(cellbox_json["geometry"])
@@ -71,13 +71,13 @@ class AggregatedCellBox:
         agg_data = load_agg_data(cellbox_json)
         return AggregatedCellBox(boundary, agg_data, cellbox_id)
 
-    def __init__(self, boundary: Boundary, agg_data: dict[str, Any], id: str) -> None:
+    def __init__(self, boundary: Boundary, agg_data: dict[str, Any], id: int) -> None:
         """
 
         Args:
             boundary(Boundary): encapsulates latitude, longtitude and time range of the CellBox
             agg_data (dict): a dictionary that contains data_names and agg values
-            id (string): a string represents cellbox id
+            id (int): an integer representing the cellbox id
         """
         # Box information relative to bottom left
         self.boundary = boundary
@@ -97,7 +97,7 @@ class AggregatedCellBox:
         """
         self.agg_data = agg_data
 
-    def set_id(self, id: str) -> None:
+    def set_id(self, id: int) -> None:
         """
         sets the cellbox id
         """
@@ -115,11 +115,11 @@ class AggregatedCellBox:
         """
         return self.agg_data
 
-    def get_id(self) -> str:
+    def get_id(self) -> int:
         """
-        returns the id
+        returns the id as an integer
         """
-        return self.id
+        return int(self.id)
 
     def to_json(self) -> dict[str, Any]:
         """
