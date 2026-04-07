@@ -82,10 +82,10 @@ packages = {find = {where = ["."], include = ["meshiphi*"]}}
 version = {attr = "meshiphi.__version__"}
 
 [project.urls]
-Homepage = "https://www.bas.ac.uk/project/autonomous-marine-operations-planning"
-Documentation = "https://bas-amop.github.io/MeshiPhi"
-Repository = "https://github.com/bas-amop/MeshiPhi"
-Issues = "https://github.com/bas-amop/MeshiPhi/issues"
+Homepage = "https://www.bas.ac.uk/project/logist-ai-for-environmentally-aware-decision-support/"
+Documentation = "https://github.com/bas-logist/MeshiPhi"
+Repository = "https://github.com/bas-logist/MeshiPhi"
+Issues = "https://github.com/bas-logist/MeshiPhi/issues"
 
 [project.scripts]
 create_mesh = "meshiphi.cli:create_mesh_cli"
