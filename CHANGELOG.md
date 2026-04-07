@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-04-07
+
 ## [2.3.0] - YYYY-MM-DD
 
 ### Added
@@ -21,5 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dependabot configuration for automated dependency updates
 - Improved test fixtures using proper temporary file patterns
 
-[Unreleased]: https://github.com/bas-amop/MeshiPhi/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/bas-amop/MeshiPhi/compare/v2.3.1...HEAD
+[2.3.1]: https://github.com/bas-amop/MeshiPhi/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/bas-amop/MeshiPhi/releases/tag/v2.3.0
