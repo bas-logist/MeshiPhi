@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "setuptools_scm"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -77,6 +77,9 @@ dev = [
 
 [tool.setuptools]
 packages = {find = {where = ["."], include = ["meshiphi*"]}}
+
+[tool.setuptools.dynamic]
+version = {attr = "meshiphi.__version__"}
 
 [project.urls]
 Homepage = "https://www.bas.ac.uk/project/autonomous-marine-operations-planning"
