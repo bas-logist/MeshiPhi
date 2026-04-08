@@ -1,8 +1,13 @@
-from datetime import datetime
-from datetime import timedelta
+from __future__ import annotations
 
-from math import cos, sin, asin, sqrt, radians
-from shapely import wkt, MultiPolygon
+from datetime import datetime, timedelta
+from math import asin, cos, radians, sin, sqrt
+from typing import TYPE_CHECKING, Any
+
+from shapely import wkt
+
+if TYPE_CHECKING:
+    from shapely.geometry import MultiPolygon, Polygon
 
 
 class Boundary:
@@ -23,7 +28,7 @@ class Boundary:
     """
 
     @classmethod
-    def from_json(cls, config):
+    def from_json(cls, config: dict[str, Any]) -> Boundary:
         """
          constructs a boundary object from json input
         Args:
@@ -45,12 +50,10 @@ class Boundary:
         else:
             time_range = None
 
-        obj = Boundary(lat_range, long_range, time_range)
-
-        return obj
+        return Boundary(lat_range, long_range, time_range)
 
     @classmethod
-    def from_poly_string(cls, poly_string):
+    def from_poly_string(cls, poly_string: str) -> Boundary:
         """
         Creates a Boundary object from a string representation of a polygon.
         """
@@ -66,9 +69,7 @@ class Boundary:
 
             # pos_coords on +180 side of antimeridian
             # neg_coords on -180 side of antimeridian
-            pos_coords, neg_coords = [
-                coord_string.split(",") for coord_string in coord_strings
-            ]
+            pos_coords, neg_coords = (coord_string.split(",") for coord_string in coord_strings)
             # Remove leading whitespace from WKT elements
             pos_coords = [pc.lstrip() for pc in pos_coords]
             neg_coords = [nc.lstrip() for nc in neg_coords]
@@ -103,11 +104,14 @@ class Boundary:
         long_range = [long_min, long_max]
         lat_range = [lat_min, lat_max]
 
-        bounds = Boundary(lat_range, long_range)
+        return Boundary(lat_range, long_range)
 
-        return bounds
-
-    def __init__(self, lat_range, long_range, time_range=None):
+    def __init__(
+        self,
+        lat_range: list[float],
+        long_range: list[float],
+        time_range: list[str] | None = None,
+    ) -> None:
         """
 
         Args:
@@ -129,7 +133,7 @@ class Boundary:
         self.time_range = time_range
 
     @staticmethod
-    def parse_datetime(datetime_str):
+    def parse_datetime(datetime_str: str) -> str:
         """
         Attempts to parse a string containing reference to system time into datetime format.
         If given the string 'TODAY', will return system time.
@@ -152,47 +156,52 @@ class Boundary:
         try:
             datetime_object = datetime.strptime(datetime_str, DATE_FORMAT).date()
             return datetime_object.strftime(DATE_FORMAT)
-        except ValueError:
+        except ValueError as err:
             # check if datetime_str contains reference to system-time.
             if datetime_str.strip() == "TODAY":
                 today = datetime.today()
                 return today.strftime(DATE_FORMAT)
-            elif "TODAY" not in datetime_str:
+            if "TODAY" not in datetime_str:
                 raise ValueError(
                     f'Incorrect date format given. Cannot convert "{datetime_str}" to date.'
-                )
+                ) from err
 
                 # check for increment to system time.
             if "+" in datetime_str:
-                increment = datetime_str.split("+")[1].strip()
+                increment_str = datetime_str.split("+")[1].strip()
                 try:
-                    increment = float(increment)
+                    increment = float(increment_str)
                     datetime_object = datetime.today() + timedelta(days=increment)
                     return datetime_object.strftime(DATE_FORMAT)
-                except ValueError:
+                except ValueError as err:
                     raise ValueError(
                         f'Incorrect date format given. Cannot convert "{datetime_str}" to date. '
-                        + f'Time increment "{increment}" cannot be cast to float'
-                    )
+                        + f'Time increment "{increment_str}" cannot be cast to float'
+                    ) from err
 
                 # check for decrement to system time.
             elif "-" in datetime_str:
-                decrement = datetime_str.split("-")[1].strip()
+                decrement_str = datetime_str.split("-")[1].strip()
                 try:
-                    decrement = float(decrement)
+                    decrement = float(decrement_str)
                     datetime_object = datetime.today() - timedelta(days=decrement)
                     return datetime_object.strftime(DATE_FORMAT)
-                except ValueError:
+                except ValueError as err:
                     raise ValueError(
                         f'Incorrect date format given. Cannot convert "{datetime_str}" to date. '
-                        + f'Time decrement "{decrement}" cannot be cast to float'
-                    )
+                        + f'Time decrement "{decrement_str}" cannot be cast to float'
+                    ) from err
             else:
                 raise ValueError(
                     f'Incorrect date format given. Cannot convert "{datetime_str}" to date'
-                )
+                ) from None
 
-    def validate_bounds(self, lat_range, long_range, time_range):
+    def validate_bounds(
+        self,
+        lat_range: list[float],
+        long_range: list[float],
+        time_range: list[str],
+    ) -> None:
         """
         method to check the bounds are valid
         Args:
@@ -214,16 +223,14 @@ class Boundary:
                 if datetime.strptime(time_range[0], "%Y-%m-%d") > datetime.strptime(
                     time_range[1], "%Y-%m-%d"
                 ):
-                    raise ValueError(
-                        "Boundary: Start time range should be smaller than range end"
-                    )
+                    raise ValueError("Boundary: Start time range should be smaller than range end")
             else:
                 raise ValueError(
                     f"Boundary: Time range needs two dates, instead got {len(time_range)}"
                 )
 
     # Functions used for getting data from a cellbox
-    def getcx(self):
+    def getcx(self) -> float:
         """
         returns x-position of the centroid of the cellbox
 
@@ -238,7 +245,7 @@ class Boundary:
 
         return cx
 
-    def getcy(self):
+    def getcy(self) -> float:
         """
         returns y-position of the centroid of the cellbox
 
@@ -248,7 +255,7 @@ class Boundary:
         """
         return self.lat_range[0] + self.get_height() / 2
 
-    def get_height(self):
+    def get_height(self) -> float:
         """
         returns height of the cellbox
 
@@ -256,10 +263,9 @@ class Boundary:
             height (float): the height of the CellBox
                 given in degrees latitude.
         """
-        height = self.lat_range[1] - self.lat_range[0]
-        return height
+        return self.lat_range[1] - self.lat_range[0]
 
-    def get_width(self):
+    def get_width(self) -> float:
         """
         returns width of the cellbox
 
@@ -274,13 +280,13 @@ class Boundary:
             width = (180 - self.long_range[0]) + (self.long_range[1] + 180)
         return width
 
-    def get_time_range(self):
+    def get_time_range(self) -> list[str]:
         """
         returns the time range
         """
         return self.time_range
 
-    def getdcx(self):
+    def getdcx(self) -> float:
         """
         returns x-distance from the edge to the centroid of the cellbox
 
@@ -288,9 +294,9 @@ class Boundary:
             dcx (float): the x-distance from the edge of the CellBox to the
                 centroid of the CellBox. Given in degrees longitude
         """
-        return self.get_width() / 2
+        return float(self.get_width() / 2)
 
-    def getdcy(self):
+    def getdcy(self) -> float:
         """
         returns y-distance from the edge to the centroid of the cellbox
 
@@ -298,53 +304,53 @@ class Boundary:
             dxy (float): the y-distance from the edge of the CellBox to the
                 centroid of the CellBox. Given in degrees latitude
         """
-        return self.get_height() / 2
+        return float(self.get_height() / 2)
 
-    def get_lat_min(self):
+    def get_lat_min(self) -> float:
         """
         returns the min latitude
         """
         return self.lat_range[0]
 
-    def get_lat_max(self):
+    def get_lat_max(self) -> float:
         """
         returns the max latitude
         """
         return self.lat_range[1]
 
-    def get_long_min(self):
+    def get_long_min(self) -> float:
         """
         returns the min longtitude
         """
         return self.long_range[0]
 
-    def get_long_max(self):
+    def get_long_max(self) -> float:
         """
         returns the max longtitude
         """
         return self.long_range[1]
 
-    def get_time_min(self):
+    def get_time_min(self) -> str:
         """
         returns the min of time range
         """
         return self.time_range[0]
 
-    def get_time_max(self):
+    def get_time_max(self) -> str:
         """
         returns the max of time range
         """
 
         return self.time_range[1]
 
-    def get_bounds(self):
+    def get_bounds(self) -> list[list[float]]:
         """
         returns the bounds of this cellbox
 
         Returns:
             bounds (list<tuples>): The geo-spatial boundaries of this CellBox.
         """
-        bounds = [
+        return [
             [self.long_range[0], self.lat_range[0]],
             [self.long_range[0], self.lat_range[1]],
             [self.long_range[1], self.lat_range[1]],
@@ -354,9 +360,8 @@ class Boundary:
                 self.lat_range[0],
             ],
         ]
-        return bounds
 
-    def calc_size(self):
+    def calc_size(self) -> float:
         """
         Calculate the great circle distance (in meters) between
         two points on the earth (specified in decimal degrees)
@@ -381,7 +386,7 @@ class Boundary:
         # Divide by sqrt(2) to get 'square' side length
         return m / sqrt(2)
 
-    def to_polygon(self):
+    def to_polygon(self) -> Polygon | MultiPolygon:
         """
         Creates a shapely polygon from the extent of the boundary. Will be a
         rectangle in mercator projection.
@@ -418,25 +423,26 @@ class Boundary:
                 + f"{self.get_long_min()} {self.get_lat_min()}))"
             )
         else:
-            # Create a multipolygon of boundary
-            polygon_1 = wkt.loads(
-                f"POLYGON(({self.get_long_min()} {self.get_lat_min()},"
+            # Create a multipolygon of boundary directly from WKT string
+            # This avoids numpy/shapely compatibility issues when constructing from separate polygons
+            polygon = wkt.loads(
+                "MULTIPOLYGON((("
+                + f"{self.get_long_min()} {self.get_lat_min()},"
                 + f"{self.get_long_min()} {self.get_lat_max()},"
                 + f"180 {self.get_lat_max()},"
                 + f"180 {self.get_lat_min()},"
-                + f"{self.get_long_min()} {self.get_lat_min()}))"
-            )
-            polygon_2 = wkt.loads(
-                f"POLYGON((-180 {self.get_lat_min()},"
+                + f"{self.get_long_min()} {self.get_lat_min()}"
+                + ")),(("
+                + f"-180 {self.get_lat_min()},"
                 + f"-180 {self.get_lat_max()},"
                 + f"{self.get_long_max()} {self.get_lat_max()},"
                 + f"{self.get_long_max()} {self.get_lat_min()},"
-                + f"-180 {self.get_lat_min()}))"
+                + f"-180 {self.get_lat_min()}"
+                + ")))"
             )
-            polygon = MultiPolygon([polygon_1, polygon_2])
         return polygon
 
-    def to_poly_string(self):
+    def to_poly_string(self) -> str:
         """
         Creates a string representation of the polygon from the extent of the boundary.
         Will be a rectangle in mercator projection.
@@ -446,9 +452,9 @@ class Boundary:
                 String representation of the shapely polygon with corners at
                 the min/max lat/long values of this boundary
         """
-        return self.to_polygon().wkt
+        return str(self.to_polygon().wkt)
 
-    def split(self):
+    def split(self) -> list[Boundary]:
         """
         Splits the boundary into four equal parts.
 
@@ -461,7 +467,7 @@ class Boundary:
         long_mid = self.get_long_min() + (self.get_width() / 2)
 
         # 0 = south_west, 1 = north_west, 2 = south_east, 3 = north_east
-        bounds = [
+        return [
             Boundary(
                 [self.get_lat_min(), lat_mid],
                 [self.get_long_min(), long_mid],
@@ -484,28 +490,16 @@ class Boundary:
             ),
         ]
 
-        return bounds
-
-    def __str__(self):
-        lat_range = (
-            "lat range :["
-            + str(self.get_lat_min())
-            + ","
-            + str(self.get_lat_max())
-            + "]"
-        )
+    def __str__(self) -> str:
+        lat_range = "lat range :[" + str(self.get_lat_min()) + "," + str(self.get_lat_max()) + "]"
         long_range = (
-            "long range :["
-            + str(self.get_long_min())
-            + ","
-            + str(self.get_long_max())
-            + "]"
+            "long range :[" + str(self.get_long_min()) + "," + str(self.get_long_max()) + "]"
         )
         time_range = "time range :" + str(self.get_time_range())
 
         return "{" + lat_range + ", " + long_range + ", " + time_range + "}"
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """
         Evaluates whether two Boundary objects have the same lat/long min/max,
         and start/end time
@@ -516,6 +510,8 @@ class Boundary:
         Returns:
             bool: True if all boundary edges are equal
         """
+        if not isinstance(other, Boundary):
+            return False
         # List to store each check for equality
         boundary_checks = []
         # Add bool indicating if spatial boundary matches between the two
@@ -524,23 +520,20 @@ class Boundary:
         boundary_checks += [(self.get_long_min() == other.get_long_min())]
         boundary_checks += [(self.get_long_max() == other.get_long_max())]
 
-        # Check if obects have the attributes to be tested
-        has_start_time = [hasattr(self, "start_time"), hasattr(other, "start_time")]
-        has_end_time = [hasattr(self, "end_time"), hasattr(other, "end_time")]
+        # Check if objects have time_range to be tested
+        has_time_range = [
+            hasattr(self, "time_range") and self.time_range != [],
+            hasattr(other, "time_range") and other.time_range != [],
+        ]
 
-        # If they both have the attribute, check that they are equal
-        if all(has_start_time):
-            boundary_checks += [(self.get_start_time() == other.get_start_time())]
-        # If only one has the attribute, they aren't equal
-        elif any(has_start_time):
+        # If they both have time_range, check that they are equal
+        if all(has_time_range):
+            boundary_checks += [(self.get_time_min() == other.get_time_min())]
+            boundary_checks += [(self.get_time_max() == other.get_time_max())]
+        # If only one has time_range, they aren't equal
+        elif any(has_time_range):
             boundary_checks += [False]
         # Otherwise, we don't need to append to the check list
-
-        # Same logic, just with other temporal boundary
-        if all(has_end_time):
-            boundary_checks += [(self.get_end_time() == other.get_end_time())]
-        elif any(has_end_time):
-            boundary_checks += [False]
 
         # See if every check has passed
         return all(boundary_checks)

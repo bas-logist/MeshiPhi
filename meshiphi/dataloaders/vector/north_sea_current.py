@@ -1,11 +1,17 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
+from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 import xarray as xr
 
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+
 
 class NorthSeaCurrentDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a BSOSE Depth NetCDF file.
         Renames coordinates to 'lat', 'long', 'time', and renames variable to
@@ -20,6 +26,8 @@ class NorthSeaCurrentDataLoader(VectorDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'uC', 'vC'
         """
         # Open Dataset
+        if self.files is None:
+            raise ValueError("files parameter is required for NorthSeaCurrentDataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -30,6 +38,4 @@ class NorthSeaCurrentDataLoader(VectorDataLoader):
         data = data[["uC", "vC"]]
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

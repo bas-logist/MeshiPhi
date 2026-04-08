@@ -1,5 +1,9 @@
-from scipy.stats import qmc
+from __future__ import annotations
+
+from typing import Any
+
 import numpy as np
+from scipy.stats import qmc
 
 
 class Sampler:
@@ -12,11 +16,11 @@ class Sampler:
 
     """
 
-    def __init__(self, d, n):
+    def __init__(self, d: int, n: int) -> None:
         self.dimensions = d
         self.number_of_samples = n
 
-    def generate_samples(self, ranges):
+    def generate_samples(self, ranges: list[list[float]]) -> np.ndarray[Any, Any]:
         """
 
         generates samples within the provided ranges array, the length of the ranges should equal to self.dimensions
@@ -36,7 +40,5 @@ class Sampler:
         # map samples to ranges
         for sample in samples:
             for i in range(len(ranges)):
-                mapped_samples.append(
-                    ranges[i][0] + sample[i] * (ranges[i][1] - ranges[i][0])
-                )
+                mapped_samples.append(ranges[i][0] + sample[i] * (ranges[i][1] - ranges[i][0]))
         return np.array(mapped_samples).reshape(len(samples), len(ranges))

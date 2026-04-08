@@ -1,12 +1,18 @@
-from meshiphi.dataloaders.dataloader_interface import DataLoaderInterface
-from abc import abstractmethod
-
+from __future__ import annotations
 
 import logging
+from abc import abstractmethod
+from typing import TYPE_CHECKING, Any, cast
+
 import numpy as np
 import pandas as pd
-from shapely.strtree import STRtree
 from shapely.ops import unary_union
+from shapely.strtree import STRtree
+
+from meshiphi.dataloaders.dataloader_interface import DataLoaderInterface
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +22,14 @@ class LutDataLoader(DataLoaderInterface):
     Abstract class for all LookUp Table Datasets.
     """
 
-    def __init__(self, bounds, params):
+    # Type hints for dynamically set attributes (set via setattr in __init__)
+    files: list[str] | None
+    data_name: str | None
+    dataloader_name: str
+    value: bool | float | None = None  # LUT-specific: value to assign to shapes
+    aggregate_type: str = "MEAN"  # Aggregation type for LUT data
+
+    def __init__(self, bounds: Boundary, params: dict[str, Any]) -> None:
         """
         This is where large-scale operations are performed,
         such as importing data, downsampling, reprojecting, and renaming
@@ -49,7 +62,7 @@ class LutDataLoader(DataLoaderInterface):
 
         # Read in and manipulate data to standard form
         self.data = self.import_data(bounds)
-        if "files" in params:
+        if "files" in params and self.files is not None:
             logger.info("\tFiles read:")
             for file in self.files:
                 logger.info(f"\t\t{file}")
@@ -80,19 +93,15 @@ class LutDataLoader(DataLoaderInterface):
                 f"Dataloader {params['dataloader_name']}"
                 + " contains no data within initial region!"
             )
-        else:
-            # Cut dataset down to initial boundary
-            logger.info(
-                "\tTrimming data to initial boundary: {min} to {max}".format(
-                    min=(bounds.get_lat_min(), bounds.get_long_min()),
-                    max=(bounds.get_lat_max(), bounds.get_long_max()),
-                )
-            )
+        # Cut dataset down to initial boundary
+        logger.info(
+            f"\tTrimming data to initial boundary: {(bounds.get_lat_min(), bounds.get_long_min())} to {(bounds.get_lat_max(), bounds.get_long_max())}"
+        )
 
-            self.data = self.trim_datapoints(bounds)
+        self.data = self.trim_datapoints(bounds)
 
     @abstractmethod
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> Any:  # gpd.GeoDataFrame
         """
         User defined method for importing data from files, or even generating
         data from scratch
@@ -105,9 +114,8 @@ class LutDataLoader(DataLoaderInterface):
                     - Must have single data column
 
         """
-        pass
 
-    def add_default_params(self, params):
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for all LUT dataloaders. This function should be
         overloaded to include any extra params for a specific dataloader
@@ -133,7 +141,7 @@ class LutDataLoader(DataLoaderInterface):
 
         return params
 
-    def verify_data(self, data=None):
+    def verify_data(self, data: Any = None) -> pd.DataFrame:
         """
         Verifies that all geometries read in are Polygons or MultiPolygons
         If MultiPolygon, then split out into multiple Polygons
@@ -169,11 +177,9 @@ class LutDataLoader(DataLoaderInterface):
                     f"{row.geometry.geom_type} not acceptable geometry type."
                     + " Must be a Polygon or MultiPolygon!"
                 )
-        data = pd.concat(new_data, ignore_index=True)
+        return pd.concat(new_data, ignore_index=True)
 
-        return data
-
-    def calculate_coverage(self, bounds, data=None):
+    def calculate_coverage(self, bounds: Boundary, data: Any = None) -> float:
         """
         Calculates percentage of boundary covered by dataset
 
@@ -196,18 +202,17 @@ class LutDataLoader(DataLoaderInterface):
         # No coverage if no data
         if data.empty:
             return 0
-        else:
-            # Calculate coverage fraction
-            bounds_polygon = bounds.to_polygon()
-            # Extract out polygons, add to multipolygon
-            data_polygon = unary_union([datum for datum in data.tolist()])
+        # Calculate coverage fraction
+        bounds_polygon = bounds.to_polygon()
+        # Extract out polygons, add to multipolygon
+        data_polygon = unary_union(data.tolist())
 
-            overlap_area = data_polygon.intersection(bounds_polygon).area
-            total_area = bounds_polygon.area
+        overlap_area = data_polygon.intersection(bounds_polygon).area
+        total_area = bounds_polygon.area
 
-            return overlap_area / total_area
+        return cast("float", overlap_area / total_area)
 
-    def trim_datapoints(self, bounds, data=None):
+    def trim_datapoints(self, bounds: Boundary, data: Any = None) -> pd.DataFrame:
         """
         Trims datapoints from self.data within boundary defined by 'bounds'.
         self.data can be pd.DataFrame or xr.Dataset
@@ -223,7 +228,7 @@ class LutDataLoader(DataLoaderInterface):
             data = self.data
         # Limit time to boundary
         if "time" in data.index.names:
-            data = data.loc[bounds.get_time_min() : bounds.get_time_max()]
+            data = data.loc[bounds.get_time_min() : bounds.get_time_max()]  # type: ignore[misc]
 
         # Find intersection of each polygon to the boundary
         bounds_polygon = bounds.to_polygon()
@@ -232,7 +237,9 @@ class LutDataLoader(DataLoaderInterface):
         # Return only rows intersecting with cellbox boundary
         return data.iloc[intersections]
 
-    def get_value(self, bounds, agg_type=None, skipna=False, data=None):
+    def get_value(
+        self, bounds: Boundary, agg_type: str | None = None, skipna: bool = False, data: Any = None
+    ) -> dict[str, float]:
         """
         Retrieve aggregated value from within bounds
 
@@ -283,15 +290,11 @@ class LutDataLoader(DataLoaderInterface):
                 weights=lambda row: self.calculate_coverage(bounds, row["geometry"])
             )
             if agg_type == "MEAN":
-                ret_val = np.average(
-                    polygons[self.data_name], weights=polygons["weights"]
-                )
+                ret_val = np.average(polygons[self.data_name], weights=polygons["weights"])
 
             elif agg_type == "MEDIAN":
                 # Chunk by cumulative weight
-                polygons["cumulative_weights"] = polygons["weights"].cumsum(
-                    skipna=skipna
-                )
+                polygons["cumulative_weights"] = polygons["weights"].cumsum(skipna=skipna)
                 # Find middle of cumulative weight
                 total_weight = polygons["weights"].sum(skipna=skipna)
                 median_pos = total_weight / 2
@@ -301,9 +304,7 @@ class LutDataLoader(DataLoaderInterface):
 
             elif agg_type == "STD":
                 # Calculate std dev manually to account for weight
-                average = np.average(
-                    polygons[self.data_name], weights=polygons["weights"]
-                )
+                average = np.average(polygons[self.data_name], weights=polygons["weights"])
                 variance = np.average(
                     np.power(polygons[self.data_name] - average, 2),
                     weights=polygons["weights"],
@@ -314,12 +315,16 @@ class LutDataLoader(DataLoaderInterface):
             raise ValueError(f"Unknown aggregation type {agg_type}")
 
         # Convert numpy bool to python bool for JSON serialisation
-        if type(ret_val) is np.bool_:
+        if isinstance(ret_val, np.bool_):
             ret_val = bool(ret_val)
 
+        if self.data_name is None:
+            raise ValueError("data_name is None")
         return {self.data_name: ret_val}
 
-    def get_hom_condition(self, bounds, splitting_conds, data=None):
+    def get_hom_condition(
+        self, bounds: Boundary, splitting_conds: dict[str, Any], data: Any = None
+    ) -> str:
         """
         Retrieves homogeneity condition of data within
         boundary.
@@ -347,30 +352,31 @@ class LutDataLoader(DataLoaderInterface):
 
         hom_type = "CLR"
         # If there's no polygon that overlaps with bounds
-        if not any([polygon.intersects(bounds_polygon) for polygon in polygons]):
+        if not any(polygon.intersects(bounds_polygon) for polygon in polygons):
             if splitting_conds["split_lock"] is True:
                 hom_type = "HOM"
         # If we want to split on the boundary
-        elif splitting_conds["boundary"]:
-            if any(p.boundary.intersects(bounds_polygon) for p in polygons):
-                hom_type = "HET"
+        elif splitting_conds["boundary"] and any(
+            p.boundary.intersects(bounds_polygon) for p in polygons
+        ):
+            hom_type = "HET"
 
         # Otherwise no boundaries intersected bounds
         return hom_type
 
-    def reproject(self):
+    def reproject(self) -> None:
         """
         Reprojection not supported by LookUpTable Dataloader
         """
         logger.warning("Reprojection not supported by LookUpTable Dataloader")
 
-    def downsample(self):
+    def downsample(self) -> None:
         """
         Downsampling not supported by LookUpTable Dataloader
         """
         logger.warning("Downsampling not supported by LookUpTable Dataloader")
 
-    def get_data_col_name(self):
+    def get_data_col_name(self) -> str:
         """
         Retrieve name of data column.
         Used for when data_name not defined in params.
@@ -387,15 +393,13 @@ class LutDataLoader(DataLoaderInterface):
 
         logger.debug(f"\tRetrieving data name from {type(self.data)}")
 
-        unique_cols = list(set(self.data.columns) - set(["time", "geometry"]))
+        unique_cols = list(set(self.data.columns) - {"time", "geometry"})
 
-        assert len(unique_cols) == 1, (
-            f"Expected only one data column! Instead, found {unique_cols}"
-        )
+        assert len(unique_cols) == 1, f"Expected only one data column! Instead, found {unique_cols}"
 
-        return unique_cols[0]
+        return str(unique_cols[0])
 
-    def set_data_col_name(self, new_name):
+    def set_data_col_name(self, new_name: str) -> pd.DataFrame:
         """
         Sets name of data column/data variable
 
@@ -411,6 +415,5 @@ class LutDataLoader(DataLoaderInterface):
         if old_name != new_name:
             logger.info(f"\tChanging data name from {old_name} to {new_name}")
             return self.data.rename({old_name: new_name})
-        else:
-            logger.info(f"\tData is already labelled '{new_name}'")
-            return self.data
+        logger.info(f"\tData is already labelled '{new_name}'")
+        return self.data

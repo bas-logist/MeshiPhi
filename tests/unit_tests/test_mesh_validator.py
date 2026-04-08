@@ -3,8 +3,9 @@ MeshValidator class tests.
 """
 
 import pytest
-from meshiphi.mesh_validation.sampler import Sampler
+
 from meshiphi.mesh_validation.mesh_validator import MeshValidator
+from meshiphi.mesh_validation.sampler import Sampler
 from tests.conftest import REGRESSION_TESTS_DIR
 
 

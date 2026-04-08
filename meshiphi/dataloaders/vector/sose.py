@@ -1,10 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import pandas as pd  # noqa: TC002
+import xarray as xr
+
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 
-import xarray as xr
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class SOSEDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a SOSE Currents NetCDF file.
         Renames coordinates to 'lat' and 'long', and renames variable to
@@ -20,6 +28,8 @@ class SOSEDataLoader(VectorDataLoader):
         """
 
         # Open dataset and cast to pandas df
+        if self.files is None:
+            raise ValueError("files parameter is required for SOSEDataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -32,6 +42,4 @@ class SOSEDataLoader(VectorDataLoader):
         # Extract relevant columns
         df = df[["lat", "long", "uC", "vC"]]
         # Trim to initial datapoints
-        df = self.trim_datapoints(bounds, data=df)
-
-        return df
+        return self.trim_datapoints(bounds, data=df)

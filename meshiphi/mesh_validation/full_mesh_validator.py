@@ -1,5 +1,13 @@
-from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 import pandas as pd
+
+from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class FullMeshValidator:
@@ -12,7 +20,7 @@ class FullMeshValidator:
     MeshValidator object only compares a sample of the source data to the mesh data.
     """
 
-    def __init__(self, mesh, source_data):
+    def __init__(self, mesh: dict[str, Any], source_data: pd.DataFrame) -> None:
         """
         Args:
             mesh: json file containing mesh data
@@ -29,7 +37,7 @@ class FullMeshValidator:
 
         # Validate that the source data is within the require bounds
 
-    def validate_vector(self, sd_name, md_name):
+    def validate_vector(self, sd_name: list[str], md_name: list[str]) -> dict[str, Any]:
         """
         Validate the mesh by comparing the vector field in the mesh to the source data
         Args:
@@ -49,12 +57,12 @@ class FullMeshValidator:
             # Get vector value from cellbox
             cell_vector_0 = "cell_" + md_name[0]
             cell_vector_1 = "cell_" + md_name[1]
-            raw_slice[cell_vector_0] = self.mesh.agg_cellboxes[
-                cell_count
-            ].get_agg_data()[md_name[0]]
-            raw_slice[cell_vector_1] = self.mesh.agg_cellboxes[
-                cell_count
-            ].get_agg_data()[md_name[1]]
+            raw_slice[cell_vector_0] = self.mesh.agg_cellboxes[cell_count].get_agg_data()[
+                md_name[0]
+            ]
+            raw_slice[cell_vector_1] = self.mesh.agg_cellboxes[cell_count].get_agg_data()[
+                md_name[1]
+            ]
 
             # Calculate difference vector
 
@@ -73,15 +81,13 @@ class FullMeshValidator:
         mean_d_vector_mag = full_raw_processed["d_vector_mag"].mean()
         rms_d_vector_mag = (full_raw_processed["d_vector_mag^2"].mean()) ** 0.5
 
-        validation_results = {
+        return {
             "cellbox_count": len(self.mesh.agg_cellboxes),
             "mean_d_vector_mag": mean_d_vector_mag,
             "root_mean_squared_d_vector_mag": rms_d_vector_mag,
         }
 
-        return validation_results
-
-    def validate_scalar(self, sd_name, md_name):
+    def validate_scalar(self, sd_name: str, md_name: str) -> dict[str, Any]:
         """
         Validate the mesh by comparing the scalar field in the mesh to the source data
         Args:
@@ -100,9 +106,7 @@ class FullMeshValidator:
 
             # Get scalar value from cellbox
             cell_scalar = "cell_" + md_name
-            raw_slice[cell_scalar] = self.mesh.agg_cellboxes[cell_count].get_agg_data()[
-                md_name
-            ]
+            raw_slice[cell_scalar] = self.mesh.agg_cellboxes[cell_count].get_agg_data()[md_name]
 
             # Calculate difference scalar
             raw_slice["d_scalar"] = abs(raw_slice[sd_name] - raw_slice[cell_scalar])
@@ -113,15 +117,13 @@ class FullMeshValidator:
         mean_err = full_raw_processed["d_scalar"].mean()
         rmse = (full_raw_processed["d_scalar^2"].mean()) ** 0.5
 
-        validation_results = {
+        return {
             "cellbox_count": len(self.mesh.agg_cellboxes),
             "mean_err": mean_err,
             "root_mean_squared_err": rmse,
         }
 
-        return validation_results
-
-    def slice_data(self, bounds):
+    def slice_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         return a slice of the source data within the bounds
         Args:
@@ -134,8 +136,4 @@ class FullMeshValidator:
         raw_slice = self.source_data[
             self.source_data["lat"].between(bounds.lat_range[0], bounds.lat_range[1])
         ]
-        raw_slice = raw_slice[
-            raw_slice["long"].between(bounds.long_range[0], bounds.long_range[1])
-        ]
-
-        return raw_slice
+        return raw_slice[raw_slice["long"].between(bounds.long_range[0], bounds.long_range[1])]

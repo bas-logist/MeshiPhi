@@ -1,13 +1,15 @@
-from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
-from meshiphi.mesh_generation.boundary import Boundary
+from __future__ import annotations
 
 import geopandas as gpd
 import pandas as pd
 from shapely.ops import unary_union
 
+from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
+from meshiphi.mesh_generation.boundary import Boundary
+
 
 class ScotlandNCMPA(LutDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Creates a simulated dataset of sea ice thickness based on
         scientific literature.
@@ -22,6 +24,8 @@ class ScotlandNCMPA(LutDataLoader):
                 and variable 'thickness'
         """
         # Read in all files specified and extract geometry of exclusion zones
+        if self.files is None:
+            raise ValueError("files parameter is required for ScotlandNCMPA")
         gdf_list = [gpd.read_file(file) for file in self.files]
         exclusion_df = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
         # Denote all geometries as exclusion zones
@@ -36,6 +40,4 @@ class ScotlandNCMPA(LutDataLoader):
         # Add line
         exclusion_df.loc[len(exclusion_df.index)] = [inclusion_polygon, False]
         # Limit to boundary
-        exclusion_df = self.trim_datapoints(bounds, data=exclusion_df)
-
-        return exclusion_df
+        return self.trim_datapoints(bounds, data=exclusion_df)

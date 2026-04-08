@@ -1,7 +1,8 @@
 import pytest
-from meshiphi.mesh_generation.metadata import Metadata
-from meshiphi.mesh_generation.cellbox import CellBox
+
 from meshiphi.mesh_generation.boundary import Boundary
+from meshiphi.mesh_generation.cellbox import CellBox
+from meshiphi.mesh_generation.metadata import Metadata
 from tests.conftest import create_cellbox, create_dataloader, create_metadata
 
 
@@ -43,7 +44,7 @@ def min_cellbox(standard_test_bounds):
 
 def test_getter_setter_minimum_datapoints(dummy_cellbox):
     """Test minimum datapoints getter and setter"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="can not be negative"):
         dummy_cellbox.set_minimum_datapoints(-1)
 
     dummy_cellbox.set_minimum_datapoints(5)
@@ -81,9 +82,7 @@ def test_getter_setter_data_source(dummy_cellbox):
     assert dummy_cellbox.get_data_source() == arbitrary_data_source2
 
 
-@pytest.mark.parametrize(
-    "bounds", [Boundary([10, 30], [30, 50]), Boundary([0, 20], [20, 40])]
-)
+@pytest.mark.parametrize("bounds", [Boundary([10, 30], [30, 50]), Boundary([0, 20], [20, 40])])
 def test_getter_setter_parent(dummy_cellbox, bounds):
     """Test parent getter and setter"""
     arbitrary_cellbox = create_cellbox(bounds)
@@ -97,7 +96,7 @@ def test_getter_setter_parent(dummy_cellbox, bounds):
 
 def test_getter_setter_split_depth(dummy_cellbox):
     """Test split depth getter and setter"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="can not be negative"):
         dummy_cellbox.set_split_depth(-1)
 
     dummy_cellbox.set_split_depth(5)
@@ -116,9 +115,7 @@ def test_getter_setter_id(dummy_cellbox):
     assert dummy_cellbox.get_id() == 321
 
 
-@pytest.mark.parametrize(
-    "bounds", [Boundary([30, 50], [50, 70]), Boundary([20, 40], [40, 60])]
-)
+@pytest.mark.parametrize("bounds", [Boundary([30, 50], [50, 70]), Boundary([20, 40], [40, 60])])
 def test_getter_setter_bounds(dummy_cellbox, bounds):
     """Test bounds getter and setter"""
     dummy_cellbox.set_bounds(bounds)
@@ -130,7 +127,7 @@ def test_getter_setter_bounds(dummy_cellbox, bounds):
 
 
 @pytest.mark.parametrize(
-    "cellbox_fixture,expected,description",
+    ("cellbox_fixture", "expected", "description"),
     [
         ("het_cellbox", True, "heterogeneous"),
         ("hom_cellbox", False, "homogeneous"),
@@ -145,7 +142,7 @@ def test_should_split(cellbox_fixture, expected, description, request):
 
 
 @pytest.mark.parametrize(
-    "cellbox_fixture,expected,description",
+    ("cellbox_fixture", "expected", "description"),
     [
         ("het_cellbox", True, "heterogeneous"),
         ("hom_cellbox", False, "homogeneous"),
@@ -242,9 +239,7 @@ def test_check_vector_data():
         "multiplier_v": 1,
     }
 
-    vector_parent_cb = create_cellbox(
-        vector_bounds, params=vector_params, id=1, parent=None
-    )
+    vector_parent_cb = create_cellbox(vector_bounds, params=vector_params, id=1, parent=None)
     vector_child_cb = vector_parent_cb.split(1)[0]
 
     arbitrary_cb = create_cellbox(
@@ -276,7 +271,7 @@ def test_check_vector_data():
         == parent_agg_val
     )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Dataloader not found in parent"):
         arbitrary_cb.check_vector_data(
             arbitrary_cb.data_source[0],
             vector_child_cb.data_source[0].get_data_loader(),

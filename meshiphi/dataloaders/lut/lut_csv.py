@@ -1,14 +1,16 @@
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+from shapely import wkt
+from shapely.ops import unary_union
+
 from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
 from meshiphi.mesh_generation.boundary import Boundary
 
-import pandas as pd
-from shapely.ops import unary_union
-from shapely import wkt
-import numpy as np
-
 
 class LutCSV(LutDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Import a list of .csv files, assign regions a value specified in
         config params, regions outside this are numpy nan values.
@@ -23,6 +25,8 @@ class LutCSV(LutDataLoader):
                 data_name (read from CSV by default)
         """
         # Read in all files and create dataframe from them
+        if self.files is None:
+            raise ValueError("files parameter is required for LutCSV")
         df_list = [pd.read_csv(file, index_col=False) for file in self.files]
         csv_df = pd.concat(df_list, ignore_index=True)
 
@@ -37,7 +41,7 @@ class LutCSV(LutDataLoader):
             )
 
         # Set data name to column in CSV
-        self.data_name = list(set(csv_df.columns.values) - set(["geometry"]))[0]
+        self.data_name = next(iter(set(csv_df.columns.values) - {"geometry"}))
         # Convert strings to shapely geometries
         csv_df["geometry"] = csv_df["geometry"].apply(wkt.loads)
         # Create boundary denoting the world
@@ -48,6 +52,4 @@ class LutCSV(LutDataLoader):
         # Set remainder to have value np.nan
         csv_df.loc[len(csv_df.index)] = [undefined_polygon, np.nan]
         # Limit to boundary
-        csv_df = self.trim_datapoints(bounds, data=csv_df)
-
-        return csv_df
+        return self.trim_datapoints(bounds, data=csv_df)

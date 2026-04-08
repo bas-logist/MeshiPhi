@@ -1,14 +1,17 @@
-from meshiphi.mesh_validation.sampler import Sampler
+from __future__ import annotations
 
-
-from meshiphi.mesh_generation.mesh_builder import MeshBuilder
-import numpy as np
 import json
-import math
 import logging
-from meshiphi.mesh_generation.boundary import Boundary
-from sklearn.metrics import mean_squared_error
+import math
+from typing import Any, cast
+
+import numpy as np
 import xarray as xr
+from sklearn.metrics import mean_squared_error
+
+from meshiphi.mesh_generation.boundary import Boundary
+from meshiphi.mesh_generation.mesh_builder import MeshBuilder
+from meshiphi.mesh_validation.sampler import Sampler
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +27,7 @@ class MeshValidator:
 
     """
 
-    def __init__(self, mesh_config_file):
+    def __init__(self, mesh_config_file: str) -> None:
         """
 
         Args:
@@ -33,14 +36,14 @@ class MeshValidator:
         """
         self.conf = None
         self.validation_length = 0.1
-        with open(mesh_config_file, "r") as config_file:
+        with open(mesh_config_file) as config_file:
             self.conf = json.load(config_file)["config"]["mesh_info"]
 
         mesh_builder = MeshBuilder(self.conf)
         self.env_mesh = mesh_builder.build_environmental_mesh()
         self.mesh = mesh_builder.mesh
 
-    def validate_mesh(self, number_of_samples=10):
+    def validate_mesh(self, number_of_samples: int = 10) -> float:
         """
 
         samples the mesh's lat and long space and compares the actual data within the sampled's range to the mesh agg_value then calculates the RMSE.
@@ -66,10 +69,9 @@ class MeshValidator:
             actual_value = np.append(actual_value, self.get_value_from_data(sample))
             mesh_value = np.append(mesh_value, self.get_values_from_mesh(sample))
         # calculate the RMSE over the samples.
-        distance = math.sqrt(mean_squared_error(actual_value, mesh_value))
-        return distance
+        return math.sqrt(mean_squared_error(actual_value, mesh_value))
 
-    def get_value_from_data(self, sample):
+    def get_value_from_data(self, sample: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
         """
         gets the actual data within the provided sample lat and long
         Args:
@@ -77,23 +79,25 @@ class MeshValidator:
         Returns:
             a numpy array that contains all the data within the sampled lat and long range
         """
-        values = []
+        values: list[Any] = []
         # calculate the sampling range based on the validation length
         lat_end, long_end = self.get_range_end(sample)
         lat_range = [sample[0], lat_end]
         long_range = [sample[1], long_end]
         time_range = self.mesh.get_bounds().get_time_range()
-        for source in self.mesh.cellboxes[0].get_data_source():
+        data_source = self.mesh.cellboxes[0].get_data_source()
+        if data_source is None:
+            return np.array([])
+        for source in data_source:
             data_loader = source.get_data_loader()
             data_name = data_loader.get_data_col_name()
-            dp = data_loader.trim_datapoints(
-                Boundary(lat_range, long_range, time_range)
-            )
-            values = np.append(values, dp[data_name])
+            dp = data_loader.trim_datapoints(Boundary(lat_range, long_range, time_range))
+            values_array = np.append(values, dp[data_name])
+            values = values_array.tolist()
         logger.info("values from data are: {}".format(" ".join(map(str, values))))
-        return values
+        return cast("np.ndarray[Any, Any]", np.array(values, dtype=np.float64))
 
-    def get_range_end(self, sample):
+    def get_range_end(self, sample: np.ndarray[Any, Any]) -> tuple[float, float]:
         """
         calculates the range end of the provided sample lat and long, claculation is based on the specified validation_length
         Args:
@@ -110,7 +114,7 @@ class MeshValidator:
             long_end = self.mesh.get_bounds().get_long_max()
         return lat_end, long_end
 
-    def get_values_from_mesh(self, sample):
+    def get_values_from_mesh(self, sample: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
         """
         finds the mesh's cellboxes that contains the sample's lat and long then returns the aggregated values within.
         Args:
@@ -119,30 +123,32 @@ class MeshValidator:
             a numpy array that contains the mesh's data within the sampled lat and long range
         """
         # TODO make sure to handle the vector data
-        values = []
+        values: list[Any] = []
         # calculate the sampling range based on the validation length
         lat_end, long_end = self.get_range_end(sample)
         lat_range = [sample[0], lat_end]
         long_range = [sample[1], long_end]
         time_range = self.mesh.get_bounds().get_time_range()
 
-        for source in self.mesh.cellboxes[0].get_data_source():
+        data_source = self.mesh.cellboxes[0].get_data_source()
+        if data_source is None:
+            return cast("np.ndarray[Any, Any]", np.array([0.0]))
+        for source in data_source:
             data_loader = source.get_data_loader()
-            dp = data_loader.trim_datapoints(
-                Boundary(lat_range, long_range, time_range)
-            )
+            dp = data_loader.trim_datapoints(Boundary(lat_range, long_range, time_range))
 
             if isinstance(dp, xr.core.dataset.Dataset):
                 dp = dp.to_dataframe().reset_index()
-            for index, point in dp.iterrows():
+            for _index, point in dp.iterrows():
                 lat = point["lat"]
                 long = point["long"]
                 for agg_cellbox in self.env_mesh.agg_cellboxes:
                     if agg_cellbox.contains_point(lat, long):
-                        values = np.append(
+                        values_array = np.append(
                             values, agg_cellbox.agg_data[data_loader.data_name]
                         )  # get the agg_value
+                        values = values_array.tolist()
                         break  # break to make sure we avoid getting multiple values (for lat and long on bounds of multiple cellboxes)
         logger.info("values from mesh are: {}".format(" ".join(map(str, values))))
 
-        return values
+        return cast("np.ndarray[Any, Any]", np.array(values, dtype=np.float64))

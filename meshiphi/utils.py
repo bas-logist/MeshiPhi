@@ -2,50 +2,80 @@
 Miscellaneous utility functions that may be of use throughout MeshiPhi
 """
 
+from __future__ import annotations
+
 import logging
 import time
 import tracemalloc
-import numpy as np
+from calendar import monthrange
 from datetime import datetime, timedelta
 from functools import wraps
-from calendar import monthrange
-from scipy.fftpack import fftshift
+from typing import TYPE_CHECKING, Any, Callable, Generator, ParamSpec, TypeVar, cast, overload
+
+import numpy as np
+import numpy.typing as npt
+
+try:
+    from scipy.fft import fftshift
+except ImportError:
+    from scipy.fftpack import fftshift
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 logger = logging.getLogger(__name__)
 
+F = TypeVar("F", bound=Callable[..., Any])
+P = ParamSpec("P")
+R = TypeVar("R")
 
-def longitude_domain(long):
+
+@overload
+def longitude_domain(long: float) -> float: ...
+
+
+@overload
+def longitude_domain(long: list[float]) -> list[float]: ...
+
+
+@overload
+def longitude_domain(long: npt.NDArray[np.floating[Any]]) -> npt.NDArray[np.floating[Any]]: ...
+
+
+def longitude_domain(
+    long: float | list[float] | npt.NDArray[np.floating[Any]],
+) -> float | list[float] | npt.NDArray[np.floating[Any]]:
     """
     Converts any longitude degree value into one between -180:180
     """
     # Allow input type to be list or ndarray
     if isinstance(long, list):
         return [longitude_domain(x) for x in long]
-    elif isinstance(long, np.ndarray):
+    if isinstance(long, np.ndarray):
         return np.array([longitude_domain(x) for x in long])
     # Return same format as input at antimeridian
-    elif long in [-180, 180]:
+    if long in [-180, 180]:
         return long
     # Otherwise convert it to be within domain
-    else:
-        return (long + 180) % 360 - 180
+    return (long + 180) % 360 - 180
 
 
-def longitude_distance(long_a, long_b):
+def longitude_distance(long_a: float, long_b: float) -> float:
     """
     Calculates the angular distance between two longitude values
     """
 
-    long_dist = np.abs(longitude_domain(long_b) - longitude_domain(long_a))
-    long_dist = np.mod(long_dist, 360)
+    long_dist = float(np.abs(longitude_domain(long_b) - longitude_domain(long_a)))
+    long_dist = float(np.mod(long_dist, 360))
 
     if long_dist > 180:
         return 360 - long_dist
-    else:
-        return long_dist
+    return long_dist
 
 
-def frac_of_month(year, month, start_date=None, end_date=None):
+def frac_of_month(
+    year: int, month: int, start_date: datetime | None = None, end_date: datetime | None = None
+) -> float:
     # Determine the number of days in the month specified
     days_in_month = monthrange(year, month)[1]
     # If not specified, default to beginning/end of month
@@ -63,22 +93,22 @@ def frac_of_month(year, month, start_date=None, end_date=None):
     return days_overlap / days_in_month
 
 
-def boundary_to_coords(bounds):
+def boundary_to_coords(bounds: Boundary) -> tuple[tuple[float, float], tuple[float, float]]:
     min_coords = (bounds.get_lat_min(), bounds.get_long_min())
     max_coords = (bounds.get_lat_max(), bounds.get_long_max())
     return min_coords, max_coords
 
 
-def str_to_datetime(date_str):
+def str_to_datetime(date_str: str) -> datetime:
     return datetime.strptime(date_str, "%Y-%m-%d")
 
 
-def date_range(start_date, end_date):
+def date_range(start_date: datetime, end_date: datetime) -> Generator[datetime, None, None]:
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
 
-def convert_decimal_days(decimal_days, mins=False):
+def convert_decimal_days(decimal_days: float, mins: bool = False) -> str:
     """
     Convert decimal days to more readable Days, Hours and (optionally) Minutes
     Args:
@@ -101,15 +131,32 @@ def convert_decimal_days(decimal_days, mins=False):
             new_time = f"{minutes} minutes"
     else:
         hours = round(hours, 2)
-        if days:
-            new_time = f"{round(days)} days {hours} hours"
-        else:
-            new_time = f"{hours} hours"
+        new_time = f"{round(days)} days {hours} hours" if days else f"{hours} hours"
 
     return new_time
 
 
-def round_to_sigfig(x, sigfig=5):
+@overload
+def round_to_sigfig(x: int, sigfig: int = 5) -> int: ...
+
+
+@overload
+def round_to_sigfig(x: float, sigfig: int = 5) -> float: ...
+
+
+@overload
+def round_to_sigfig(x: list[float], sigfig: int = 5) -> list[float]: ...
+
+
+@overload
+def round_to_sigfig(
+    x: npt.NDArray[np.floating[Any]], sigfig: int = 5
+) -> npt.NDArray[np.floating[Any]]: ...
+
+
+def round_to_sigfig(
+    x: int | float | list[float] | npt.NDArray[np.floating[Any]], sigfig: int = 5
+) -> int | float | list[float] | npt.NDArray[np.floating[Any]]:
     """
     Rounds numbers to some number of significant figures
 
@@ -127,11 +174,13 @@ def round_to_sigfig(x, sigfig=5):
         raise ValueError(f"Cannot round {type(x)} to sig figs!")
 
     # Cast as array if not initially, so that later processes all act as expected
-    if orig_type in [int, float, np.float64]:
-        x = [x]
-    x = np.array(x)
+    x_array: npt.NDArray[np.floating[Any]]
+    if isinstance(x, (int, float, np.floating)):
+        x_array = np.array([float(x)], dtype=np.float64)  # Explicit conversion to array
+    else:
+        x_array = np.array(x, dtype=np.float64)
     # Create a mask disabling any values of inf or zero being passed to log10
-    loggable_idxs = ([x != 0] & np.isfinite(x))[0]
+    loggable_idxs = ([x_array != 0] & np.isfinite(x_array))[0]
     # Determine number of decimal places to round each number to
     # np.abs because can't find log of negative number
     # np.log10 to get position of most significant digit
@@ -142,42 +191,40 @@ def round_to_sigfig(x, sigfig=5):
     dec_pl = (
         sigfig
         - np.floor(
-            np.log10(np.abs(x), where=loggable_idxs, out=np.zeros_like(x))
+            np.log10(np.abs(x_array), where=loggable_idxs, out=np.zeros_like(x_array))
         ).astype(int)
         - 1
     )
     # Round to sig figs
-    rounded = np.array([np.around(x[i], decimals=dec_pl[i]) for i in range(len(x))])
+    rounded = np.array([np.around(x_array[i], decimals=dec_pl[i]) for i in range(len(x_array))])
     # Return as single value if input that way
     if orig_type in [int, float]:
-        return rounded.item()
+        return cast("int | float", rounded.item())
     # Return as python list
-    elif orig_type is list:
-        return rounded.tolist()
+    if orig_type is list:
+        return cast("list[float]", rounded.tolist())
     # Otherwise, return np.array
-    else:
-        return rounded
+    return cast("npt.NDArray[np.floating[Any]]", rounded)
 
 
-def divergence(flow):
+def divergence(flow: npt.NDArray[np.floating[Any]]) -> npt.NDArray[np.floating[Any]]:
     flow = np.swapaxes(flow, 0, 1)
     Fx, Fy = flow[:, :, 0], flow[:, :, 1]
     dFx_dx = np.gradient(Fx, axis=0)
     dFy_dy = np.gradient(Fy, axis=1)
-    return dFx_dx + dFy_dy
+    return cast("npt.NDArray[np.floating[Any]]", dFx_dx + dFy_dy)
 
 
-def curl(flow):
+def curl(flow: npt.NDArray[np.floating[Any]]) -> npt.NDArray[np.floating[Any]]:
     flow = np.swapaxes(flow, 0, 1)
     Fx, Fy = flow[:, :, 0], flow[:, :, 1]
     dFx_dy = np.gradient(Fx, axis=1)
     dFy_dx = np.gradient(Fy, axis=0)
-    curl = dFy_dx - dFx_dy
-    return curl
+    return cast("npt.NDArray[np.floating[Any]]", dFy_dx - dFx_dy)
 
 
 # GRF functions
-def fftind(size):
+def fftind(size: int) -> npt.NDArray[np.int_]:
     """
     Creates a numpy array of shifted Fourier coordinates.
 
@@ -195,11 +242,10 @@ def fftind(size):
     # Create array
     k_ind = np.mgrid[:size, :size] - int((size + 1) / 2)
     # Fourier shift
-    k_ind = fftshift(k_ind)
-    return k_ind
+    return cast("npt.NDArray[np.int_]", fftshift(k_ind))
 
 
-def gaussian_random_field(size, alpha):
+def gaussian_random_field(size: int, alpha: float) -> npt.NDArray[np.floating[Any]]:
     """
     Creates a gaussian random field with normal (circular) distribution
     Code from https://github.com/bsciolla/gaussian-random-fields/blob/master/gaussian_random_fields.py
@@ -226,52 +272,48 @@ def gaussian_random_field(size, alpha):
 
     # Draws a complex gaussian random noise with normal
     # (circular) distribution
-    noise = np.random.normal(size=(size, size)) + 1j * np.random.normal(
-        size=(size, size)
-    )
+    noise = np.random.normal(size=(size, size)) + 1j * np.random.normal(size=(size, size))
 
     # To real space
     grf = np.fft.ifft2(noise * amplitude).real
 
     # Normalise the GRF:
     grf = grf - np.min(grf)
-    grf = grf / (np.max(grf) - np.min(grf))
-
-    return grf
+    return grf / (np.max(grf) - np.min(grf))
 
 
-def memory_trace(func):
+def memory_trace(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         tracemalloc.start(20)
         res = func(*args, **kwargs)
         snapshot = tracemalloc.take_snapshot()
         top_stats = snapshot.statistics("traceback")
 
         stat = top_stats[0]
-        logging.info("{} memory blocks: {.1f} KiB".format(stat.count, stat.size / 1024))
+        logging.info(f"{stat.count} memory blocks: {stat.size / 1024:.1f} KiB")
         logging.info("\n".join(stat.traceback.format()))
         return res
 
     return wrapper
 
 
-def timed_call(func):
+def timed_call(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         start = time.perf_counter()
         res = func(*args, **kwargs)
         end = time.perf_counter()
-        logger.info(
-            "Timed call to {} took {:02f} seconds".format(func.__name__, end - start)
-        )
+        logger.info(f"Timed call to {func.__name__} took {end - start:02f} seconds")
         return res
 
     return wrapper
 
 
 # CLI utilities
-def setup_logging(func, log_format="[%(asctime)-17s :%(levelname)-8s] - %(message)s"):
+def setup_logging(
+    func: Callable[P, R], log_format: str = "[%(asctime)-17s :%(levelname)-8s] - %(message)s"
+) -> Callable[P, R]:
     """Wraps a CLI endpoint and sets up logging for it
 
     This is probably not the smoothest implementation, but it's an educational
@@ -286,7 +328,7 @@ def setup_logging(func, log_format="[%(asctime)-17s :%(levelname)-8s] - %(messag
     """
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         parsed_args = func(*args, **kwargs)
         level = logging.INFO
 

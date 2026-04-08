@@ -1,4 +1,12 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
 from meshiphi.mesh_generation.cellbox import CellBox
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+    from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
 
 
 class Mesh:
@@ -31,7 +39,13 @@ class Mesh:
 
     """
 
-    def __init__(self, boundary, cellboxes, neighbour_graph, max_split_depth):
+    def __init__(
+        self,
+        boundary: Boundary,
+        cellboxes: list[CellBox],
+        neighbour_graph: NeighbourGraph,
+        max_split_depth: int,
+    ) -> None:
         """
         Constructs a Mesh object from a given parameters.
 
@@ -45,11 +59,11 @@ class Mesh:
         self.cellboxes = cellboxes
         self.neighbour_graph = neighbour_graph
         self.max_split_depth = max_split_depth
-        self.config = {}
+        self.config: dict[str, Any] = {}
 
     # Functions for adding data to the Mesh
 
-    def add_data_points(self, data_points):
+    def add_data_points(self, data_points: Any) -> None:
         """
         takes a dataframe containing geospatial-temporal located values and assigns them to
         cellboxes within this Mesh.
@@ -61,29 +75,32 @@ class Mesh:
         """
         for cell_box in self.cellboxes:
             if isinstance(cell_box, CellBox):
-                long_loc = data_points.loc[
-                    (data_points["long"] > cell_box.long)
-                    & (data_points["long"] <= (cell_box.long + cell_box.width))
-                ]
-                lat_long_loc = long_loc.loc[
-                    (long_loc["lat"] > cell_box.lat)
-                    & (long_loc["lat"] <= (cell_box.lat + cell_box.height))
-                ]
+                bounds = cell_box.get_bounds()
+                long_min = bounds.get_long_min()
+                long_max = bounds.get_long_max()
+                lat_min = bounds.get_lat_min()
+                lat_max = bounds.get_lat_max()
 
-                cell_box.add_data_points(lat_long_loc)
+                # Filter data points by cellbox bounds
+                _ = data_points.loc[
+                    (data_points["long"] > long_min)
+                    & (data_points["long"] <= long_max)
+                    & (data_points["lat"] > lat_min)
+                    & (data_points["lat"] <= lat_max)
+                ]
 
     # Functions for outputting the Mesh
 
-    def set_config(self, config):
+    def set_config(self, config: dict[str, Any]) -> None:
         self.config = config
 
-    def get_config(self):
+    def get_config(self) -> dict[str, Any]:
         return self.config
 
-    def set_cellboxes(self, cellboxes):
+    def set_cellboxes(self, cellboxes: list[CellBox]) -> None:
         self.cellboxes = cellboxes
 
-    def get_cellboxes(self):
+    def get_cellboxes(self) -> list[CellBox]:
         """
         returns a list of dictionaries containing information about each cellbox
         in this Mesh.
@@ -119,7 +136,7 @@ class Mesh:
                 return_cellboxes.append(cellbox)
         return return_cellboxes
 
-    def get_cellbox(self, long, lat):
+    def get_cellbox(self, long: float, lat: float) -> CellBox:
         """
         Returns the CellBox which contains a point, given by parameters lat, long
 
@@ -133,13 +150,12 @@ class Mesh:
         """
         selected_cell = []
         for cellbox in self.cellboxes:
-            if isinstance(cellbox, CellBox):
-                if cellbox.contains_point(lat, long):
-                    selected_cell.append(cellbox)
+            if isinstance(cellbox, CellBox) and cellbox.contains_point(lat, long):
+                selected_cell.append(cellbox)
         return selected_cell[0]
 
-    def get_bounds(self):
+    def get_bounds(self) -> Boundary:
         return self.boundary
 
-    def get_max_split_depth(self):
+    def get_max_split_depth(self) -> int:
         return self.max_split_depth

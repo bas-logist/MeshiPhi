@@ -1,12 +1,18 @@
-from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
+from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 import pandas as pd
 from shapely import wkt
 
+from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+
 
 class DensityDataLoader(LutDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Creates a simulated dataset of sea ice density based on
         scientific literature.
@@ -22,12 +28,8 @@ class DensityDataLoader(LutDataLoader):
         """
 
         # Look up table parameters hardcoded
-        northern_hemisphere = wkt.loads(
-            "POLYGON((-180 0, -180 90, 180 90, 180 0, -180 0))"
-        )
-        southern_hemisphere = wkt.loads(
-            "POLYGON((-180 -90, -180 0, 180 0, 180 -90, -180 -90))"
-        )
+        northern_hemisphere = wkt.loads("POLYGON((-180 0, -180 90, 180 90, 180 0, -180 0))")
+        southern_hemisphere = wkt.loads("POLYGON((-180 -90, -180 0, 180 0, 180 -90, -180 -90))")
 
         # su = summer, au = autumn, wi = winter, sp = spring
         northern_seasons = {
@@ -72,21 +74,15 @@ class DensityDataLoader(LutDataLoader):
                 pd.DataFrame(
                     {
                         "time": dates,
-                        "geometry": northern_hemisphere
-                        & bounds_polygon,  # Intersect shapes
-                        "density": [
-                            densities[northern_seasons[month]] for month in dates.month
-                        ],
+                        "geometry": northern_hemisphere & bounds_polygon,  # Intersect shapes
+                        "density": [densities[northern_seasons[month]] for month in dates.month],
                     }
                 ),
                 pd.DataFrame(
                     {
                         "time": dates,
-                        "geometry": southern_hemisphere
-                        & bounds_polygon,  # Intersect shapes
-                        "density": [
-                            densities[southern_seasons[month]] for month in dates.month
-                        ],
+                        "geometry": southern_hemisphere & bounds_polygon,  # Intersect shapes
+                        "density": [densities[southern_seasons[month]] for month in dates.month],
                     }
                 ),
             ]
@@ -104,5 +100,4 @@ class DensityDataLoader(LutDataLoader):
         density_df.drop(columns=["index"], inplace=True)
 
         density_df = density_df.drop_duplicates()
-        density_df = density_df.set_index("time").sort_index()
-        return density_df
+        return density_df.set_index("time").sort_index()
