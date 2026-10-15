@@ -40,6 +40,7 @@ from meshiphi.dataloaders.lut.scotland_ncmpa import ScotlandNCMPA
 from meshiphi.dataloaders.lut.lut_csv import LutCSV
 from meshiphi.dataloaders.lut.lut_geojson import LutGeoJSON
 from meshiphi.dataloaders.lut.lut_shapefile import LutShapefile
+from meshiphi.dataloaders.lut.lut_shapefile_arcnet import LutShapefileArcNet
 
 from glob import glob
 import os
@@ -131,6 +132,7 @@ class DataLoaderFactory:
             "lut_csv": (LutCSV, ["files"]),
             "lut_geojson": (LutGeoJSON, ["files", "value"]),
             "lut_shapefile": (LutShapefile, ["files", "value"]),
+            "lut_shapefile_arcnet": (LutShapefileArcNet, ["files", "value"]),
         }
         # If name is recognised as a dataloader
         if name in dataloader_requirements:
