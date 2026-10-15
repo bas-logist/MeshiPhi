@@ -352,7 +352,9 @@ class CellBox:
                         )
                         parent = parent.get_parent()
                 else:  # not parent, so either float or Nan so set the agg_Data to value_fill_type
-                    agg_value[data_name] = source.get_value_fill_type()
+                    fill = source.get_value_fill_type()
+                    # "Nan" must become a real NaN, not the string "Nan"
+                    agg_value[data_name] = float(fill) if isinstance(fill, str) else fill
 
             # If already and value for {data_name} in cellbox and it's a NaN, overwrite
             if data_name in agg_dict:

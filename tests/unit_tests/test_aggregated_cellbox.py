@@ -2,6 +2,7 @@
 AggregatedCellBox class tests.
 """
 
+import numpy as np
 import pytest
 from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
 from meshiphi.mesh_generation.boundary import Boundary
@@ -78,6 +79,25 @@ def test_to_json():
     agg_cb = AggregatedCellBox(agg_cb_boundary, agg_cb_data, agg_cb_id)
 
     assert agg_cb.to_json() == agg_cb_json
+
+
+def test_from_json_restores_nan_for_null_values():
+    """Null values produced by JSON serialization should be restored as NaN."""
+    agg_cb_json = {
+        "geometry": "POLYGON ((-175 49, -175 51.5, -170 51.5, -170 49, -175 49))",
+        "cx": -172.5,
+        "cy": 50.25,
+        "dcx": 2.5,
+        "dcy": 1.25,
+        "uC": None,
+        "vC": None,
+        "id": "1",
+    }
+
+    agg_cb = AggregatedCellBox.from_json(agg_cb_json)
+
+    assert np.isnan(agg_cb.agg_data["uC"])
+    assert np.isnan(agg_cb.agg_data["vC"])
 
 
 @pytest.mark.parametrize(

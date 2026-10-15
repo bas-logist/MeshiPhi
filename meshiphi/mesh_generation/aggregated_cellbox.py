@@ -60,7 +60,10 @@ class AggregatedCellBox:
             dict_obj = {}
             for key in cellbox_json:
                 if key not in ["geometry", "cx", "cy", "dcx", "dcy", "id"]:
-                    dict_obj[key] = cellbox_json[key]
+                    value = cellbox_json[key]
+                    if value is None:
+                        value = np.nan
+                    dict_obj[key] = value
 
             return dict_obj
 
@@ -147,10 +150,14 @@ class AggregatedCellBox:
             "dcy": float(self.get_bounds().getdcy()),
         }
 
-        # Clean agg_data by converting np.nan to None for valid JSON
+        # Clean agg_data by converting np.nan to None for valid JSON. Mark
+        # speed-limit fields as null to preserve semantically undefined values.
         agg_data = self.get_agg_data()
         clean_agg_data = {}
         for key, value in agg_data.items():
+            if "speed_limit" in str(key).lower():
+                clean_agg_data[key] = None if isinstance(value, float) and np.isnan(value) else value
+                continue
             if isinstance(value, (list, tuple)):
                 # Handle lists/arrays that might contain NaN values
                 clean_value = [
