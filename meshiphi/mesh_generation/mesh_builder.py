@@ -16,6 +16,8 @@ Example:
 
 """
 
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 import logging
 import numpy as np
 from tqdm import tqdm
@@ -712,66 +714,63 @@ class MeshBuilder:
             ):
                 sw_neighbour_map[-3].append(indx)
 
-    def split_to_depth(self, split_depth):
-        """
-        splits all cellboxes in this grid until a maximum split depth
-        is reached, or all cellboxes are homogeneous.
 
-        Args:
-            split_depth (int): The maximum split depth reached by any CellBox
-                within this Mesh after splitting.
-        """
+    def split_to_depth(self, split_depth, max_workers=None):
         logger.info("Splitting cellboxes...")
-        # loop over the data_sources then cellboxes to implement depth-first splitting. should be simpler and loop over cellboxes only once we switch to breadth-first splitting
-        # this impl assumws all the cellboxes have the same data sources. should not be the caase once we switch to breadth-first splitting.
         data_sources = self.mesh.cellboxes[0].get_data_source()
 
-        # Set up data_source progress bar
         ds_pbar = tqdm(
-            range(0, len(data_sources)),
+            range(len(data_sources)),
             position=0,
             bar_format="{desc}{n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
         )
-        sd_pbar = tqdm(
-            range(0, split_depth),
-            position=1,
-            leave=False,
-            bar_format=" Split depth: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%{postfix} ",
-        )
-        for index in ds_pbar:
-            # Update name of data source being processed
-            ds_pbar.set_description(
-                f" Processing {data_sources[index].get_data_loader().dataloader_name} data"
-            )
+        sd_pbar = None
 
-            if len(data_sources[index].get_splitting_conditions()) > 0:
-                # Set up split depth progress bar
-                level = 0
+        with ThreadPoolExecutor(max_workers=max_workers) as pool:
+            for index in ds_pbar:
+                ds_pbar.set_description(
+                    f" Processing {data_sources[index].get_data_loader().dataloader_name} data"
+                )
+                if not data_sources[index].get_splitting_conditions():
+                    continue
+
                 sd_pbar = tqdm(
-                    range(0, split_depth),
+                    range(split_depth),
                     position=1,
                     leave=False,
                     bar_format=" Split depth: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%{postfix} ",
                 )
+                check = partial(_should_split, ds_number=index + 1)
 
-                for cb_index, cellbox in enumerate(self.mesh.cellboxes):
-                    ds_pbar.update(0)
-                    if isinstance(cellbox, CellBox):
-                        if cellbox.get_split_depth() > level:
-                            level = cellbox.get_split_depth()
-                            # If we're a split level further down, iterate progress in progress bar
-                            sd_pbar.update()
-                        # Split the cellbox
-                        should_split = cellbox.should_split(index + 1)
-                        if (cellbox.get_split_depth() < split_depth) & should_split:
-                            self.split_and_replace(cellbox)
-                        # Update number of cellboxes processed
-                        sd_pbar.set_postfix_str(
-                            f"[Cellbox {cb_index + 1} / {len(self.mesh.cellboxes)}]"
-                        )
+                for level in range(split_depth):
+                    # Only cellboxes at this depth can be split this pass;
+                    # their children are picked up on the next pass.
+                    candidates = [
+                        cb
+                        for cb in self.mesh.cellboxes
+                        if isinstance(cb, CellBox) and cb.get_split_depth() == level
+                    ]
+                    if not candidates:
+                        break
+
+                    # First step: parallel iteration of cellboxes and decide whether to split
+                    n = len(candidates)
+                    to_split = []
+                    for i, flag in enumerate(pool.map(check, candidates)):
+                        if flag:
+                            to_split.append(candidates[i])
+                        sd_pbar.set_postfix_str(f"[Cellbox {i + 1} / {n}]")
+                        ds_pbar.update(0)  # keep the outer bar redrawn
+
+                    # Second step: split the mesh
+                    for cb in to_split:
+                        self.split_and_replace(cb)
+
+                    sd_pbar.update()
+                sd_pbar.close()
+
         tqdm.write("")
         ds_pbar.clear()
-        sd_pbar.clear()
 
     def build_environmental_mesh(self):
         """
@@ -810,3 +809,8 @@ class MeshBuilder:
         returns the config
         """
         return self.config
+
+
+def _should_split(cellbox, ds_number):
+    # Module-level so it can be pickled for ThreadPoolExecutor
+    return cellbox.should_split(ds_number)
