@@ -13,6 +13,29 @@ from scipy.fftpack import fftshift
 
 logger = logging.getLogger(__name__)
 
+def _recover_int_keys(data):
+    """Recursively converts all integer-like string keys in dictionaries to int."""
+    if isinstance(data, dict):
+        return {
+            int(k) if isinstance(k, str) and (k.isdigit() or (k.startswith("-") and k[1:].isdigit())) else k: _recover_int_keys(v)
+            for k, v in data.items()
+        }
+    elif isinstance(data, list):
+        return [_recover_int_keys(item) for item in data]
+    return data
+
+def _cast_id_type(mesh_json):
+    """Converts cell box IDs to int if they are not."""
+    cellboxes_dict = mesh_json["cellboxes"]
+    if isinstance(cellboxes_dict[0]["id"], str):
+        for cellbox in cellboxes_dict:
+            cellbox["id"] = int(cellbox["id"])
+    return mesh_json
+
+def restore_int_values(mesh_json):
+    mesh_json = _recover_int_keys(mesh_json)
+    mesh_json = _cast_id_type(mesh_json)
+    return mesh_json
 
 def longitude_domain(long):
     """

@@ -12,6 +12,7 @@ from meshiphi import __version__ as meshiphi_version
 from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
+from meshiphi.utils import restore_int_values
 
 
 import collections.abc
@@ -84,6 +85,7 @@ class EnvironmentMesh:
         Returns:
             EnvironmentMesh: object that contains all the json file mesh information.\n
         """
+        mesh_json = restore_int_values(mesh_json)
         config = mesh_json["config"]["mesh_info"]
         cellboxes_json = mesh_json["cellboxes"]
         agg_cellboxes = []
