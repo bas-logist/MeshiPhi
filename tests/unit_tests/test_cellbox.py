@@ -190,10 +190,10 @@ def test_split():
 
 def test_create_splitted_cell_boxes():
     parent_cellbox = create_cellbox(Boundary([-10, 10], [-10, 10]), id=1, parent=None)
-    nw_child = CellBox(Boundary([0, 10], [-10, 0]), "0")
-    ne_child = CellBox(Boundary([0, 10], [0, 10]), "1")
-    sw_child = CellBox(Boundary([-10, 0], [-10, 0]), "2")
-    se_child = CellBox(Boundary([-10, 0], [0, 10]), "3")
+    nw_child = CellBox(Boundary([0, 10], [-10, 0]), 0)
+    ne_child = CellBox(Boundary([0, 10], [0, 10]), 1)
+    sw_child = CellBox(Boundary([-10, 0], [-10, 0]), 2)
+    se_child = CellBox(Boundary([-10, 0], [0, 10]), 3)
 
     children_cellboxes = [nw_child, ne_child, sw_child, se_child]
 
