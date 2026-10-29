@@ -9,6 +9,7 @@ import copy
 from pathlib import Path
 import pytest
 import meshiphi
+from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
 from meshiphi.mesh_generation.metadata import Metadata
 from meshiphi.dataloaders.factory import DataLoaderFactory
 from meshiphi.mesh_generation.cellbox import CellBox
@@ -241,6 +242,8 @@ def mesh_pair(request):
    
     with open(mesh_path, 'r') as fp:
         old_mesh = json.load(fp)
+        old_mesh = EnvironmentMesh.load_from_json(old_mesh)
+        old_mesh = old_mesh.to_json()
     
     mesh_config = old_mesh['config']['mesh_info']
     new_mesh = calculate_env_mesh(mesh_config)
