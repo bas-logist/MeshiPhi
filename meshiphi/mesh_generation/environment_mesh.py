@@ -337,15 +337,15 @@ class EnvironmentMesh:
                     south_east_neighbours.append(cellbox_s.get_id())
 
             for neighbour in south_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["4"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][4].append(
                     neighbour
                 )
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-1].append(
                     neighbour
                 )
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][3].append(
                     neighbour
                 )
 
@@ -372,15 +372,15 @@ class EnvironmentMesh:
                     north_east_neighbours.append(cellbox_l.get_id())
 
             for neighbour in north_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-4"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-4].append(
                     neighbour
                 )  #
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-3].append(
                     neighbour
                 )
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][1].append(
                     neighbour
                 )
 
@@ -416,15 +416,15 @@ class EnvironmentMesh:
                     north_east_neighbours.append(cellbox_s.get_id())
 
             for neighbour in north_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-4"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-4].append(
                     neighbour
                 )
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-3].append(
                     neighbour
                 )
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][1].append(
                     neighbour
                 )
 
@@ -451,15 +451,15 @@ class EnvironmentMesh:
                     south_east_neighbours.append(cellbox_l.get_id())
 
             for neighbour in south_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["4"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][4].append(
                     neighbour
                 )
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-1].append(
                     neighbour
                 )
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][3].append(
                     neighbour
                 )
 
@@ -495,15 +495,15 @@ class EnvironmentMesh:
                     north_west_neighbours.append(cellbox_s.get_id())
 
             for neighbour in west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-2"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-2].append(
                     neighbour
                 )
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-1"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-1].append(
                     neighbour
                 )
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["-3"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][-3].append(
                     neighbour
                 )
 
@@ -530,15 +530,15 @@ class EnvironmentMesh:
                     north_east_neighbours.append(cellbox_l.get_id())
 
             for neighbour in east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["2"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][2].append(
                     neighbour
                 )
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["3"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][3].append(
                     neighbour
                 )
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["1"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][1].append(
                     neighbour
                 )
 
@@ -574,15 +574,15 @@ class EnvironmentMesh:
                     north_east_neighbours.append(cellbox_s.get_id())
 
             for neighbour in east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["2"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][2].append(
                     neighbour
                 )
             for neighbour in south_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["3"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][3].append(
                     neighbour
                 )
             for neighbour in north_east_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_l.get_id()]["1"].append(
+                self.neighbour_graph.get_graph()[cellbox_l.get_id()][1].append(
                     neighbour
                 )
 
@@ -609,15 +609,15 @@ class EnvironmentMesh:
                     north_west_neighbours.append(cellbox_l.get_id())
 
             for neighbour in west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-2"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-2].append(
                     neighbour
                 )
             for neighbour in south_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-1"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-1].append(
                     neighbour
                 )
             for neighbour in north_west_neighbours:
-                self.neighbour_graph.get_graph()[cellbox_s.get_id()]["-3"].append(
+                self.neighbour_graph.get_graph()[cellbox_s.get_id()][-3].append(
                     neighbour
                 )
 
@@ -861,22 +861,22 @@ class EnvironmentMesh:
         south_east_index = int(split_cellboxes[2].get_agg_data()["id"])
 
         # Get neighbours of original cellbox
-        south_neighbour_index = self.neighbour_graph.get_neighbours(cellbox_id, "4")
-        north_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_id, "-4")
-        east_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_id, "2")
-        west_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_id, "-2")
+        south_neighbour_index = self.neighbour_graph.get_neighbours(cellbox_id, 4)
+        north_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_id, -4)
+        east_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_id, 2)
+        west_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_id, -2)
 
         # ================== Create Neighbour Maps ==================
         # initialize the neighbour map of SW cellbox
         sw_neighbour_map = {
-            "1": [north_east_index],
-            "2": [south_east_index],
-            "3": [],
-            "4": [],
-            "-1": self.neighbour_graph.get_neighbours(cellbox_id, "-1"),
-            "-2": [],
-            "-3": [],
-            "-4": [north_west_index],
+            1: [north_east_index],
+            2: [south_east_index],
+            3: [],
+            4: [],
+            -1: self.neighbour_graph.get_neighbours(cellbox_id, -1),
+            -2: [],
+            -3: [],
+            -4: [north_west_index],
         }
         # fill remaining neighbour map
         sw_neighbour_map = self.fill_sw_neighbour_map(
@@ -889,14 +889,14 @@ class EnvironmentMesh:
 
         # initialize the neighbour map of NW cellbox
         nw_neighbour_map = {
-            "1": [],
-            "2": [north_east_index],
-            "3": [south_east_index],
-            "4": [south_west_index],
-            "-1": [],
-            "-2": [],
-            "-3": self.neighbour_graph.get_neighbours(cellbox_id, "-3"),
-            "-4": [],
+            1: [],
+            2: [north_east_index],
+            3: [south_east_index],
+            4: [south_west_index],
+            -1: [],
+            -2: [],
+            -3: self.neighbour_graph.get_neighbours(cellbox_id, -3),
+            -4: [],
         }
         # fill remaining neighbour map
         nw_neighbour_map = self.fill_nw_neighbour_map(
@@ -909,14 +909,14 @@ class EnvironmentMesh:
 
         # initialize the neighbour map of NE cellbox
         ne_neighbour_map = {
-            "1": self.neighbour_graph.get_neighbours(cellbox_id, "1"),
-            "2": [],
-            "3": [],
-            "4": [south_east_index],
-            "-1": [south_west_index],
-            "-2": [north_west_index],
-            "-3": [],
-            "-4": [],
+            1: self.neighbour_graph.get_neighbours(cellbox_id, 1),
+            2: [],
+            3: [],
+            4: [south_east_index],
+            -1: [south_west_index],
+            -2: [north_west_index],
+            -3: [],
+            -4: [],
         }
         # fill remaining neighbour map
         ne_neighbour_map = self.fill_ne_neighbour_map(
@@ -929,14 +929,14 @@ class EnvironmentMesh:
 
         # initialize the neighbour map of SE cellbox
         se_neighbour_map = {
-            "1": [],
-            "2": [],
-            "3": self.neighbour_graph.get_neighbours(cellbox_id, "3"),
-            "4": [],
-            "-1": [],
-            "-2": [south_west_index],
-            "-3": [north_west_index],
-            "-4": [north_east_index],
+            1: [],
+            2: [],
+            3: self.neighbour_graph.get_neighbours(cellbox_id, 3),
+            4: [],
+            -1: [],
+            -2: [south_west_index],
+            -3: [north_west_index],
+            -4: [north_east_index],
         }
         # fill remaining neighbour map
         se_neighbour_map = self.fill_se_neighbour_map(
@@ -950,26 +950,26 @@ class EnvironmentMesh:
         # ================== Update Neighbours of original cellbox ==================
 
         # update corner neighbours
-        ne_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, "1")
-        se_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, "3")
-        nw_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, "-3")
-        sw_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, "-1")
+        ne_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, 1)
+        se_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, 3)
+        nw_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, -3)
+        sw_corner_index = self.neighbour_graph.get_neighbours(cellbox_id, -1)
 
         if len(ne_corner_index) > 0:
             self.neighbour_graph.update_neighbour(
-                ne_corner_index[0], "-1", [north_east_index]
+                ne_corner_index[0], -1, [north_east_index]
             )
         if len(se_corner_index) > 0:
             self.neighbour_graph.update_neighbour(
-                se_corner_index[0], "-3", [south_east_index]
+                se_corner_index[0], -3, [south_east_index]
             )
         if len(nw_corner_index) > 0:
             self.neighbour_graph.update_neighbour(
-                nw_corner_index[0], "3", [north_west_index]
+                nw_corner_index[0], 3, [north_west_index]
             )
         if len(sw_corner_index) > 0:
             self.neighbour_graph.update_neighbour(
-                sw_corner_index[0], "1", [south_west_index]
+                sw_corner_index[0], 1, [south_west_index]
             )
 
         # update sides neighbours
@@ -1098,14 +1098,14 @@ class EnvironmentMesh:
                 )
                 == 4
             ):
-                se_neighbour_map["4"].append(indx)
+                se_neighbour_map[4].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     se_bounds, neighbour_bounds
                 )
                 == -1
             ):
-                se_neighbour_map["-1"].append(indx)
+                se_neighbour_map[-1].append(indx)
 
         for indx in east_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
@@ -1115,14 +1115,14 @@ class EnvironmentMesh:
                 )
                 == 2
             ):
-                se_neighbour_map["2"].append(indx)
+                se_neighbour_map[2].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     se_bounds, neighbour_bounds
                 )
                 == 1
             ):
-                se_neighbour_map["1"].append(indx)
+                se_neighbour_map[1].append(indx)
 
         return se_neighbour_map
 
@@ -1153,14 +1153,14 @@ class EnvironmentMesh:
                 )
                 == -4
             ):
-                ne_neighbour_map["-4"].append(indx)
+                ne_neighbour_map[-4].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     ne_bounds, neighbour_bounds
                 )
                 == -3
             ):
-                ne_neighbour_map["-3"].append(indx)
+                ne_neighbour_map[-3].append(indx)
 
         for indx in east_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
@@ -1170,14 +1170,14 @@ class EnvironmentMesh:
                 )
                 == 2
             ):
-                ne_neighbour_map["2"].append(indx)
+                ne_neighbour_map[2].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     ne_bounds, neighbour_bounds
                 )
                 == 3
             ):
-                ne_neighbour_map["3"].append(indx)
+                ne_neighbour_map[3].append(indx)
 
         return ne_neighbour_map
 
@@ -1208,14 +1208,14 @@ class EnvironmentMesh:
                 )
                 == 3
             ):
-                sw_neighbour_map["3"].append(indx)
+                sw_neighbour_map[3].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     sw_bounds, neighbour_bounds
                 )
                 == 4
             ):
-                sw_neighbour_map["4"].append(indx)
+                sw_neighbour_map[4].append(indx)
 
         for indx in west_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
@@ -1225,14 +1225,14 @@ class EnvironmentMesh:
                 )
                 == -2
             ):
-                sw_neighbour_map["-2"].append(indx)
+                sw_neighbour_map[-2].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     sw_bounds, neighbour_bounds
                 )
                 == -3
             ):
-                sw_neighbour_map["-3"].append(indx)
+                sw_neighbour_map[-3].append(indx)
 
         return sw_neighbour_map
 
@@ -1263,14 +1263,14 @@ class EnvironmentMesh:
                 )
                 == -4
             ):
-                nw_neighbour_map["-4"].append(indx)
+                nw_neighbour_map[-4].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     nw_bounds, neighbour_bounds
                 )
                 == 1
             ):
-                nw_neighbour_map["1"].append(indx)
+                nw_neighbour_map[1].append(indx)
 
         for indx in west_neighbour_indx:
             neighbour_bounds = self.get_cellbox(indx).get_bounds()
@@ -1280,14 +1280,14 @@ class EnvironmentMesh:
                 )
                 == -2
             ):
-                nw_neighbour_map["-2"].append(indx)
+                nw_neighbour_map[-2].append(indx)
             if (
                 self.neighbour_graph.get_neighbour_case_bounds(
                     nw_bounds, neighbour_bounds
                 )
                 == -1
             ):
-                nw_neighbour_map["-1"].append(indx)
+                nw_neighbour_map[-1].append(indx)
 
         return nw_neighbour_map
 
