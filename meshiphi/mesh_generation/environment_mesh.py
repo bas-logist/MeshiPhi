@@ -802,7 +802,7 @@ class EnvironmentMesh:
     def increment_ids(self, increment):
         for cellbox in self.agg_cellboxes:
             cellbox.set_id(cellbox.get_id() + increment)
-            cellbox.agg_data["id"] = str(int(cellbox.get_id()) + increment)
+            cellbox.agg_data["id"] = cellbox.get_id() + increment
 
         self.neighbour_graph.increment_ids(increment)
 
@@ -823,21 +823,21 @@ class EnvironmentMesh:
         # Copy agg_data, update id's
         agg_data = cellbox.get_agg_data()
         agg_data1 = agg_data.copy()
-        agg_data1["id"] = str(max_id + 1)
+        agg_data1["id"] = max_id + 1
         agg_data2 = agg_data.copy()
-        agg_data2["id"] = str(max_id + 2)
+        agg_data2["id"] = max_id + 2
         agg_data3 = agg_data.copy()
-        agg_data3["id"] = str(max_id + 3)
+        agg_data3["id"] = max_id + 3
         agg_data4 = agg_data.copy()
-        agg_data4["id"] = str(max_id + 4)
+        agg_data4["id"] = max_id + 4
 
         bounds = cellbox.get_bounds()
         split_bounds = bounds.split()
 
-        cellbox1 = AggregatedCellBox(split_bounds[0], agg_data1, str(max_id + 1))
-        cellbox2 = AggregatedCellBox(split_bounds[1], agg_data2, str(max_id + 2))
-        cellbox3 = AggregatedCellBox(split_bounds[2], agg_data3, str(max_id + 3))
-        cellbox4 = AggregatedCellBox(split_bounds[3], agg_data4, str(max_id + 4))
+        cellbox1 = AggregatedCellBox(split_bounds[0], agg_data1, max_id + 1)
+        cellbox2 = AggregatedCellBox(split_bounds[1], agg_data2, max_id + 2)
+        cellbox3 = AggregatedCellBox(split_bounds[2], agg_data3, max_id + 3)
+        cellbox4 = AggregatedCellBox(split_bounds[3], agg_data4, max_id + 4)
 
         return [cellbox1, cellbox2, cellbox3, cellbox4]
 

@@ -68,7 +68,7 @@ def test_to_tif():
     bounds = Boundary(lat_range, long_range)
 
     # Minimal boxes, graph and config
-    cellbox = AggregatedCellBox(bounds, {"test_value": 1.5}, "test_cellbox_0")
+    cellbox = AggregatedCellBox(bounds, {"test_value": 1.5}, 0)
     agg_cellboxes = [cellbox]
     neighbour_graph = NeighbourGraph()
     config = {"test": True}
