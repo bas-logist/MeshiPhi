@@ -1,14 +1,20 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-
-import xarray as xr
-import numpy as np
+from __future__ import annotations
 
 from datetime import datetime
 from os.path import basename
+from typing import TYPE_CHECKING
+
+import numpy as np
+import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class ERA5WindMagDataLoader(ScalarDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from an ERA5 NetCDF file.
         Renames coordinates to 'lat' and 'long'
@@ -22,11 +28,12 @@ class ERA5WindMagDataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'wind_mag'
         """
         time_range = [
-            datetime.strptime(time_str, "%Y-%m-%d")
-            for time_str in bounds.get_time_range()
+            datetime.strptime(time_str, "%Y-%m-%d") for time_str in bounds.get_time_range()
         ]
         # Reduce files to those within date range
-        self.files = [
+        if self.files is None:
+            raise ValueError("files parameter is required for ERA5WindMagDataLoader")
+        self.files: list[str] = [
             file
             for file in self.files
             if time_range[0]
@@ -53,6 +60,4 @@ class ERA5WindMagDataLoader(ScalarDataLoader):
         # Reverse order of lat as array goes from max to min
         data = data.reindex(lat=data.lat[::-1])
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

@@ -1,12 +1,21 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
+
+import numpy as np
+import pandas as pd
+
 from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
 from meshiphi.utils import gaussian_random_field
 
-import pandas as pd
-import numpy as np
+if TYPE_CHECKING:
+    import xarray as xr
+
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class VectorGRFDataLoader(VectorDataLoader):
-    def add_default_params(self, params):
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for abstract GRF dataloaders, starting by
         including defaults for scalar dataloaders.
@@ -34,10 +43,12 @@ class VectorGRFDataLoader(VectorDataLoader):
         # Column/variable names
         if params["data_name"] is None:
             params["data_name"] = "uC,vC"
-        if "vec_x" not in params:
-            params["vec_x"] = params["data_name"].split(",")[0]
-        if "vec_y" not in params:
-            params["vec_y"] = params["data_name"].split(",")[1]
+        data_name = params["data_name"]
+        if data_name is not None:
+            if "vec_x" not in params:
+                params["vec_x"] = data_name.split(",")[0]
+            if "vec_y" not in params:
+                params["vec_y"] = data_name.split(",")[1]
         # Min/Max magnitude
         if "min" not in params:
             params["min"] = 0
@@ -46,7 +57,7 @@ class VectorGRFDataLoader(VectorDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Creates data in the form of a Gaussian Random Field
 
@@ -62,7 +73,12 @@ class VectorGRFDataLoader(VectorDataLoader):
 
         """
 
-        def grf_to_vector(magnitudes, directions, min_val, max_val):
+        def grf_to_vector(
+            magnitudes: np.ndarray[Any, Any],
+            directions: np.ndarray[Any, Any],
+            min_val: float,
+            max_val: float,
+        ) -> tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]:
             # Scale to max/min
             magnitudes = magnitudes * (max_val - min_val) + min_val
 
@@ -74,18 +90,24 @@ class VectorGRFDataLoader(VectorDataLoader):
         # Set seed for generation. If not specified, will be 'random'
         np.random.seed(self.seed)
 
+        # Validate required attributes
+        if self.size is None:
+            raise ValueError("size parameter is required for VectorGRFDataLoader")
+        if self.alpha is None:
+            raise ValueError("alpha parameter is required for VectorGRFDataLoader")
+        if self.vec_x is None or self.vec_y is None:
+            raise ValueError("vec_x and vec_y parameters are required for VectorGRFDataLoader")
+
         # Create a GRF of magnitudes and angles
         magnitudes = gaussian_random_field(self.size, self.alpha)
         directions = gaussian_random_field(self.size, self.alpha)
         directions = np.radians(360 * directions)
 
-        vec_x, vec_y = grf_to_vector(magnitudes, directions, self.min, self.max)
+        vec_x, vec_y = grf_to_vector(magnitudes, directions, self.min, self.max)  # type: ignore[arg-type]
 
         # Set up domain of field
         lat_array = np.linspace(bounds.get_lat_min(), bounds.get_lat_max(), self.size)
-        long_array = np.linspace(
-            bounds.get_long_min(), bounds.get_long_max(), self.size
-        )
+        long_array = np.linspace(bounds.get_long_min(), bounds.get_long_max(), self.size)
         latv, longv = np.meshgrid(lat_array, long_array, indexing="ij")
 
         # Create an entry for each row in final dataframe
@@ -102,6 +124,4 @@ class VectorGRFDataLoader(VectorDataLoader):
         # Cast to dataframe
         data = pd.DataFrame(rows).set_index(["lat", "long"])
         # Set to xarray dataset
-        data = data.to_xarray()
-
-        return data
+        return cast("xr.Dataset", data.to_xarray())

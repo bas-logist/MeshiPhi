@@ -1,7 +1,12 @@
-from shapely.geometry import Point
-from meshiphi.mesh_generation.boundary import Boundary
-import shapely.wkt
+from __future__ import annotations
+
+from typing import Any, cast
+
 import numpy as np
+import shapely.wkt
+from shapely.geometry import Point
+
+from meshiphi.mesh_generation.boundary import Boundary
 
 
 class AggregatedCellBox:
@@ -17,15 +22,15 @@ class AggregatedCellBox:
     """
 
     @classmethod
-    def from_json(cls, cellbox_json):
+    def from_json(cls, cellbox_json: dict[str, Any]) -> AggregatedCellBox:
         """
 
         Args:
             cellbox_json(Json): json object that encapsulates boundary, agg_data and id of the CellBox
         """
-        cellbox_id = cellbox_json["id"]
+        cellbox_id = int(cellbox_json["id"])
 
-        def load_bounds(cellbox_json):
+        def load_bounds(cellbox_json: dict[str, Any]) -> Boundary:
             shape = shapely.wkt.loads(cellbox_json["geometry"])
             # Take case where crossing antimeridian
             if shape.geom_type == "MultiPolygon":
@@ -50,14 +55,12 @@ class AggregatedCellBox:
                 long_range = [bounds[0], bounds[2]]
             # Or something is wrong with the mesh
             else:
-                raise TypeError(
-                    f"Expected Polygon or MultiPolygon, instead got {shape.geom_type}"
-                )
+                raise TypeError(f"Expected Polygon or MultiPolygon, instead got {shape.geom_type}")
 
             return Boundary(lat_range, long_range)
 
-        def load_agg_data(cellbox_json):
-            dict_obj = {}
+        def load_agg_data(cellbox_json: dict[str, Any]) -> dict[str, Any]:
+            dict_obj: dict[str, Any] = {}
             for key in cellbox_json:
                 if key not in ["geometry", "cx", "cy", "dcx", "dcy", "id"]:
                     dict_obj[key] = cellbox_json[key]
@@ -66,16 +69,15 @@ class AggregatedCellBox:
 
         boundary = load_bounds(cellbox_json)
         agg_data = load_agg_data(cellbox_json)
-        obj = AggregatedCellBox(boundary, agg_data, cellbox_id)
-        return obj
+        return AggregatedCellBox(boundary, agg_data, cellbox_id)
 
-    def __init__(self, boundary, agg_data, id):
+    def __init__(self, boundary: Boundary, agg_data: dict[str, Any], id: int) -> None:
         """
 
         Args:
             boundary(Boundary): encapsulates latitude, longtitude and time range of the CellBox
             agg_data (dict): a dictionary that contains data_names and agg values
-            id (string): a string represents cellbox id
+            id (int): an integer representing the cellbox id
         """
         # Box information relative to bottom left
         self.boundary = boundary
@@ -83,43 +85,43 @@ class AggregatedCellBox:
         self.id = id
 
     ######## setters and getters ########
-    def set_bounds(self, boundary):
+    def set_bounds(self, boundary: Boundary) -> None:
         """
         set the boundary of the CellBox
         """
         self.boundary = boundary
 
-    def set_agg_data(self, agg_data):
+    def set_agg_data(self, agg_data: dict[str, Any]) -> None:
         """
         sets the agg_data
         """
         self.agg_data = agg_data
 
-    def set_id(self, id):
+    def set_id(self, id: int) -> None:
         """
         sets the cellbox id
         """
         self.id = id
 
-    def get_bounds(self):
+    def get_bounds(self) -> Boundary:
         """
         get the boundary of the CellBox
         """
         return self.boundary
 
-    def get_agg_data(self):
+    def get_agg_data(self) -> dict[str, Any]:
         """
         returns the agg_data
         """
         return self.agg_data
 
-    def get_id(self):
+    def get_id(self) -> int:
         """
-        returns the id
+        returns the id as an integer
         """
-        return self.id
+        return int(self.id)
 
-    def to_json(self):
+    def to_json(self) -> dict[str, Any]:
         """
         convert cellbox to JSON
 
@@ -153,9 +155,7 @@ class AggregatedCellBox:
         for key, value in agg_data.items():
             if isinstance(value, (list, tuple)):
                 # Handle lists/arrays that might contain NaN values
-                clean_value = [
-                    None if (isinstance(v, float) and np.isnan(v)) else v for v in value
-                ]
+                clean_value = [None if (isinstance(v, float) and np.isnan(v)) else v for v in value]
             elif isinstance(value, float) and np.isnan(value):
                 # Convert single NaN values to None
                 clean_value = None
@@ -168,7 +168,7 @@ class AggregatedCellBox:
 
         return cell_json
 
-    def contains_point(self, lat, long):
+    def contains_point(self, lat: float, long: float) -> bool:
         """
         Returns true if a given lat/long coordinate is contained within this cellbox.
 
@@ -182,8 +182,8 @@ class AggregatedCellBox:
         """
         shapely_boundary = self.boundary.to_polygon()
         point = Point(long, lat)
-        point_within_bounds = shapely_boundary.contains(point)
-        point_on_bounds = shapely_boundary.boundary.contains(point)
+        point_within_bounds = cast("bool", shapely_boundary.contains(point))
+        point_on_bounds = cast("bool", shapely_boundary.boundary.contains(point))
         point_on_north_edge = shapely_boundary.bounds[2] == point.x
         point_on_east_edge = shapely_boundary.bounds[3] == point.y
 
@@ -191,7 +191,7 @@ class AggregatedCellBox:
             point_on_bounds and (point_on_north_edge or point_on_east_edge)
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, AggregatedCellBox):
             eq_checks = []
 

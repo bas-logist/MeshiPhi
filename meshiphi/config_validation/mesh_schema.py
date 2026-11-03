@@ -1,4 +1,6 @@
-region_schema = {
+from typing import Any
+
+region_schema: dict[str, Any] = {
     "type": "object",
     "required": [
         "lat_min",
@@ -23,14 +25,14 @@ region_schema = {
     },
 }
 
-dataloader_schema = {
+dataloader_schema: dict[str, Any] = {
     "type": "object",
     "required": ["loader", "params"],
     "additionalProperties": False,
     "properties": {"loader": {"type": "string"}, "params": {"type": "object"}},
 }
 
-splitting_schema = {
+splitting_schema: dict[str, Any] = {
     "type": "object",
     "required": ["split_depth", "minimum_datapoints"],
     "additionalProperties": False,
@@ -40,7 +42,7 @@ splitting_schema = {
     },
 }
 
-mesh_schema = {
+mesh_schema: dict[str, Any] = {
     "type": "object",
     "required": ["region", "data_sources", "splitting"],
     "properties": {

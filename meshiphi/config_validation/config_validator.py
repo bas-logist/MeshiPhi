@@ -1,12 +1,14 @@
-import json
-import jsonschema
 import datetime
+import json
 import re
+from typing import Any, Union
+
+import jsonschema
 
 from meshiphi.config_validation.mesh_schema import mesh_schema
 
 
-def flexi_json_input(config):
+def flexi_json_input(config: Union[str, dict[str, Any]]) -> dict[str, Any]:
     """
     Allows flexible inputs. If a string is parsed, then assume it's a file path
     and read in as a json. If a dict is parsed, then assume it's already a
@@ -23,8 +25,8 @@ def flexi_json_input(config):
     """
     if isinstance(config, str):
         # If str, assume filename
-        with open(config, "r") as fp:
-            config_json = json.load(fp)
+        with open(config) as fp:
+            config_json: dict[str, Any] = json.load(fp)
     elif isinstance(config, dict):
         # If dict, assume it's the config
         config_json = config
@@ -35,7 +37,7 @@ def flexi_json_input(config):
     return config_json
 
 
-def validate_mesh_config(config):
+def validate_mesh_config(config: Union[str, dict[str, Any]]) -> None:
     """
     Validates a mesh config
 
@@ -51,7 +53,7 @@ def validate_mesh_config(config):
         ValidationError: Malformed mesh config
     """
 
-    def assert_valid_time(time_str):
+    def assert_valid_time(time_str: str) -> None:
         """
         Checks if the time strings in the config are correctly formatted
 
@@ -63,9 +65,7 @@ def validate_mesh_config(config):
         """
         correctly_formatted = False
         # If relative time is parsed
-        if re.match(r"TODAY[+,-]\d+", time_str.replace(" ", "")):
-            correctly_formatted = True
-        elif time_str == "TODAY":
+        if re.match(r"TODAY[+,-]\d+", time_str.replace(" ", "")) or time_str == "TODAY":
             correctly_formatted = True
         # Otherwise check if date is parsed correctly
         else:
@@ -81,7 +81,7 @@ def validate_mesh_config(config):
         if not correctly_formatted:
             raise ValueError(f"{time_str} is not a valid date format!")
 
-    def assert_valid_cellsize(bound_min, bound_max, cell_size):
+    def assert_valid_cellsize(bound_min: float, bound_max: float, cell_size: float) -> None:
         """
         Ensures that the initial cellbox size can evenly divide the initial
         boundary.
@@ -102,17 +102,17 @@ def validate_mesh_config(config):
     jsonschema.validate(instance=config_json, schema=mesh_schema)
 
     # Check that the dates in the region are valid
-    assert_valid_time(config["region"]["start_time"])
-    assert_valid_time(config["region"]["end_time"])
+    assert_valid_time(config_json["region"]["start_time"])
+    assert_valid_time(config_json["region"]["end_time"])
 
     # Check that cellbox width and height evenly divide boundary
     assert_valid_cellsize(
-        config["region"]["lat_min"],
-        config["region"]["lat_max"],
-        config["region"]["cell_height"],
+        config_json["region"]["lat_min"],
+        config_json["region"]["lat_max"],
+        config_json["region"]["cell_height"],
     )
     assert_valid_cellsize(
-        config["region"]["long_min"],
-        config["region"]["long_max"],
-        config["region"]["cell_width"],
+        config_json["region"]["long_min"],
+        config_json["region"]["long_max"],
+        config_json["region"]["cell_width"],
     )

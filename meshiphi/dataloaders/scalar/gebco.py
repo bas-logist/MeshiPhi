@@ -1,10 +1,17 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import xarray as xr
 
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+
 
 class GEBCODataLoader(ScalarDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from GEBCO NetCDF files. Renames coordinates to
         'lat' and 'long'.
@@ -18,6 +25,8 @@ class GEBCODataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'elevation'
         """
         # Import data from files defined in config
+        if self.files is None:
+            raise ValueError("files parameter is required for GEBCODataLoader")
         if len(self.files) == 1:
             data = xr.open_dataset(self.files[0])
         else:
@@ -29,6 +38,4 @@ class GEBCODataLoader(ScalarDataLoader):
         data = data["elevation"].to_dataset()
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

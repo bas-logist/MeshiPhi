@@ -2,10 +2,12 @@
 MeshBuilder class tests.
 """
 
-import pytest
 import json
-from meshiphi.mesh_generation.mesh_builder import MeshBuilder
+
+import pytest
+
 from meshiphi.mesh_generation.direction import Direction
+from meshiphi.mesh_generation.mesh_builder import MeshBuilder
 from tests.conftest import UNIT_TESTS_DIR
 
 
@@ -14,7 +16,7 @@ def mesh_builder():
     """Create a mesh builder instance for testing."""
     json_file_path = UNIT_TESTS_DIR / "resources/global_grf_normal.json"
 
-    with open(json_file_path, "r") as config_file:
+    with open(json_file_path) as config_file:
         json_file = json.load(config_file)
         config = json_file["config"]["mesh_info"]
         builder = MeshBuilder(config)
@@ -31,7 +33,7 @@ def test_check_global_mesh(mesh_builder):
 
 
 @pytest.mark.parametrize(
-    "cb1_idx,cb2_idx,expected_dir,description",
+    ("cb1_idx", "cb2_idx", "expected_dir", "description"),
     [
         (0, 71, Direction.west, "edge wrapping west"),
         (71, 0, Direction.east, "edge wrapping east"),
@@ -49,9 +51,7 @@ def test_check_global_mesh(mesh_builder):
         (1, 74, Direction.north_east, "vertical north_east"),
     ],
 )
-def test_neighbour_relationships(
-    mesh_builder, cb1_idx, cb2_idx, expected_dir, description
-):
+def test_neighbour_relationships(mesh_builder, cb1_idx, cb2_idx, expected_dir, description):
     """Test neighbour relationships in global mesh"""
     builder = mesh_builder["builder"]
     actual_dir = builder.neighbour_graph.get_neighbour_case(

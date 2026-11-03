@@ -1,16 +1,22 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+from __future__ import annotations
 
 import logging
-
 from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
 
+import pandas as pd
 import xarray as xr
-from pandas import to_timedelta
 from numpy import datetime64
+from pandas import to_timedelta
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class IceNetDataLoader(ScalarDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a IceNet 2 NetCDF file.
         Renames coordinates to 'lat' and 'long', and renames variable to
@@ -25,7 +31,7 @@ class IceNetDataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'SIC'
         """
 
-        def filename_to_datetime(filename):
+        def filename_to_datetime(filename: str) -> datetime:
             """
             Converts icenet filenames to datetime objects
             Assumes file names are in the format
@@ -38,6 +44,8 @@ class IceNetDataLoader(ScalarDataLoader):
         min_time = datetime.strptime(bounds.get_time_min(), "%Y-%m-%d")
         time_range = max_time - min_time
         # Retrieve list of dates from filenames
+        if self.files is None:
+            raise ValueError("files parameter is required for IceNetDataLoader")
         file_dates = {
             filename_to_datetime(file): file
             for file in self.files

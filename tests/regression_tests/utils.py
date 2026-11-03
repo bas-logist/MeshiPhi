@@ -22,7 +22,7 @@ def round_dataframe_values(df):
     float_cols = df.select_dtypes(include=float).columns
     for col in float_cols:
         df[col] = round_to_sigfig(df[col].to_numpy(), sigfig=SIG_FIG_TOLERANCE)
-    
+
     # Round list columns that contain floats
     list_cols = df.select_dtypes(include=list).columns
     for col in list_cols:
@@ -33,7 +33,7 @@ def round_dataframe_values(df):
             else:
                 round_col.append(val)
         df[col] = round_col
-    
+
     return df
 
 
@@ -48,9 +48,7 @@ def extract_common_boundaries_for_comparison(mesh_a, mesh_b):
     Returns:
         list: List of common cellbox geometries (as strings)
     """
-    bounds_a = [cb['geometry'] for cb in mesh_a['cellboxes']]
-    bounds_b = [cb['geometry'] for cb in mesh_b['cellboxes']]
+    bounds_a = [cb["geometry"] for cb in mesh_a["cellboxes"]]
+    bounds_b = [cb["geometry"] for cb in mesh_b["cellboxes"]]
 
-    common_bounds = [geom for geom in bounds_a if geom in bounds_b]
-
-    return common_bounds
+    return [geom for geom in bounds_a if geom in bounds_b]

@@ -1,16 +1,20 @@
-import numpy as np
-
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
-
-import xarray as xr
+from __future__ import annotations
 
 from datetime import datetime
 from os.path import basename
+from typing import TYPE_CHECKING
+
+import numpy as np
+import xarray as xr
+
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class ERA5WaveDirectionLoader(VectorDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in wave direction data from a ERA5 NetCDF file.
         Renames coordinates to 'lat' and 'long' and calculates unit vector
@@ -25,11 +29,12 @@ class ERA5WaveDirectionLoader(VectorDataLoader):
                 Dataset has coordinates 'lat', 'long', and variables 'uW', 'vW'
         """
         time_range = [
-            datetime.strptime(time_str, "%Y-%m-%d")
-            for time_str in bounds.get_time_range()
+            datetime.strptime(time_str, "%Y-%m-%d") for time_str in bounds.get_time_range()
         ]
         # Reduce files to those within date range
-        self.files = [
+        if self.files is None:
+            raise ValueError("files parameter is required for ERA5WaveDirectionLoader")
+        self.files: list[str] = [
             file
             for file in self.files
             if time_range[0]
@@ -58,15 +63,8 @@ class ERA5WaveDirectionLoader(VectorDataLoader):
         # Limit to just uW and vW
         data = data[["uW", "vW"]]
 
-        # Set min time to start of month to ensure we include data as we only have a
-        # monthly cadence. Assuming time is in str format
-        time_min = datetime.strptime(bounds.get_time_min(), "%Y-%m-%d")
-        time_min = datetime.strftime(time_min, "%Y-%m-01")
-
         # Reverse order of lat as array goes from max to min
         data = data.reindex(lat=data.lat[::-1])
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

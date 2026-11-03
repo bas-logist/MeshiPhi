@@ -24,6 +24,7 @@ The following commands are available via the Makefile:
 - **`make clean`** - Clean build artifacts and cache files
 - **`make docs`** - Build documentation
 - **`make docs-clean`** - Clean documentation build artifacts
+- **`make type-check`** - Run a type check
 - **`make help`** - Show all available commands with descriptions
 
 ## Pre-commit Hooks

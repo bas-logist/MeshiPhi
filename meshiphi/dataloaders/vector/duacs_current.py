@@ -1,14 +1,19 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
-
-
-import xarray as xr
+from __future__ import annotations
 
 from datetime import datetime
 from os.path import basename
+from typing import TYPE_CHECKING
+
+import xarray as xr
+
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class DuacsCurrentDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a DUACS altimeter derived current NetCDF file.
         Renames coordinates to 'lat' and 'long', and renames variable to
@@ -23,11 +28,12 @@ class DuacsCurrentDataLoader(VectorDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'uC', 'vC'
         """
         time_range = [
-            datetime.strptime(time_str, "%Y-%m-%d")
-            for time_str in bounds.get_time_range()
+            datetime.strptime(time_str, "%Y-%m-%d") for time_str in bounds.get_time_range()
         ]
         # Reduce files to those within date range
-        self.files = [
+        if self.files is None:
+            raise ValueError("files parameter is required for DuacsCurrentDataLoader")
+        self.files: list[str] = [
             file
             for file in self.files
             if time_range[0]
@@ -41,15 +47,11 @@ class DuacsCurrentDataLoader(VectorDataLoader):
         else:
             data = xr.open_mfdataset(self.files).compute()
         # Change column names
-        data = data.rename(
-            {"latitude": "lat", "longitude": "long", "ugos": "uC", "vgos": "vC"}
-        )
+        data = data.rename({"latitude": "lat", "longitude": "long", "ugos": "uC", "vgos": "vC"})
 
         # Drop unnecessary variable, if present
-        if "crs" in data.keys():
+        if "crs" in data:
             data = data.drop_vars("crs")
 
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

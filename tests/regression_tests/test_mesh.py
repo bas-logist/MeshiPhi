@@ -4,8 +4,9 @@ of the MeshiPhi python package.
 """
 
 import json
-import os
 import logging
+import os
+
 import pytest
 
 import meshiphi

@@ -1,10 +1,17 @@
-from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
+from meshiphi.dataloaders.vector.abstract_vector import VectorDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
+
 
 class VectorCSVDataLoader(VectorDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Reads in data from a CSV file.
 
@@ -18,12 +25,12 @@ class VectorCSVDataLoader(VectorDataLoader):
                 and variable defined by column heading in csv file
         """
         # Read in data
+        if self.files is None:
+            raise ValueError("files parameter is required for VectorCSVDataLoader")
         df_list = []
         # NOTE: All csv files must have same columns for this to work
         for file in self.files:
             df_list += [pd.read_csv(file)]
         data = pd.concat(df_list)
         # Trim to initial datapoints
-        data = self.trim_datapoints(bounds, data=data)
-
-        return data
+        return self.trim_datapoints(bounds, data=data)

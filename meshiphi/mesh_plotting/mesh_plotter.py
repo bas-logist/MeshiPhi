@@ -1,8 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
+
 import cartopy.crs as ccrs
-import shapely
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+import shapely
+
+if TYPE_CHECKING:
+    from cartopy.mpl.geoaxes import GeoAxes
 
 
 class MeshPlotter:
@@ -10,7 +17,7 @@ class MeshPlotter:
     Object for plotting mesh json files using matplotlib and cartopy.
     """
 
-    def __init__(self, mesh_json, figscale=10):
+    def __init__(self, mesh_json: dict[str, Any], figscale: int = 10) -> None:
         self.mesh_json = mesh_json
         self.mesh_df = pd.DataFrame(self.mesh_json["cellboxes"])
 
@@ -21,18 +28,14 @@ class MeshPlotter:
 
         self.figscale = figscale
 
-        self.aspect_ratio = (self.long_max - self.long_min) / (
-            self.lat_max - self.lat_min
-        )
+        self.aspect_ratio = (self.long_max - self.long_min) / (self.lat_max - self.lat_min)
 
-        self.fig = plt.figure(
-            figsize=(self.figscale * self.aspect_ratio, self.figscale)
-        )
+        self.fig = plt.figure(figsize=(self.figscale * self.aspect_ratio, self.figscale))
 
-        self.plot = plt.axes(projection=ccrs.PlateCarree())
+        self.plot = cast("GeoAxes", plt.axes(projection=ccrs.PlateCarree()))
         self.plot.set_extent([self.long_min, self.long_max, self.lat_min, self.lat_max])
 
-    def plot_bool(self, value_name, colour):
+    def plot_bool(self, value_name: str, colour: str) -> None:
         """
         Plots boolean values from the mesh json file.
         Args:
@@ -50,7 +53,7 @@ class MeshPlotter:
                     edgecolor="darkslategrey",
                 )
 
-    def plot_cmap(self, value_name, colourmap):
+    def plot_cmap(self, value_name: str, colourmap: str) -> None:
         """
         Plots colourmap values from the mesh json file.
         Args:
@@ -77,7 +80,7 @@ class MeshPlotter:
                 edgecolor="darkslategrey",
             )
 
-    def save(self, filename):
+    def save(self, filename: str) -> None:
         """
         Saves the plot to a file.
         Args:

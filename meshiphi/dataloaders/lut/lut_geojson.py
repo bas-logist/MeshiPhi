@@ -1,14 +1,18 @@
+from __future__ import annotations
+
+from typing import Any
+
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+from shapely.ops import unary_union
+
 from meshiphi.dataloaders.lut.abstract_lut import LutDataLoader
 from meshiphi.mesh_generation.boundary import Boundary
 
-import geopandas as gpd
-import pandas as pd
-from shapely.ops import unary_union
-import numpy as np
-
 
 class LutGeoJSON(LutDataLoader):
-    def add_default_params(self, params):
+    def add_default_params(self, params: dict[str, Any]) -> dict[str, Any]:
         """
         Set default values for LUT dataloader. Only unique addition over
         the regular abstracted add_default_params is the data_name
@@ -32,7 +36,7 @@ class LutGeoJSON(LutDataLoader):
 
         return params
 
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> pd.DataFrame:
         """
         Import a list of GeoJSON files, assign regions a value specified in
         config params, regions outside this are numpy nan values.
@@ -47,6 +51,8 @@ class LutGeoJSON(LutDataLoader):
                 data_name ('dummy_data' by default)
         """
         # Read in all files specified and extract geometry of geojsons
+        if self.files is None:
+            raise ValueError("files parameter is required for LutGeoJSON")
         gdf_list = [gpd.read_file(file) for file in self.files]
         geojson_df = gpd.GeoDataFrame(pd.concat(gdf_list, ignore_index=True))
         # Give geometries a value defined in config
@@ -59,6 +65,7 @@ class LutGeoJSON(LutDataLoader):
         defined_polygon = unary_union(geojson_df.geometry)
         undefined_polygon = world_polygon - defined_polygon
         # Set remainder to have value np.nan (or opposing bool value)
+        alt_val: Any
         if self.value is True:
             alt_val = False
         elif self.value is False:
@@ -67,6 +74,4 @@ class LutGeoJSON(LutDataLoader):
             alt_val = np.nan
         geojson_df.loc[len(geojson_df.index)] = [undefined_polygon, alt_val]
         # Limit to boundary
-        geojson_df = self.trim_datapoints(bounds, data=geojson_df)
-
-        return geojson_df
+        return self.trim_datapoints(bounds, data=geojson_df)

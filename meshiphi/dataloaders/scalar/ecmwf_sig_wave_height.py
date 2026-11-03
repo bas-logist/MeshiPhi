@@ -1,12 +1,20 @@
-from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
-from datetime import datetime, timedelta
+from __future__ import annotations
+
 import logging
 import os
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING
+
 import xarray as xr
+
+from meshiphi.dataloaders.scalar.abstract_scalar import ScalarDataLoader
+
+if TYPE_CHECKING:
+    from meshiphi.mesh_generation.boundary import Boundary
 
 
 class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):
-    def import_data(self, bounds):
+    def import_data(self, bounds: Boundary) -> xr.Dataset:
         """
         Reads in data from a ECMWF GRIB2 file, or folder of files.
         Extracts Significant wave height
@@ -20,13 +28,12 @@ class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):
                 Dataset has coordinates 'lat', 'long', and variable 'SIC'
         """
 
-        def extract_base_date(filename):
+        def extract_base_date(filename: str) -> datetime:
             filename = os.path.basename(filename)
             base_date = filename.split("-")[0]
-            base_date = datetime.strptime(base_date, "%Y%m%d%H0000")
-            return base_date
+            return datetime.strptime(base_date, "%Y%m%d%H0000")
 
-        def calculate_timestamp(filename):
+        def calculate_timestamp(filename: str) -> datetime:
             """
             Get date from filename in format:
                 YYYYMMDDHH0000-wave-fc.grib2
@@ -34,31 +41,31 @@ class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):
             # Get filename independant of directory
             filename = os.path.basename(filename)
             # Get date of file and forecast timedelta
-            base_date, forecast_len, _, _ = filename.split("-")
+            base_date_str, forecast_len_str, _, _ = filename.split("-")
             # Turn forecast len into number of hours
-            forecast_len = int(forecast_len[:-1])
+            forecast_len_hours = int(forecast_len_str[:-1])
             # Calculate
-            date = datetime.strptime(base_date, "%Y%m%d%H0000") + timedelta(
-                hours=forecast_len
+            return datetime.strptime(base_date_str, "%Y%m%d%H0000") + timedelta(
+                hours=forecast_len_hours
             )
-            return date
 
-        def retrieve_data(filename, timestamp):
+        def retrieve_data(filename: str, timestamp: datetime) -> xr.Dataset:
             """
             Read in data as xr.Dataset, create time coordinate
             """
             data = xr.open_dataset(filename)
             # Add date to data
-            data = data.assign_coords(time=timestamp)
-            return data
+            return data.assign_coords(time=timestamp)
 
         # Date limits
         start_time = datetime.strptime(bounds.get_time_min(), "%Y-%m-%d")
         end_time = datetime.strptime(bounds.get_time_max(), "%Y-%m-%d")
 
         # Go through reverse alphabetical list until date < start_date found
-        self.files = sorted(self.files, reverse=True)
-        for file in self.files:
+        if self.files is None:
+            raise ValueError("files parameter is required for ECMWFSigWaveHeightDataLoader")
+        sorted_files: list[str] = sorted(self.files, reverse=True)
+        for file in sorted_files:
             base_date = extract_base_date(file)
             if base_date < start_time:
                 closest_date = base_date
@@ -67,14 +74,14 @@ class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):
         else:
             raise FileNotFoundError("No file found prior to start time")
         # Limit files to be read in
-        self.files = [
-            file for file in self.files if extract_base_date(file) == closest_date
+        filtered_files: list[str] = [
+            file for file in sorted_files if extract_base_date(file) == closest_date
         ]
 
-        data_array = []
-        relevant_files = []
+        data_array: list[xr.Dataset] = []
+        relevant_files: list[str] = []
         # Limit data to forecasts that cover time boundary
-        for file in self.files:
+        for file in filtered_files:
             timestamp = calculate_timestamp(file)
             print(start_time, timestamp, end_time)
             if start_time <= timestamp <= end_time:
@@ -86,9 +93,7 @@ class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):
                 "\tNo files found for date range "
                 + f"[ {bounds.get_time_min()} : {bounds.get_time_max()} ]"
             )
-            raise FileNotFoundError(
-                "No ECMWF Wave files found within specified time range!"
-            )
+            raise FileNotFoundError("No ECMWF Wave files found within specified time range!")
         data = xr.concat(data_array, "time")
 
         # Extract just SWH
@@ -98,6 +103,6 @@ class ECMWFSigWaveHeightDataLoader(ScalarDataLoader):
         data = data.reindex(lat=data.lat[::-1])
         data = data.reset_coords(drop=True)
         # Limit self.files to only those actually used
-        self.files = relevant_files
+        self.files: list[str] = relevant_files
 
         return data
