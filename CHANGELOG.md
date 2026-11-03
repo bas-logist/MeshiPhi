@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## What's Changed
+* Migrate documentation builder from mkdocs to properdocs.
+
 ## [2.3.1] - 2026-04-07
 ## What's Changed
 * Migrate documentation to mkdocs + various improvements by @davidwyld in https://github.com/bas-logist/MeshiPhi/pull/116

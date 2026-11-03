@@ -50,11 +50,11 @@ dependencies = [
 
 [dependency-groups]
 docs = [
-    "mkdocs",
+    "properdocs",
     "mkdocs-autoapi",
     "mkdocs-include-markdown-plugin",
     "mkdocstrings[python]",
-    "mkdocs-material",
+    "mkdocs-materialx",
 ]
 test = [
     "pytest",

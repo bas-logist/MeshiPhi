@@ -26,8 +26,8 @@ To run only slow tests:
 
 ## Documentation
 
-Documentation is built from the `docs/` directory using `mkdocs` and plugins.
+Documentation is built from the `docs/` directory using `properdocs` and plugins.
 
 To install the docs dependencies, from the project root run `pip install --group docs` in your virtual environment.
 
-To serve the docs locally, run `mkdocs serve`.
+To serve the docs locally, run `properdocs serve`.
