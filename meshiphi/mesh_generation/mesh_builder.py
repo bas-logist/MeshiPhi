@@ -112,10 +112,6 @@ class MeshBuilder:
         # dataloader's data set
         logger.info("Initialising cellbox metadata...")
         for cellbox in cellboxes:
-        #     tqdm(
-        #     cellboxes,
-        #     bar_format="{desc}{n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
-        # ):
             # checking to avoid any dummy cellboxes
             # (the ones that were split and replaced)
             if isinstance(cellbox, CellBox):
