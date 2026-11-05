@@ -122,7 +122,7 @@ class MeshBuilder:
                 cellbox.set_data_source(updated_meta_data_list)
 
         logger.info("Initialising neighbour graph...")
-        self.neighbour_graph = NeighbourGraph(cellboxes, grid_width)
+        self.neighbour_graph = NeighbourGraph(cellboxes, int(grid_width))
         self.neighbour_graph.set_global_mesh(
             self.check_global_mesh(bounds, cellboxes, int(grid_width))
         )
