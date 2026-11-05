@@ -2,13 +2,12 @@ import copy
 
 import pytest
 
+from meshiphi.mesh_generation.boundary import Boundary
+from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.direction import Direction
 from meshiphi.mesh_generation.neighbour_graph import NeighbourGraph
-from meshiphi.mesh_generation.cellbox import CellBox
-from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.utils import longitude_domain
 from tests.conftest import create_ng_from_dict
-
 
 # Define which direction each cardinal direction lies
 NORTHERN_DIRECTIONS = [Direction.north_east, Direction.north, Direction.north_west]
@@ -103,7 +102,7 @@ def test_increment_ids(ng_dict_3x3):
     # Add 'increment' to nodes and neighbours stored within the neighbourgraph dict
     # Creates a dict of form {str(node + increment): {direction: [neighbours + increment]}}
     manually_incremented_dict = {
-        str(int(node) + increment): {
+        int(node) + increment: {
             direction: [neighbour + increment for neighbour in neighbours]
             for direction, neighbours in dir_map.items()
         }

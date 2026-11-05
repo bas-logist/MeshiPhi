@@ -9,6 +9,7 @@ import copy
 from pathlib import Path
 import pytest
 import meshiphi
+from meshiphi.mesh_generation.environment_mesh import EnvironmentMesh
 from meshiphi.mesh_generation.metadata import Metadata
 from meshiphi.dataloaders.factory import DataLoaderFactory
 from meshiphi.mesh_generation.cellbox import CellBox
@@ -241,6 +242,8 @@ def mesh_pair(request):
    
     with open(mesh_path, 'r') as fp:
         old_mesh = json.load(fp)
+        old_mesh = EnvironmentMesh.load_from_json(old_mesh)
+        old_mesh = old_mesh.to_json()
     
     mesh_config = old_mesh['config']['mesh_info']
     new_mesh = calculate_env_mesh(mesh_config)
@@ -295,32 +298,32 @@ def dummy_cellbox(arbitrary_boundary):
 def dummy_agg_cellbox():
     """Basic aggregated cellbox for testing."""
     arbitrary_agg_data = {'dummy_data': 1}
-    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, '0')
+    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, 0)
 
 
 @pytest.fixture
 def arbitrary_agg_cellbox():
     """Arbitrary aggregated cellbox for testing."""
     arbitrary_agg_data = {'dummy_data': 1}
-    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, '1')
+    return AggregatedCellBox(Boundary([45, 60], [45, 60]), arbitrary_agg_data, 1)
 
 
 @pytest.fixture
 def equatorial_agg_cellbox():
     """Aggregated cellbox crossing equator."""
     arbitrary_agg_data = {'dummy_data': 1}
-    return AggregatedCellBox(Boundary([-10, 10], [45, 60]), arbitrary_agg_data, '2')
+    return AggregatedCellBox(Boundary([-10, 10], [45, 60]), arbitrary_agg_data, 2)
 
 
 @pytest.fixture
 def meridian_agg_cellbox():
     """Aggregated cellbox crossing prime meridian."""
     arbitrary_agg_data = {'dummy_data': 1}
-    return AggregatedCellBox(Boundary([45, 60], [-10, 10]), arbitrary_agg_data, '3')
+    return AggregatedCellBox(Boundary([45, 60], [-10, 10]), arbitrary_agg_data, 3)
 
 
 @pytest.fixture
 def antimeridian_agg_cellbox():
     """Aggregated cellbox crossing antimeridian."""
     arbitrary_agg_data = {'dummy_data': 1}
-    return AggregatedCellBox(Boundary([45, 60], [170, -170]), arbitrary_agg_data, '4')
+    return AggregatedCellBox(Boundary([45, 60], [170, -170]), arbitrary_agg_data, 4)

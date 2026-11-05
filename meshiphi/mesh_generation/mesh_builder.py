@@ -18,7 +18,7 @@ Example:
 
 import logging
 import numpy as np
-from tqdm import tqdm
+
 from meshiphi.mesh_generation.boundary import Boundary
 from meshiphi.mesh_generation.cellbox import CellBox
 from meshiphi.mesh_generation.direction import Direction
@@ -109,10 +109,7 @@ class MeshBuilder:
         # Initialise the metadata for each cellbox, including subsets of each
         # dataloader's data set
         logger.info("Initialising cellbox metadata...")
-        for cellbox in tqdm(
-            cellboxes,
-            bar_format="{desc}{n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
-        ):
+        for cellbox in cellboxes:
             # checking to avoid any dummy cellboxes
             # (the ones that were split and replaced)
             if isinstance(cellbox, CellBox):
@@ -125,7 +122,7 @@ class MeshBuilder:
                 cellbox.set_data_source(updated_meta_data_list)
 
         logger.info("Initialising neighbour graph...")
-        self.neighbour_graph = NeighbourGraph(cellboxes, grid_width)
+        self.neighbour_graph = NeighbourGraph(cellboxes, int(grid_width))
         self.neighbour_graph.set_global_mesh(
             self.check_global_mesh(bounds, cellboxes, int(grid_width))
         )
@@ -271,7 +268,7 @@ class MeshBuilder:
                 cell_bounds = Boundary(
                     cell_lat_range, cell_long_range, bounds.get_time_range()
                 )
-                cell_id = str(len(cellboxes))
+                cell_id = len(cellboxes)
                 cellbox = CellBox(cell_bounds, cell_id)
                 cellboxes.append(cellbox)
         return cellboxes
@@ -354,37 +351,37 @@ class MeshBuilder:
             # update NG to connect cellboxes
             for i in range(0, len(min_long_cellboxes)):
                 self.neighbour_graph.add_neighbour(
-                    int(min_long_cellboxes[i].get_id()),
+                    min_long_cellboxes[i].get_id(),
                     Direction.west,
-                    int(max_long_cellboxes[i].get_id()),
+                    max_long_cellboxes[i].get_id(),
                 )
                 self.neighbour_graph.add_neighbour(
-                    int(max_long_cellboxes[i].get_id()),
+                    max_long_cellboxes[i].get_id(),
                     Direction.east,
-                    int(min_long_cellboxes[i].get_id()),
+                    min_long_cellboxes[i].get_id(),
                 )
                 # checks to avoid the very upper and lower cellboxes as they do not have north/south neighbours
                 if 0 <= i < len(min_long_cellboxes) - 1:
                     self.neighbour_graph.add_neighbour(
-                        int(min_long_cellboxes[i].get_id()),
+                        min_long_cellboxes[i].get_id(),
                         Direction.north_west,
-                        int(max_long_cellboxes[i + 1].get_id()),
+                        max_long_cellboxes[i + 1].get_id(),
                     )
                     self.neighbour_graph.add_neighbour(
-                        int(max_long_cellboxes[i].get_id()),
+                        max_long_cellboxes[i].get_id(),
                         Direction.north_east,
-                        int(min_long_cellboxes[i + 1].get_id()),
+                        min_long_cellboxes[i + 1].get_id(),
                     )
                 if 0 < i <= len(min_long_cellboxes) - 1:
                     self.neighbour_graph.add_neighbour(
-                        int(min_long_cellboxes[i].get_id()),
+                        min_long_cellboxes[i].get_id(),
                         Direction.south_west,
-                        int(max_long_cellboxes[i - 1].get_id()),
+                        max_long_cellboxes[i - 1].get_id(),
                     )
                     self.neighbour_graph.add_neighbour(
-                        int(max_long_cellboxes[i].get_id()),
+                        max_long_cellboxes[i].get_id(),
                         Direction.south_east,
-                        int(min_long_cellboxes[i - 1].get_id()),
+                        min_long_cellboxes[i - 1].get_id(),
                     )
 
         return is_global_mesh
@@ -419,15 +416,17 @@ class MeshBuilder:
                 4 smaller CellBox objects.
 
         """
-        split_cellboxes = cellbox.split(len(self.mesh.cellboxes))
+        cb_length = len(self.mesh.cellboxes)
+        split_cellboxes = cellbox.split(cb_length)
         self.mesh.cellboxes += split_cellboxes
+        cb_length += len(split_cellboxes)
         cellboxes = self.mesh.cellboxes
-        cellbox_indx = cellboxes.index(cellbox)
+        cellbox_indx = cellbox.get_id()
 
-        north_west_indx = cellboxes.index(split_cellboxes[0])
-        north_east_indx = cellboxes.index(split_cellboxes[1])
-        south_west_indx = cellboxes.index(split_cellboxes[2])
-        south_east_indx = cellboxes.index(split_cellboxes[3])
+        north_west_indx = cb_length-4
+        north_east_indx = cb_length-3
+        south_west_indx = cb_length-2
+        south_east_indx = cb_length-1
 
         south_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, 4)
         north_neighbour_indx = self.neighbour_graph.get_neighbours(cellbox_indx, -4)
@@ -726,52 +725,25 @@ class MeshBuilder:
         # this impl assumws all the cellboxes have the same data sources. should not be the caase once we switch to breadth-first splitting.
         data_sources = self.mesh.cellboxes[0].get_data_source()
 
-        # Set up data_source progress bar
-        ds_pbar = tqdm(
-            range(0, len(data_sources)),
-            position=0,
-            bar_format="{desc}{n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
-        )
-        sd_pbar = tqdm(
-            range(0, split_depth),
-            position=1,
-            leave=False,
-            bar_format=" Split depth: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%{postfix} ",
-        )
-        for index in ds_pbar:
-            # Update name of data source being processed
-            ds_pbar.set_description(
-                f" Processing {data_sources[index].get_data_loader().dataloader_name} data"
-            )
+        for index in range(0, len(data_sources)):
+            # # Update name of data source being processed
+            # ds_pbar.set_description(
+            #     f" Processing {data_sources[index].get_data_loader().dataloader_name} data"
+            # )
 
             if len(data_sources[index].get_splitting_conditions()) > 0:
                 # Set up split depth progress bar
                 level = 0
-                sd_pbar = tqdm(
-                    range(0, split_depth),
-                    position=1,
-                    leave=False,
-                    bar_format=" Split depth: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%{postfix} ",
-                )
 
                 for cb_index, cellbox in enumerate(self.mesh.cellboxes):
-                    ds_pbar.update(0)
                     if isinstance(cellbox, CellBox):
                         if cellbox.get_split_depth() > level:
                             level = cellbox.get_split_depth()
                             # If we're a split level further down, iterate progress in progress bar
-                            sd_pbar.update()
                         # Split the cellbox
                         should_split = cellbox.should_split(index + 1)
                         if (cellbox.get_split_depth() < split_depth) & should_split:
                             self.split_and_replace(cellbox)
-                        # Update number of cellboxes processed
-                        sd_pbar.set_postfix_str(
-                            f"[Cellbox {cb_index + 1} / {len(self.mesh.cellboxes)}]"
-                        )
-        tqdm.write("")
-        ds_pbar.clear()
-        sd_pbar.clear()
 
     def build_environmental_mesh(self):
         """
@@ -785,10 +757,7 @@ class MeshBuilder:
 
         agg_cell_count = 0
         logger.info("Aggregating cellboxes...")
-        for cellbox in tqdm(
-            self.mesh.cellboxes,
-            bar_format=" Aggregating cellboxes: {n_fmt}/{total_fmt} |{bar}| {percentage:3.0f}%, [{elapsed} elapsed] ",
-        ):
+        for cellbox in self.mesh.cellboxes:
             agg_cell_count += 1
             if isinstance(cellbox, CellBox):
                 logger.debug(

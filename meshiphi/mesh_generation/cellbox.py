@@ -282,7 +282,7 @@ class CellBox:
         long = self.bounds.get_long_min()
         long_range = [long, longitude_domain(long + half_width)]
         boundary = Boundary(lat_range, long_range, time_range)
-        north_west = CellBox(boundary, str(index))
+        north_west = CellBox(boundary, index)
 
         lat_range = [lat + half_height, lat + self.bounds.get_height()]
         long_range = [
@@ -291,13 +291,13 @@ class CellBox:
         ]
         boundary = Boundary(lat_range, long_range, time_range)
         index += 1
-        north_east = CellBox(boundary, str(index))
+        north_east = CellBox(boundary, index)
 
         lat_range = [lat, lat + half_height]
         long_range = [long, longitude_domain(long + half_width)]
         boundary = Boundary(lat_range, long_range, time_range)
         index += 1
-        south_west = CellBox(boundary, str(index))
+        south_west = CellBox(boundary, index)
 
         lat_range = [lat, lat + half_height]
         long_range = [
@@ -306,7 +306,7 @@ class CellBox:
         ]
         boundary = Boundary(lat_range, long_range, time_range)
         index += 1
-        south_east = CellBox(boundary, str(index))
+        south_east = CellBox(boundary, index)
 
         split_boxes = [north_west, north_east, south_west, south_east]
         return split_boxes

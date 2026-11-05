@@ -75,7 +75,7 @@ class AggregatedCellBox:
         Args:
             boundary(Boundary): encapsulates latitude, longtitude and time range of the CellBox
             agg_data (dict): a dictionary that contains data_names and agg values
-            id (string): a string represents cellbox id
+            id (int): a string represents cellbox id
         """
         # Box information relative to bottom left
         self.boundary = boundary
