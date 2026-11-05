@@ -178,7 +178,7 @@ class NeighbourGraph:
             try:
                 self.neighbour_graph[indx][-1 * direction].remove(cellbox_indx)
             except KeyError:
-                self.neighbour_graph[indx][-1 * direction].remove(int(cellbox_indx))
+                self.neighbour_graph[indx][-1 * direction].remove(cellbox_indx)
 
     def update_corner_neighbours(
         self,
@@ -486,28 +486,28 @@ class NeighbourGraph:
             neighbour_map[Direction.east].append(cellbox_indx + 1)
             # south-east neighbours
             if cellbox_indx + grid_width < cellboxes_length:
-                neighbour_map[Direction.north_east].append(int((cellbox_indx + grid_width) + 1))
+                neighbour_map[Direction.north_east].append((cellbox_indx + grid_width) + 1)
             # north-east neighbours
             if cellbox_indx - grid_width >= 0:
-                neighbour_map[Direction.south_east].append(int((cellbox_indx - grid_width) + 1))
+                neighbour_map[Direction.south_east].append((cellbox_indx - grid_width) + 1)
 
         # add west neighbours to neighbour graph
         if cellbox_indx % grid_width != 0:
             neighbour_map[Direction.west].append(cellbox_indx - 1)
             # add south-west neighbours to neighbour graph
             if cellbox_indx + grid_width < cellboxes_length:
-                neighbour_map[Direction.north_west].append(int((cellbox_indx + grid_width) - 1))
+                neighbour_map[Direction.north_west].append((cellbox_indx + grid_width) - 1)
             # add north-west neighbours to neighbour graph
             if cellbox_indx - grid_width >= 0:
-                neighbour_map[Direction.south_west].append(int((cellbox_indx - grid_width) - 1))
+                neighbour_map[Direction.south_west].append((cellbox_indx - grid_width) - 1)
 
         # add south neighbours to neighbour graph
         if cellbox_indx + grid_width < cellboxes_length:
-            neighbour_map[Direction.north].append(int(cellbox_indx + grid_width))
+            neighbour_map[Direction.north].append(cellbox_indx + grid_width)
 
         # add north neighbours to neighbour graph
         if cellbox_indx - grid_width >= 0:
-            neighbour_map[Direction.south].append(int(cellbox_indx - grid_width))
+            neighbour_map[Direction.south].append(cellbox_indx - grid_width)
         return neighbour_map
 
     def set_global_mesh(self, is_global):

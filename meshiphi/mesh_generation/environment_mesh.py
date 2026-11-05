@@ -411,7 +411,7 @@ class EnvironmentMesh:
                 )
 
                 if neighbour_case == -4:
-                    north_neighbours.append(int(cellbox_s.get_id()))
+                    north_neighbours.append(cellbox_s.get_id())
                 if neighbour_case == -3:
                     north_west_neighbours.append(cellbox_s.get_id())
                 if neighbour_case == 1:
@@ -446,7 +446,7 @@ class EnvironmentMesh:
                 )
 
                 if neighbour_case == 4:
-                    south_neighbours.append(int(cellbox_l.get_id()))
+                    south_neighbours.append(cellbox_l.get_id())
                 if neighbour_case == -1:
                     south_west_neighbours.append(cellbox_l.get_id())
                 if neighbour_case == 3:
@@ -780,8 +780,8 @@ class EnvironmentMesh:
         """
         max_id = 0
         for cellbox in self.agg_cellboxes:
-            if int(cellbox.get_id()) > max_id:
-                max_id = int(cellbox.get_id())
+            if cellbox.get_id() > max_id:
+                max_id = cellbox.get_id()
         return max_id
 
     def remove_cellbox(self, cellbox):
@@ -857,10 +857,10 @@ class EnvironmentMesh:
             self.agg_cellboxes.append(cellbox)
 
         # get ID's of new cellboxes
-        north_west_index = int(split_cellboxes[1].get_agg_data()["id"])
-        north_east_index = int(split_cellboxes[3].get_agg_data()["id"])
-        south_west_index = int(split_cellboxes[0].get_agg_data()["id"])
-        south_east_index = int(split_cellboxes[2].get_agg_data()["id"])
+        north_west_index = split_cellboxes[1].get_agg_data()["id"]
+        north_east_index = split_cellboxes[3].get_agg_data()["id"]
+        south_west_index = split_cellboxes[0].get_agg_data()["id"]
+        south_east_index = split_cellboxes[2].get_agg_data()["id"]
 
         # Get neighbours of original cellbox
         south_neighbour_index = self.neighbour_graph.get_neighbours(cellbox_id, 4)
