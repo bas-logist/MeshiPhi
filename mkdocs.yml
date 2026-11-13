@@ -54,7 +54,9 @@ nav:
   - Home: index.md
   - overview.md
   - installation.md
-  - examples.md
+  - Examples:
+    - Mesh Generation: examples/mesh_generation.md
+    - Mesh Manipulation Using Shapefiles - ArcNet: examples/arcnet.md
   - cli.md
   - Configuration:
     - Overview: config/overview.md
