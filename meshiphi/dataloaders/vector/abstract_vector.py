@@ -237,6 +237,42 @@ class VectorDataLoader(DataLoaderInterface):
         elif isinstance(data, xr.core.dataset.Dataset):
             return add_mag_dir_to_xr(data, names)
 
+    @staticmethod
+    def _to_python_scalar(x):
+        """
+        Safely convert xarray/dask/numpy scalars or 0-d arrays to a Python scalar.
+        Handles xarray.DataArray, dask arrays (computes them), numpy scalars/arrays.
+        Returns a plain Python number when possible, otherwise returns the
+        original object as a fallback.
+        """
+        try:
+            # Unwrap xarray DataArray to its underlying data
+            if isinstance(x, xr.DataArray):
+                arr = x.data
+            else:
+                arr = x
+            # If it's a dask array, compute it
+            try:
+                import dask.array as da
+
+                if isinstance(arr, da.Array):
+                    arr = arr.compute()
+            except Exception:
+                # dask may not be installed or arr isn't a dask array
+                pass
+
+            # If it's a numpy scalar or ndarray, try to extract python scalar
+            if hasattr(arr, "item"):
+                return arr.item()
+            # Fallback to casting to float for simple numeric objects
+            return float(arr)
+        except Exception:
+            # Last resort: try .item() on original, then return original
+            try:
+                return x.item()
+            except Exception:
+                return x
+
     def calculate_coverage(self, bounds, data=None):
         """
         Calculates percentage of boundary covered by dataset
@@ -291,8 +327,8 @@ class VectorDataLoader(DataLoaderInterface):
             else:
                 # Create a polygon to calculate overlap region from
                 data_boundary = Boundary(
-                    [data.lat.min().item(), data.lat.max().item()],
-                    [data.long.min().item(), data.long.max().item()],
+                    [self._to_python_scalar(data.lat.min()), self._to_python_scalar(data.lat.max())],
+                    [self._to_python_scalar(data.long.min()), self._to_python_scalar(data.long.max())],
                 )
                 data_polygon = data_boundary.to_polygon()
                 bounds_polygon = bounds.to_polygon()
@@ -539,29 +575,29 @@ class VectorDataLoader(DataLoaderInterface):
                     values = [data_count for _ in variable_names]
                 # Otherwise count non-nan values
                 else:
-                    values = [dps[name].count().item() for name in variable_names]
+                    values = [self._to_python_scalar(dps[name].count()) for name in variable_names]
             elif agg_type == "MIN":
                 # Get 2D index of minimum magnitude point
                 index = np.unravel_index(
                     dps._magnitude.argmin(skipna=skipna), dps._magnitude.shape
                 )
                 # Get cartesian vector from index
-                values = [dps[name][index].item() for name in variable_names]
+                values = [self._to_python_scalar(dps[name][index]) for name in variable_names]
             elif agg_type == "MAX":
                 # Get 2D index of minimum magnitude point
                 index = np.unravel_index(
                     dps._magnitude.argmax(skipna=skipna), dps._magnitude.shape
                 )
                 # Get cartesian vector from index
-                values = [dps[name][index].item() for name in variable_names]
+                values = [self._to_python_scalar(dps[name][index]) for name in variable_names]
             # And the rest self explanatory
             elif agg_type == "MEAN":
                 values = [
-                    dps[name].mean(skipna=skipna).item() for name in variable_names
+                    self._to_python_scalar(dps[name].mean(skipna=skipna)) for name in variable_names
                 ]
             elif agg_type == "STD":
                 values = [
-                    dps[name].std(skipna=skipna).item() for name in variable_names
+                    self._to_python_scalar(dps[name].std(skipna=skipna)) for name in variable_names
                 ]
             elif agg_type == "MEDIAN":
                 raise ValueError(

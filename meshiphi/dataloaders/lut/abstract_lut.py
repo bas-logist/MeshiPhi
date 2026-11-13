@@ -346,12 +346,15 @@ class LutDataLoader(DataLoaderInterface):
         polygons = self.trim_datapoints(bounds, data=data)["geometry"].tolist()
 
         hom_type = "CLR"
+        boundary_split = splitting_conds.get("boundary", False)
+        split_lock = splitting_conds.get("split_lock", False)
+
         # If there's no polygon that overlaps with bounds
         if not any([polygon.intersects(bounds_polygon) for polygon in polygons]):
-            if splitting_conds["split_lock"] is True:
+            if split_lock is True:
                 hom_type = "HOM"
         # If we want to split on the boundary
-        elif splitting_conds["boundary"]:
+        elif boundary_split:
             if any(p.boundary.intersects(bounds_polygon) for p in polygons):
                 hom_type = "HET"
 

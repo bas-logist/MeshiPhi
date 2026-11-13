@@ -2,6 +2,7 @@
 AggregatedCellBox class tests.
 """
 
+import numpy as np
 import pytest
 from meshiphi.mesh_generation.aggregated_cellbox import AggregatedCellBox
 from meshiphi.mesh_generation.boundary import Boundary
@@ -80,6 +81,25 @@ def test_to_json():
     assert agg_cb.to_json() == agg_cb_json
 
 
+def test_from_json_restores_nan_for_null_values():
+    """Null values produced by JSON serialization should be restored as NaN."""
+    agg_cb_json = {
+        "geometry": "POLYGON ((-175 49, -175 51.5, -170 51.5, -170 49, -175 49))",
+        "cx": -172.5,
+        "cy": 50.25,
+        "dcx": 2.5,
+        "dcy": 1.25,
+        "uC": None,
+        "vC": None,
+        "id": "1",
+    }
+
+    agg_cb = AggregatedCellBox.from_json(agg_cb_json)
+
+    assert np.isnan(agg_cb.agg_data["uC"])
+    assert np.isnan(agg_cb.agg_data["vC"])
+
+
 @pytest.mark.parametrize(
     "cellbox_fixture,lat,lon,expected",
     [
@@ -93,3 +113,25 @@ def test_contains_point(cellbox_fixture, lat, lon, expected, request):
     """Test point containment check"""
     cellbox = request.getfixturevalue(cellbox_fixture)
     assert cellbox.contains_point(lat, lon) == expected
+
+def test_aggregated_cellbox_serialises_generic_nan_fields_to_none():
+    boundary = Boundary([0.0, 1.0], [0.0, 1.0])
+    cell = AggregatedCellBox(boundary, {"some_other_field": np.nan, "other_value": 2.5}, "cell-1")
+
+    serialized = cell.to_json()
+
+    assert serialized["some_other_field"] is None
+    assert serialized["other_value"] == 2.5
+
+def test_aggregated_cellbox_serialises_speed_limit_fields_to_none_when_undefined():
+    boundary = Boundary([0.0, 1.0], [0.0, 1.0])
+    cell = AggregatedCellBox(
+        boundary,
+        {"protected_area_speed_limit": np.nan, "speed_limit": 7.5},
+        "cell-2",
+    )
+
+    serialized = cell.to_json()
+
+    assert serialized["protected_area_speed_limit"] is None
+    assert serialized["speed_limit"] == 7.5
