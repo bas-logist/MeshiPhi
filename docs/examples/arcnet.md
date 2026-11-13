@@ -85,7 +85,7 @@ with open('arcnet_mesh.json', 'w') as f:
     json.dump(mesh, f)
 ```
 
-We can then use this mesh for whatever we want, for example by passing it to [PolarRoute](https://github.com/bas-logist/PolarRoute) to generate a vessel path that respects the speed limits imposed in the ArcNet areas. To see how this can be achieved, please see the [PolarRoute example documentation](XXX).
+We can then use this mesh for whatever we want, for example by passing it to [PolarRoute](https://github.com/bas-logist/PolarRoute) to generate a vessel path that respects the speed limits imposed in the ArcNet areas. To see how this can be achieved, please see the [PolarRoute example documentation](https://bas-logist.github.io/PolarRoute/examples/).
 
 
 ## Acknowledgements
