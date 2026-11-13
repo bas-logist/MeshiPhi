@@ -150,24 +150,21 @@ class AggregatedCellBox:
             "dcy": float(self.get_bounds().getdcy()),
         }
 
-        # Clean agg_data by converting np.nan to None for valid JSON. Mark
-        # speed-limit fields as null to preserve semantically undefined values.
+        # Clean agg_data by converting np.nan to None for valid JSON.
         agg_data = self.get_agg_data()
         clean_agg_data = {}
+
         for key, value in agg_data.items():
-            if "speed_limit" in str(key).lower():
-                clean_agg_data[key] = None if isinstance(value, float) and np.isnan(value) else value
-                continue
             if isinstance(value, (list, tuple)):
-                # Handle lists/arrays that might contain NaN values
                 clean_value = [
-                    None if (isinstance(v, float) and np.isnan(v)) else v for v in value
+                    None if (isinstance(v, (float, np.floating)) and np.isnan(v)) else v
+                    for v in value
                 ]
-            elif isinstance(value, float) and np.isnan(value):
-                # Convert single NaN values to None
+            elif isinstance(value, (float, np.floating)) and np.isnan(value):
                 clean_value = None
             else:
                 clean_value = value
+
             clean_agg_data[key] = clean_value
 
         cell_json.update(clean_agg_data)

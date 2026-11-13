@@ -113,3 +113,25 @@ def test_contains_point(cellbox_fixture, lat, lon, expected, request):
     """Test point containment check"""
     cellbox = request.getfixturevalue(cellbox_fixture)
     assert cellbox.contains_point(lat, lon) == expected
+
+def test_aggregated_cellbox_serialises_generic_nan_fields_to_none():
+    boundary = Boundary([0.0, 1.0], [0.0, 1.0])
+    cell = AggregatedCellBox(boundary, {"some_other_field": np.nan, "other_value": 2.5}, "cell-1")
+
+    serialized = cell.to_json()
+
+    assert serialized["some_other_field"] is None
+    assert serialized["other_value"] == 2.5
+
+def test_aggregated_cellbox_serialises_speed_limit_fields_to_none_when_undefined():
+    boundary = Boundary([0.0, 1.0], [0.0, 1.0])
+    cell = AggregatedCellBox(
+        boundary,
+        {"protected_area_speed_limit": np.nan, "speed_limit": 7.5},
+        "cell-2",
+    )
+
+    serialized = cell.to_json()
+
+    assert serialized["protected_area_speed_limit"] is None
+    assert serialized["speed_limit"] == 7.5
