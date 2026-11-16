@@ -8,7 +8,7 @@ with the mesh. When creating a new dataloader, the user must define
 how to open the data files, and what methods are required to manipulate
 the data into a standard format.
 
-Documentation for the abstract `LutDataLoader` is available in the [API documentation](../../autoapi/meshiphi/dataloaders/lut/abstract_lut).
+Documentation for the abstract `LutDataLoader` is available in the [API documentation](../autoapi/meshiphi/dataloaders/lut/abstract_lut.md).
 
 ## LUT Dataloader Examples
 
@@ -26,7 +26,7 @@ Density values were taken from the paper 'Thickness distribution of Antarctic se
 
 Name in config: `'density'`
 
-Class documentation: [BalticCurrentDataLoader](../../autoapi/meshiphi/dataloaders/lut/DensityDataLoader)
+Class documentation: [DensityDataLoader](../autoapi/meshiphi/dataloaders/lut/density.md)
 
 ### LUT CSV 
 
@@ -39,7 +39,7 @@ any name, and is just the value that is associated with the polygon.
 
 Name in config: `'lut_csv'`
 
-Class documentation: [LutCSV](../../autoapi/meshiphi/dataloaders/lut/lut_csv)
+Class documentation: [LutCSV](../autoapi/meshiphi/dataloaders/lut/lut_csv.md)
 
 ### LUT GeoJSON
 
@@ -51,7 +51,7 @@ that the polygons save. The keyword in the config params is 'value'.
 
 Name in config: `'lut_geojson'`
 
-Class documentation: [LutGeoJSON](../../autoapi/meshiphi/dataloaders/lut/lut_geojson)
+Class documentation: [LutGeoJSON](../autoapi/meshiphi/dataloaders/lut/lut_geojson.md)
 
 ### Scotland NCMPA
 
@@ -61,7 +61,7 @@ Data can be downloaded from <https://www.data.gov.uk/dataset/67572936-18dc-4180-
 
 Name in config: `'scotland_ncmpa'`
 
-Class documentation: [ScotlandNCMPA](../../autoapi/meshiphi/dataloaders/lut/scotland_ncmpa)
+Class documentation: [ScotlandNCMPA](../autoapi/meshiphi/dataloaders/lut/scotland_ncmpa.md)
 
 ### Thickness Dataloader
 
@@ -71,4 +71,4 @@ Data is generated using the values from this paper, and so no data file is avail
 
 Name in config: `'thickness'`
 
-Class documentation: [ThicknessDataLoader](../../autoapi/meshiphi/dataloaders/lut/thickness)
+Class documentation: [ThicknessDataLoader](../autoapi/meshiphi/dataloaders/lut/thickness.md)
