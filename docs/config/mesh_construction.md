@@ -2,8 +2,8 @@
 
 Below is a full configuration file for building an environmental mesh using synthetic data generated from Gaussian
 Random Fields (GRFs). This configuration file generates the fields `SIC`, `elevation`, `thickness`, `density`, `uC`, `vC`
-(currents) and `u10`, `v10` (winds). The full configuration file is available in the file [`examples/environment_config/grf_example.config.json`](https://raw.githubusercontent.com/bas-amop/MeshiPhi/refs/heads/main/examples/environment_config/grf_example.config.json) . Other example configuration files are also
-available [in the GitHub repo](https://github.com/bas-amop/MeshiPhi/tree/main/examples/environment_config), including configuration files which build meshes using real datasets.
+(currents) and `u10`, `v10` (winds). The full configuration file is available in the file [`examples/environment_config/grf_example.config.json`](https://raw.githubusercontent.com/bas-logist/MeshiPhi/refs/heads/main/examples/environment_config/grf_example.config.json) . Other example configuration files are also
+available [in the GitHub repo](https://github.com/bas-logist/MeshiPhi/tree/main/examples/environment_config), including configuration files which build meshes using real datasets.
 
 <details>
 <summary><strong>Click to open full configuration</strong></summary>

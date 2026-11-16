@@ -8,7 +8,7 @@ with the mesh. When creating a new dataloader, the user must define
 how to open the data files, and what methods are required to manipulate
 the data into a standard format. 
 
-Documentation for the abstract `ScalarDataLoader` is available in the [API documentation](../../autoapi/meshiphi/dataloaders/scalar/abstract_scalar).
+Documentation for the abstract `ScalarDataLoader` is available in the [API documentation](../autoapi/meshiphi/dataloaders/scalar/abstract_scalar).
 
 ## Scalar Dataloader Examples
 
@@ -71,7 +71,7 @@ class MyDataLoader(ScalarDataLoader):
 
 The following scalar dataloaders are included in MeshiPhi.
 
-See the package [API Reference](../../autoapi/meshiphi/dataloaders/scalar) section of the docs for details.
+See the package [API Reference](../autoapi/meshiphi/dataloaders/scalar) section of the docs for details.
 
 ### AMSR
 
@@ -89,7 +89,7 @@ Data can be downloaded from the [University of Bremen Sea Ice Data Archive](http
 
 Name in config: `'amsr'`
 
-Class documentation: [AMSRDataLoader](../../autoapi/meshiphi/dataloaders/scalar/amsr)
+Class documentation: [AMSRDataLoader](../autoapi/meshiphi/dataloaders/scalar/amsr)
 
 ### Baltic Sea Ice 
 
@@ -104,7 +104,7 @@ Data can be downloaded from <https://data.marine.copernicus.eu/product/SEAICE_BA
 
 Name in config: `'baltic_sic'`
 
-Class documentation: [BalticSeaIceDataLoader](../../autoapi/meshiphi/dataloaders/scalar/baltic_sea_ice)
+Class documentation: [BalticSeaIceDataLoader](../autoapi/meshiphi/dataloaders/scalar/baltic_sea_ice)
 
 ### Binary GRF 
 
@@ -157,7 +157,7 @@ Name in config: `'bsose_depth'`
 
 Data can be downloaded from <http://sose.ucsd.edu/BSOSE_iter105_solution.html>
 
-Class documentation: [BSOSEDepthDataLoader](../../autoapi/meshiphi/dataloaders/scalar/bsose_depth)
+Class documentation: [BSOSEDepthDataLoader](../autoapi/meshiphi/dataloaders/scalar/bsose_depth)
 
 !!! note
     This dataloader may not work "as is" for new data downloaded, it has been internally collated into a more easily ingestable format.
@@ -177,7 +177,7 @@ Data can be downloaded from <http://sose.ucsd.edu/BSOSE_iter105_solution.html>
 
 Name in config: `'bsose_sic'`
 
-Class documentation: [BSOSESeaIceDataLoader](../../autoapi/meshiphi/dataloaders/scalar/bsose_sea_ice)
+Class documentation: [BSOSESeaIceDataLoader](../autoapi/meshiphi/dataloaders/scalar/bsose_sea_ice)
 
 !!! note
     This dataloader may not work as is for new data downloaded, it has been internally collated into  a more easily ingestable format.
@@ -201,7 +201,7 @@ Data can be downloaded from <https://data.ecmwf.int/forecasts/>
 
 Name in config: `'ecmwf_sig_wave_height'`
 
-Class documentation: [ECMWFSigWaveHeightDataLoader](../../autoapi/meshiphi/dataloaders/scalar/ecmwf_sig_wave_height)
+Class documentation: [ECMWFSigWaveHeightDataLoader](../autoapi/meshiphi/dataloaders/scalar/ecmwf_sig_wave_height)
 
 ### ERA5 Dataloaders
 
@@ -221,12 +221,12 @@ available from <https://confluence.ecmwf.int/display/CKB/How+to+download+ERA5>
 
 Variables, their names in config and class documentation:
 
-* Maximum Wave Height: `'era5_max_wave_height'` - [ERA5MaxWaveHeightDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_max_wave_height)
-* Significant Wave Height: `'era5_sig_wave_height'` - [ERA5SigWaveHeightDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_sig_wave_height)
-* Mean Wave Direction Dataloader: `'era5_wave_dir'` - [ERA5MeanWaveDirDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wave_dir)
-* Mean Wave Period: `'era5_wave_period'` - [ERA5WavePeriodDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wave_period)
-* Wind Direction: `'era5_wind_dir'` - [ERA5WindDirDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wind_dir)
-* Wind Magnitude: `'era5_wind_mag'` - [ERA5WindMagDataLoader](../../autoapi/meshiphi/dataloaders/scalar/era5_wind_mag)
+* Maximum Wave Height: `'era5_max_wave_height'` - [ERA5MaxWaveHeightDataLoader](../autoapi/meshiphi/dataloaders/scalar/era5_max_wave_height)
+* Significant Wave Height: `'era5_sig_wave_height'` - [ERA5SigWaveHeightDataLoader](../autoapi/meshiphi/dataloaders/scalar/era5_sig_wave_height)
+* Mean Wave Direction Dataloader: `'era5_wave_dir'` - [ERA5MeanWaveDirDataLoader](../autoapi/meshiphi/dataloaders/scalar/era5_wave_dir)
+* Mean Wave Period: `'era5_wave_period'` - [ERA5WavePeriodDataLoader](../autoapi/meshiphi/dataloaders/scalar/era5_wave_period)
+* Wind Direction: `'era5_wind_dir'` - [ERA5WindDirDataLoader](../autoapi/meshiphi/dataloaders/scalar/era5_wind_dir)
+* Wind Magnitude: `'era5_wind_mag'` - [ERA5WindMagDataLoader](../autoapi/meshiphi/dataloaders/scalar/era5_wind_mag)
 
 ### GEBCO
 
@@ -238,7 +238,7 @@ Data can be downloaded from <https://download.gebco.net/>
 
 Name in config: `'gebco'`
 
-Class documentation: [GEBCODataLoader](../../autoapi/meshiphi/dataloaders/scalar/gebco)
+Class documentation: [GEBCODataLoader](../autoapi/meshiphi/dataloaders/scalar/gebco)
 
 ### IceNet
 
@@ -256,7 +256,7 @@ Data for IceNet V2 is not publicly available.
 
 Name in config: `'icenet'`
 
-Class documentation: [IceNetDataLoader](../../autoapi/meshiphi/dataloaders/scalar/icenet)
+Class documentation: [IceNetDataLoader](../autoapi/meshiphi/dataloaders/scalar/icenet)
 
 
 ### MODIS
@@ -272,7 +272,7 @@ Information on where to download their data products can be found at <https://mo
 
 Name in config: `'modis'`
 
-Class documentation: [MODISDataLoader](../../autoapi/meshiphi/dataloaders/scalar/modis)
+Class documentation: [MODISDataLoader](../autoapi/meshiphi/dataloaders/scalar/modis)
 
 
 ### Scalar CSV
@@ -284,7 +284,7 @@ for this dataloader.
 
 Name in config: `'scalar_csv'`
 
-Class documentation: [ScalarCSVDataLoader](../../autoapi/meshiphi/dataloaders/scalar/scalar_csv)
+Class documentation: [ScalarCSVDataLoader](../autoapi/meshiphi/dataloaders/scalar/scalar_csv)
 
 ### Scalar GRF
 
@@ -297,7 +297,7 @@ Can be used to generate [binary masks](#binary-grf).
 
 For vector fields, see [vector GRF](vector.md#vector-grf).
 
-Class documentation: [ScalarGRFDataLoader](../../autoapi/meshiphi/dataloaders/scalar/scalar_grf)
+Class documentation: [ScalarGRFDataLoader](../autoapi/meshiphi/dataloaders/scalar/scalar_grf)
 
 Default parameters for scalar GRF dataloader. 
 
@@ -335,7 +335,7 @@ boundaries, and cast it into a data source for mesh construction. It was primari
 used in testing to debug cellbox generation. As such, there is no data source 
 for this dataloader.
 
-Class documentation: [ShapeDataLoader](../../autoapi/meshiphi/dataloaders/scalar/shape)
+Class documentation: [ShapeDataLoader](../autoapi/meshiphi/dataloaders/scalar/shape)
 
 ### Visual_iced 
 
@@ -353,4 +353,4 @@ Values between 0 and 100 are generated by the aggregation of the 0s and 1s withi
 
 Name in config: `'visual_iced'`
 
-Class documentation: [VisualIcedDataLoader](../../autoapi/meshiphi/dataloaders/scalar/visual_iced)
+Class documentation: [VisualIcedDataLoader](../autoapi/meshiphi/dataloaders/scalar/visual_iced)

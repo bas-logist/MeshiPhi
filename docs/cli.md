@@ -2,7 +2,7 @@
 
 The MeshiPhi package provides CLI entry points, used to build a digital environment from a heterogeneous collection of
 source data. This digital environment file (mesh) can then be exported to a variety of file formats for use in other
-systems, such as GIS software. The produced mesh file also interfaces directly with [PolarRoute](https://github.com/bas-amop/PolarRoute).
+systems, such as GIS software. The produced mesh file also interfaces directly with [PolarRoute](https://github.com/bas-logist/PolarRoute).
 BAS's route planning software, to provide optimal routes for a vehicle travelling through the mesh.
 
 ## `create_mesh`
@@ -140,7 +140,7 @@ optional arguments:
 ## `plot_mesh` (GeoPlot)
 
 Meshes produced at any stage in the route planning process can be visualised using the [GeoPlot 
-library](https://github.com/bas-amop/GeoPlot). Meshes and routes can also be
+library](https://github.com/bas-logist/GeoPlot). Meshes and routes can also be
 plotted in other GIS software such as QGIS or ArcGIS by exporting the mesh to a common format such as .geojson or .tif
 using the [`export_mesh`](#export_mesh) command.
 
@@ -163,7 +163,7 @@ creating a pull request.
 
 Requires git to be installed, and for Meshiphi to be installed with pip in developer mode from a local git repo. 
 
-:file:`git clone git@github.com:bas-amop/MeshiPhi.git /path/to/meshiphi` downloads Meshiphi into :file:`/path/to/meshiphi`
+:file:`git clone git@github.com:bas-logist/MeshiPhi.git /path/to/meshiphi` downloads Meshiphi into :file:`/path/to/meshiphi`
 
 :file:`pip install -e /path/to/meshiphi` installs the local copy of Meshiphi in developer mode.
 

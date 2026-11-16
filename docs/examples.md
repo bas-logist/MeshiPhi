@@ -32,7 +32,7 @@ cg = MeshBuilder(config).build_environmental_mesh()
 mesh = cg.to_json()
 ```
 
-The `Mesh` object can be visualised using the [GeoPlot](https://github.com/bas-amop/GeoPlot) package, also developed
+The `Mesh` object can be visualised using the [GeoPlot](https://github.com/bas-logist/GeoPlot) package, also developed
 by BAS. This package is not included in the distribution of MeshiPhi, but can be installed using the following command:
 
 ```py

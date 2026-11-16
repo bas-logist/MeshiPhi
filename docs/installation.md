@@ -13,7 +13,7 @@ from PyPI: `pip install MeshiPhi`
 from Github: 
 
 ```sh
-git clone https://github.com/bas-amop/MeshiPhi.git
+git clone https://github.com/bas-logist/MeshiPhi.git
 cd MeshiPhi
 pip install .
 ```
