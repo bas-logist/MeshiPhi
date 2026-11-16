@@ -8,7 +8,7 @@ with the mesh. When creating a new dataloader, the user must define
 how to open the data files, and what methods are required to manipulate
 the data into a standard format. 
 
-Documentation for the abstract `VectorDataLoader` is available in the [API documentation](../autoapi/meshiphi/dataloaders/vector/abstract_vector).
+Documentation for the abstract `VectorDataLoader` is available in the [API documentation](../autoapi/meshiphi/dataloaders/vector/abstract_vector.md).
 
 
 ## Examples
@@ -93,7 +93,7 @@ Data can be downloaded from <https://data.marine.copernicus.eu/product/BALTICSEA
 
 Name in config: `'baltic_currents'`
 
-Class documentation: [BalticCurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/baltic_current)
+Class documentation: [BalticCurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/baltic_current.md)
 
 ### DUACS Currents
 
@@ -113,7 +113,7 @@ Reanalysis data can be downloaded from `here. <https://data.marine.copernicus.eu
 
 Name in config: `'duacs_currents'`
 
-Class documentation: [DuacsCurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/duacs_current)
+Class documentation: [DuacsCurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/duacs_current.md)
 
 ### ERA5 Wave Direction
 
@@ -136,7 +136,7 @@ from north in degrees, and converts it to a unit vector with u and v components.
 
 Name in config: `'era5_wave_direction'`
 
-Class documentation: [ERA5WaveDirectionLoader](../autoapi/meshiphi/dataloaders/vector/era5_wave_direction_vector)
+Class documentation: [ERA5WaveDirectionLoader](../autoapi/meshiphi/dataloaders/vector/era5_wave_direction_vector.md)
 
 ### ERA5 Wind 
 
@@ -144,7 +144,7 @@ See above for information about ERA5.
 
 Name in config: `'era5_wind'`
 
-Class documentation: [ERA5WindDataLoader](../autoapi/meshiphi/dataloaders/vector/era5_wind)
+Class documentation: [ERA5WindDataLoader](../autoapi/meshiphi/dataloaders/vector/era5_wind.md)
 
 ### North Sea Currents 
 
@@ -157,7 +157,7 @@ available <https://www.bodc.ac.uk/resources/inventories/edmed/report/6364/>
 
 Name in config: `'northsea_currents'`
 
-Class documentation: [NorthSeaCurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/north_sea_current)
+Class documentation: [NorthSeaCurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/north_sea_current.md)
 
 ### ORAS5 Currents
 
@@ -176,7 +176,7 @@ Data can be downloaded from <https://cds.climate.copernicus.eu/cdsapp#!/dataset/
 
 Name in config: `'oras5_currents'`
 
-Class documentation: [ORAS5CurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/oras5_current)
+Class documentation: [ORAS5CurrentDataLoader](../autoapi/meshiphi/dataloaders/vector/oras5_current.md)
 
 ### SOSE Currents
 
@@ -192,7 +192,7 @@ Data can be downloaded from `here <http://sose.ucsd.edu/sose_stateestimation_dat
 
 Name in config: `'sose'`
 
-Class documentation: [SOSEDataLoader](../autoapi/meshiphi/dataloaders/vector/sose)
+Class documentation: [SOSEDataLoader](../autoapi/meshiphi/dataloaders/vector/sose.md)
 
 !!! note
     This dataloader may not work as is for new data downloaded, it has been internally collated into  a more easily ingestable format.
@@ -206,7 +206,7 @@ for this dataloader.
 
 Name in config: `'vector_csv'`
 
-Class documentation: [VectorCSVDataLoader](../autoapi/meshiphi/dataloaders/vector/vector_csv)
+Class documentation: [VectorCSVDataLoader](../autoapi/meshiphi/dataloaders/vector/vector_csv.md)
 
 ### Vector GRF
 
@@ -217,7 +217,7 @@ columns in the final dataframe.
 
 Name in config: `'vector_grf'`
 
-Class documentation: [VectorGRFDataLoader](../autoapi/meshiphi/dataloaders/vector/vector_grf)
+Class documentation: [VectorGRFDataLoader](../autoapi/meshiphi/dataloaders/vector/vector_grf.md)
 
 Can be used to generate [binary masks](scalar.md#binary-grf).
 
