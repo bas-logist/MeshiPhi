@@ -66,19 +66,19 @@ A list of supported data sources and their associated data-loaders is given in t
 Samuel Hall, Harrison Abbot, Ayat Fekry, George Coombs, David Wyld, Thomas Zwagerman, Jonathan Smith, Maria Fox, and James Byrne
 
 ## Contributing
-For more details on contributing, see the [contributing](CONTRIBUTING.md) guide.
+For more details on contributing, see the [contributing](https://github.com/bas-logist/MeshiPhi/blob/main/CONTRIBUTING.md) guide.
 
 ## License
 This software is licensed under a MIT license, but request users cite our publication:
 
 Jonathan D. Smith, Samuel Hall, George Coombs, James Byrne, Michael A. S. Thorne,  J. Alexander Brearley, Derek Long, Michael Meredith, Maria Fox (2022) Autonomous Passage Planning for a Polar Vessel. _arXiv_, <https://arxiv.org/abs/2209.02389>
 
-For more information please see the [`LICENSE`](LICENSE) file.
+For more information please see the [`LICENSE`](https://github.com/bas-logist/MeshiPhi/blob/main/LICENSE) file.
 
 ## How to Cite
 
 If you use Meshiφ in your research, please cite our software and publication:
 
-- See the [`CITATION.cff`](CITATION.cff) file for citation metadata.
+- See the [`CITATION.cff`](https://github.com/bas-logist/MeshiPhi/blob/main/CITATION.cff) file for citation metadata.
 
 You can also use the "Cite this repository" button on GitHub for formatted citations.
